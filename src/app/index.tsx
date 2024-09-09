@@ -1,9 +1,10 @@
 import Checkbox from "expo-checkbox";
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { onboardingBg } from "~/assets/images";
+import { Text } from "~/theme";
 
 type Props = {
   text: string;
@@ -61,7 +62,9 @@ const OnBoarding = (props: Props) => {
           </View>
           <View>
             <Pressable>
-              <Text>Proceed</Text>
+              <Text style={{ color: "blue", fontFamily: "AeonikNormalItalic" }}>
+                Proceed
+              </Text>
             </Pressable>
           </View>
         </View>

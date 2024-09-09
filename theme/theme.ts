@@ -1,17 +1,17 @@
-import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle';
-import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+import { createTheme, useTheme as useRestyleTheme } from "@shopify/restyle";
+import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 type NamedStyles<T> = {
   [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
 };
 
 const palette = {
-  gray: '#808080',
-  blue: '#007AFF',
-  darkGray: '#38434D',
-  white: '#FFFFFF',
-  black: '#000000',
-  purple: '#6366F1',
+  gray: "#808080",
+  blue: "#007AFF",
+  darkGray: "#38434D",
+  white: "#FFFFFF",
+  black: "#000000",
+  purple: "#6366F1",
 };
 
 const theme = createTheme({
@@ -34,19 +34,19 @@ const theme = createTheme({
     xl_24: 24,
   },
   textVariants: {
+    defaults: {
+      fontFamily: "AeonikNormal",
+    },
     body: {
       fontSize: 16,
     },
-    title: { fontSize: 20, fontWeight: 'bold' },
+    title: { fontSize: 20, fontWeight: "bold" },
     large: {
       fontSize: 36,
     },
     extra_large: {
       fontSize: 64,
-      fontWeight: 'bold',
-    },
-    defaults: {
-      // We can define a default text variant here.
+      fontWeight: "bold",
     },
   },
 });
@@ -56,7 +56,7 @@ export const useTheme = () => {
 };
 
 export const makeStyles = <T extends NamedStyles<T> | NamedStyles<unknown>>(
-  styles: (theme: Theme) => T
+  styles: (theme: Theme) => T,
 ) => {
   return () => {
     return styles(theme);
