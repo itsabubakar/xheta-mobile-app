@@ -2,6 +2,7 @@ import { ThemeProvider } from "@shopify/restyle";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { theme } from "theme";
 
 export const unstable_settings = {
@@ -35,12 +36,20 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <ThemeProvider theme={theme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+    <Providers>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="signup" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
-    </ThemeProvider>
+    </Providers>
+  );
+}
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </SafeAreaView>
   );
 }

@@ -12,6 +12,7 @@ const palette = {
   white: "#FFFFFF",
   black: "#000000",
   purple: "#6366F1",
+  primary: "#03363D",
 };
 
 const theme = createTheme({
@@ -36,11 +37,17 @@ const theme = createTheme({
   textVariants: {
     defaults: {
       fontFamily: "AeonikNormal",
+      fontSize: 14,
     },
     body: {
       fontSize: 16,
+      fontFamily: "AeonikNormal",
     },
-    title: { fontSize: 20, fontWeight: "bold" },
+    title: { fontSize: 24, fontFamily: "AeonikBold" },
+    subtitle: {
+      fontSize: 16,
+      fontFamily: "AeonikMedium",
+    },
     large: {
       fontSize: 36,
     },
