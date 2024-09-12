@@ -6,7 +6,7 @@ type NamedStyles<T> = {
 };
 
 const palette = {
-  gray: "#808080",
+  gray: "##434343",
   blue: "#007AFF",
   darkGray: "#38434D",
   white: "#FFFFFF",
@@ -18,6 +18,7 @@ const palette = {
 const theme = createTheme({
   colors: {
     ...palette,
+    gray: palette.gray,
   },
   spacing: {
     xs_4: 4,
@@ -38,6 +39,7 @@ const theme = createTheme({
     defaults: {
       fontFamily: "AeonikNormal",
       fontSize: 14,
+      color: "gray",
     },
     body: {
       fontSize: 16,

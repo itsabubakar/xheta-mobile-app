@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import { TextInput as RNTextInput, TextInputProps } from "react-native";
 
-import { Box, Text } from "~/theme";
+import { Box, Text, useTheme } from "~/theme";
 
 interface NInputProps extends TextInputProps {
   label?: string;
@@ -31,11 +31,12 @@ export type InputControllerType<T extends FieldValues> = {
 interface ControlledInputProps<T extends FieldValues> extends NInputProps {
   name: Path<T>;
   control: Control<T>;
-  rules?: RuleType<T>;
+  rules?: any;
 }
 
 export const Input = React.forwardRef<RNTextInput, NInputProps>(
   ({ label, error, style, ...props }, ref) => {
+    const theme = useTheme();
     const [isFocused, setIsFocused] = React.useState(false);
     const onBlur = React.useCallback(() => setIsFocused(false), []);
     const onFocus = React.useCallback(() => setIsFocused(true), []);
@@ -57,12 +58,12 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
               borderWidth: 1,
               borderRadius: 8,
               padding: 12,
-              backgroundColor: "#F5F5F5",
+              backgroundColor: "#F7F7F9",
               borderColor: error
                 ? "#FF6B6B"
                 : isFocused
-                  ? "#007AFF"
-                  : "#D3D3D3",
+                  ? theme.colors.primary
+                  : "#D2D2D240",
             },
             style,
           ]}

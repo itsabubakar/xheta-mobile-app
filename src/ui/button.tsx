@@ -1,11 +1,10 @@
-// import { useTheme } from "@shopify/restyle";
 import React from "react";
 import {
   ActivityIndicator,
   Pressable,
-  type PressableProps,
   Text,
-  type View,
+  View,
+  type PressableProps,
 } from "react-native";
 
 import { useTheme } from "~/theme";
@@ -13,6 +12,8 @@ import { useTheme } from "~/theme";
 interface ButtonProps extends Omit<PressableProps, "disabled"> {
   label?: string;
   loading?: boolean;
+  icon?: React.ReactNode; // New prop for icon
+  iconPosition?: "left" | "right"; // Positioning for the icon
   variant?:
     | "default"
     | "secondary"
@@ -30,6 +31,8 @@ export const Button = React.forwardRef<View, ButtonProps>(
     {
       label,
       loading = false,
+      icon, // Icon component
+      iconPosition = "left", // Icon position default to left
       variant = "default",
       size = "default",
       disabled = false,
@@ -44,11 +47,11 @@ export const Button = React.forwardRef<View, ButtonProps>(
       if (disabled) return theme.colors.black;
       switch (variant) {
         case "secondary":
-          return theme.colors.gray || "#6B7280"; // Fallback color if not in theme
+          return theme.colors.gray || "#6B7280";
         case "outline":
           return "transparent";
         case "destructive":
-          return theme.colors.white || "#DC2626"; // Fallback to red
+          return theme.colors.white || "#DC2626";
         case "ghost":
         case "link":
           return "transparent";
@@ -71,7 +74,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
     };
 
     const getBorderColor = () => {
-      if (variant === "outline") return theme.colors.black || "#D1D5DB"; // Fallback neutral
+      if (variant === "outline") return theme.colors.black || "#D1D5DB";
       return "transparent";
     };
 
@@ -111,6 +114,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
             borderColor: getBorderColor(),
             alignItems: "center",
             justifyContent: "center",
+            flexDirection: "row", // Allows icon and text to sit next to each other
             width: fullWidth ? "100%" : "auto",
           },
           getSizeStyles(),
@@ -121,15 +125,26 @@ export const Button = React.forwardRef<View, ButtonProps>(
         {loading ? (
           <ActivityIndicator color={getTextColor()} />
         ) : (
-          <Text
-            style={{
-              color: getTextColor(),
-              fontSize: getSizeStyles().fontSize,
-              fontFamily: "AeonikBold",
-            }}
-          >
-            {label}
-          </Text>
+          <>
+            {icon && iconPosition === "left" && (
+              <View style={{ marginRight: label ? 8 : 0 }}>{icon}</View>
+            )}
+            {label && (
+              <Text
+                style={{
+                  color: getTextColor(),
+                  fontSize: getSizeStyles().fontSize,
+                  fontFamily: "AeonikBold",
+                  height: 20,
+                }}
+              >
+                {label}
+              </Text>
+            )}
+            {icon && iconPosition === "right" && (
+              <View style={{ marginLeft: label ? 8 : 0 }}>{icon}</View>
+            )}
+          </>
         )}
       </Pressable>
     );

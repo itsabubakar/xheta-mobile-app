@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Button } from "../ui/button";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
-import { Xback } from "~/assets/icons";
+import { GoogleIcon, Xback } from "~/assets/icons";
 import { Text } from "~/theme";
 
 type FormData = {
@@ -50,85 +50,112 @@ const Login = () => {
         </Text>
       </View>
 
-      {/* Name Field */}
-      <ControlledInput
-        name="name"
-        control={control}
-        label="Enter your name"
-        rules={{
-          required: "Name is required",
-        }}
-        placeholder="Your name"
-      />
-      {errors.name && (
-        <Text style={{ color: "red", marginBottom: 10 }}>
-          {errors.name.message}
-        </Text>
-      )}
+      <View style={styles.formView}>
+        {/* Name Field */}
+        <ControlledInput
+          name="name"
+          control={control}
+          label="Fullname"
+          rules={{
+            required: "Name is required",
+          }}
+          placeholder="Enter name"
+        />
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name.message}
+          </Text>
+        )}
+      </View>
 
-      {/* Email Field */}
-      <ControlledInput
-        name="email"
-        control={control}
-        label="Enter your email"
-        rules={{
-          required: "Email is required",
-          pattern: {
-            value: /^\S+@\S+\.\S+$/,
-            message: "Please enter a valid email address",
-          },
-        }}
-        placeholder="Your email"
-        keyboardType="email-address"
-      />
-      {errors.email && (
-        <Text style={{ color: "red", marginBottom: 10 }}>
-          {errors.email.message}
-        </Text>
-      )}
+      <View style={styles.formView}>
+        {/* Email Field */}
+        <ControlledInput
+          name="email"
+          control={control}
+          label="Email"
+          rules={{
+            required: "Email is required",
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: "Please enter a valid email address",
+            },
+          }}
+          placeholder="email@example.com"
+          keyboardType="email-address"
+        />
+        {errors.email && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.email.message}
+          </Text>
+        )}
+      </View>
 
-      {/* Password Field */}
-      <ControlledInput
-        name="password"
-        control={control}
-        label="Enter your password"
-        rules={{
-          required: "Password is required",
-          minLength: {
-            value: 6,
-            message: "Password must be at least 6 characters long",
-          },
-        }}
-        placeholder="Your password"
-        secureTextEntry
-      />
-      {errors.password && (
-        <Text style={{ color: "red", marginBottom: 10 }}>
-          {errors.password.message}
-        </Text>
-      )}
+      <View style={styles.formView}>
+        {/* Password Field */}
+        <ControlledInput
+          name="password"
+          control={control}
+          label="Password"
+          rules={{
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters long",
+            },
+          }}
+          placeholder="Your password"
+          secureTextEntry
+        />
+        {errors.password && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.password.message}
+          </Text>
+        )}
+      </View>
 
-      {/* Confirm Password Field */}
-      <ControlledInput
-        name="confirmPassword"
-        control={control}
-        label="Confirm your password"
-        rules={{
-          required: "Please confirm your password",
-          validate: (value: string) =>
-            value === password || "Passwords do not match",
-        }}
-        placeholder="Confirm your password"
-        secureTextEntry
-      />
-      {errors.confirmPassword && (
-        <Text style={{ color: "red", marginBottom: 10 }}>
-          {errors.confirmPassword.message}
-        </Text>
-      )}
+      <View>
+        {/* Confirm Password Field */}
+        <ControlledInput
+          name="confirmPassword"
+          control={control}
+          label="Confirm your password"
+          rules={{
+            required: "Please confirm your password",
+            validate: (value: string) =>
+              value === password || "Passwords do not match",
+          }}
+          placeholder="Confirm your password"
+          secureTextEntry
+        />
+        {errors.confirmPassword && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.confirmPassword.message}
+          </Text>
+        )}
+      </View>
 
-      {/* Submit Button */}
-      <Button label="Submit" onPress={handleSubmit(onSubmit)} />
+      <View style={{ marginVertical: 24 }}>
+        {/* Submit Button */}
+        <Button label="Create account" onPress={handleSubmit(onSubmit)} />
+      </View>
+
+      {/* Divider with OR */}
+      <View style={styles.dividerContainer}>
+        <View style={styles.divider} />
+        <Text style={styles.orText}>or</Text>
+        <View style={styles.divider} />
+      </View>
+
+      <View style={{ marginVertical: 24 }}>
+        {/* google sign up */}
+        <Button
+          variant="outline"
+          icon={<GoogleIcon />}
+          label="Sign up with Google"
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
     </View>
   );
 };
@@ -145,5 +172,23 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 24,
     paddingTop: 26,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#D2D2D2",
+  },
+  orText: {
+    marginHorizontal: 10,
+    color: "#686868",
+    fontWeight: "bold",
+  },
+
+  formView: {
+    marginBottom: 16,
   },
 });
