@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { Button } from "../ui/button";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
@@ -39,123 +39,125 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable style={{ width: 60, flexDirection: "row" }}>
-        <Xback />
-        <Text style={{ paddingLeft: 8 }}>Back</Text>
-      </Pressable>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Pressable style={{ width: 60, flexDirection: "row" }}>
+          <Xback />
+          <Text style={{ paddingLeft: 8 }}>Back</Text>
+        </Pressable>
 
-      <View>
-        <Text variant="title" style={styles.header}>
-          Create an account
-        </Text>
-      </View>
-
-      <View style={styles.formView}>
-        {/* Name Field */}
-        <ControlledInput
-          name="name"
-          control={control}
-          label="Fullname"
-          rules={{
-            required: "Name is required",
-          }}
-          placeholder="Enter name"
-        />
-        {errors.name && (
-          <Text style={{ color: "red", marginBottom: 10 }}>
-            {errors.name.message}
+        <View>
+          <Text variant="title" style={styles.header}>
+            Create an account
           </Text>
-        )}
-      </View>
+        </View>
 
-      <View style={styles.formView}>
-        {/* Email Field */}
-        <ControlledInput
-          name="email"
-          control={control}
-          label="Email"
-          rules={{
-            required: "Email is required",
-            pattern: {
-              value: /^\S+@\S+\.\S+$/,
-              message: "Please enter a valid email address",
-            },
-          }}
-          placeholder="email@example.com"
-          keyboardType="email-address"
-        />
-        {errors.email && (
-          <Text style={{ color: "red", marginBottom: 10 }}>
-            {errors.email.message}
-          </Text>
-        )}
-      </View>
+        <View style={styles.formView}>
+          {/* Name Field */}
+          <ControlledInput
+            name="name"
+            control={control}
+            label="Fullname"
+            rules={{
+              required: "Name is required",
+            }}
+            placeholder="Enter name"
+          />
+          {errors.name && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errors.name.message}
+            </Text>
+          )}
+        </View>
 
-      <View style={styles.formView}>
-        {/* Password Field */}
-        <ControlledInput
-          name="password"
-          control={control}
-          label="Password"
-          rules={{
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters long",
-            },
-          }}
-          placeholder="Your password"
-          secureTextEntry
-        />
-        {errors.password && (
-          <Text style={{ color: "red", marginBottom: 10 }}>
-            {errors.password.message}
-          </Text>
-        )}
-      </View>
+        <View style={styles.formView}>
+          {/* Email Field */}
+          <ControlledInput
+            name="email"
+            control={control}
+            label="Email"
+            rules={{
+              required: "Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Please enter a valid email address",
+              },
+            }}
+            placeholder="email@example.com"
+            keyboardType="email-address"
+          />
+          {errors.email && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errors.email.message}
+            </Text>
+          )}
+        </View>
 
-      <View>
-        {/* Confirm Password Field */}
-        <ControlledInput
-          name="confirmPassword"
-          control={control}
-          label="Confirm your password"
-          rules={{
-            required: "Please confirm your password",
-            validate: (value: string) =>
-              value === password || "Passwords do not match",
-          }}
-          placeholder="Confirm your password"
-          secureTextEntry
-        />
-        {errors.confirmPassword && (
-          <Text style={{ color: "red", marginBottom: 10 }}>
-            {errors.confirmPassword.message}
-          </Text>
-        )}
-      </View>
+        <View style={styles.formView}>
+          {/* Password Field */}
+          <ControlledInput
+            name="password"
+            control={control}
+            label="Password"
+            rules={{
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            }}
+            placeholder="Your password"
+            secureTextEntry
+          />
+          {errors.password && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errors.password.message}
+            </Text>
+          )}
+        </View>
 
-      <View style={{ marginVertical: 24 }}>
-        {/* Submit Button */}
-        <Button label="Create account" onPress={handleSubmit(onSubmit)} />
-      </View>
+        <View>
+          {/* Confirm Password Field */}
+          <ControlledInput
+            name="confirmPassword"
+            control={control}
+            label="Confirm your password"
+            rules={{
+              required: "Please confirm your password",
+              validate: (value: string) =>
+                value === password || "Passwords do not match",
+            }}
+            placeholder="Confirm your password"
+            secureTextEntry
+          />
+          {errors.confirmPassword && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errors.confirmPassword.message}
+            </Text>
+          )}
+        </View>
 
-      {/* Divider with OR */}
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.orText}>or</Text>
-        <View style={styles.divider} />
-      </View>
+        <View style={{ marginVertical: 24 }}>
+          {/* Submit Button */}
+          <Button label="Create account" onPress={handleSubmit(onSubmit)} />
+        </View>
 
-      <View style={{ marginVertical: 24 }}>
-        {/* google sign up */}
-        <Button
-          variant="outline"
-          icon={<GoogleIcon />}
-          label="Sign up with Google"
-          onPress={handleSubmit(onSubmit)}
-        />
-      </View>
+        {/* Divider with OR */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.divider} />
+        </View>
+
+        <View style={{ marginVertical: 24 }}>
+          {/* google sign up */}
+          <Button
+            variant="outline"
+            icon={<GoogleIcon />}
+            label="Sign up with Google"
+            onPress={handleSubmit(onSubmit)}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
