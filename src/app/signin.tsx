@@ -3,19 +3,12 @@ import { StatusBar } from "expo-status-bar";
 import Lottie from "lottie-react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
-import { greenTick } from "~/assets/animations";
 import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
 import { Text, useTheme } from "~/theme";
 
