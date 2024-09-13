@@ -157,7 +157,7 @@ const SignUp = ({ toggleModal }: Props) => {
 
       <View>
         <Button
-          onPress={() => router.push("/signin")}
+          onPress={() => router.replace("/signin")}
           variant="link"
           label="Already have an account? Sign in"
           fontFamily="AeonikMedium"

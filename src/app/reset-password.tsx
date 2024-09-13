@@ -19,7 +19,7 @@ type FormData = {
   confirmPassword: string;
 };
 
-const SignIn = () => {
+const ResetPassword = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
   const router = useRouter();
@@ -55,35 +55,11 @@ const SignIn = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <Text variant="title" style={styles.header}>
-            Sign In to your account
+            Reset password
           </Text>
           <Text variant="subtitle" style={styles.subHeader}>
-            Welcome back! Please sing in with
+            Kindly input your new password
           </Text>
-        </View>
-
-        <View style={styles.formView}>
-          {/* Email Field */}
-          <ControlledInput
-            name="email"
-            control={control}
-            shadow
-            label="Email"
-            rules={{
-              required: "Email is required",
-              pattern: {
-                value: /^\S+@\S+\.\S+$/,
-                message: "Please enter a valid email address",
-              },
-            }}
-            placeholder="email@example.com"
-            keyboardType="email-address"
-          />
-          {errors.email && (
-            <Text style={{ color: "red", marginBottom: 10 }}>
-              {errors.email.message}
-            </Text>
-          )}
         </View>
 
         <View style={styles.formView}>
@@ -92,7 +68,7 @@ const SignIn = () => {
             name="password"
             control={control}
             shadow
-            label="Password"
+            label="New password"
             rules={{
               required: "Password is required",
               minLength: {
@@ -100,7 +76,7 @@ const SignIn = () => {
                 message: "Password must be at least 6 characters long",
               },
             }}
-            placeholder="Your password"
+            placeholder="Enter new password"
             type="password"
           />
           {errors.password && (
@@ -108,65 +84,35 @@ const SignIn = () => {
               {errors.password.message}
             </Text>
           )}
-          <Button
-            variant="link"
-            size="sm"
-            style={{ alignSelf: "flex-end" }}
-            label="Forgot Password"
-            fontFamily="AeonikMedium"
-            onPress={() => router.push("/forget-password")}
+        </View>
+        <View>
+          {/* Confirm Password Field */}
+          <ControlledInput
+            name="confirmPassword"
+            control={control}
+            shadow
+            label="Confirm new password"
+            rules={{
+              required: "Please confirm your new password",
+              validate: (value: string) =>
+                value === password || "Passwords do not match",
+            }}
+            placeholder="Confirm your password"
+            type="password"
           />
+          {errors.confirmPassword && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errors.confirmPassword.message}
+            </Text>
+          )}
         </View>
 
         <View style={{ marginVertical: 24 }}>
           {/* Submit Button */}
           {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
-          <Button label="Sign In" onPress={toggleModal} />
+          <Button label="Change Password" onPress={toggleModal} />
         </View>
 
-        {/* Divider with OR */}
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.orText}>or</Text>
-          <View style={styles.divider} />
-        </View>
-
-        <View style={{ marginVertical: 24 }}>
-          {/* google sign up */}
-          <Button
-            variant="outline"
-            icon={<GoogleIcon />}
-            label="Sign in with Google"
-            onPress={handleSubmit(onSubmit)}
-          />
-        </View>
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              onPress={() => router.replace("/signup")}
-              variant="link"
-              label="Don't have an account?"
-              style={{ borderWidth: 0 }}
-              fontFamily="AeonikMedium"
-            />
-            <Text
-              style={{
-                color: theme.colors.primary,
-                fontFamily: "AeonikMedium",
-                height: 20,
-              }}
-            >
-              {" "}
-              Sign up
-            </Text>
-          </View>
-        </View>
         <Modal isVisible={isModalVisible}>
           <View
             style={{
@@ -198,10 +144,13 @@ const SignIn = () => {
               variant="normal_bold"
               style={{ textAlign: "center", paddingVertical: 16 }}
             >
-              Your account sign in was successful
+              Password reset successful
             </Text>
 
-            <Button label="Proceed to dashboard" onPress={toggleModal} />
+            <Button
+              label="Proceed to signin"
+              onPress={() => router.replace("/signin")}
+            />
           </View>
         </Modal>
       </ScrollView>
@@ -210,7 +159,7 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ResetPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -226,6 +175,7 @@ const styles = StyleSheet.create({
   subHeader: {
     textAlign: "center",
     marginBottom: 24,
+    height: 20,
   },
   dividerContainer: {
     flexDirection: "row",

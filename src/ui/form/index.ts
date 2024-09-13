@@ -1,3 +1,4 @@
 import { ControlledInput } from "./input";
+import { OTPInput } from "./otp";
 
-export { ControlledInput };
+export { ControlledInput, OTPInput };

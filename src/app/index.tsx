@@ -52,8 +52,8 @@ const OnBoarding = (props: Props) => {
   const [isChecked, setChecked] = useState(false);
   return (
     <>
-      {/* <Image src={onboardingBg} /> */}
       <Image source={onboardingBg} style={{ width: "auto", height: 509 }} />
+
       <View style={styles.buttonsContainer}>
         <View>
           <Text
