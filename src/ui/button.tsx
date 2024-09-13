@@ -24,6 +24,8 @@ interface ButtonProps extends Omit<PressableProps, "disabled"> {
   size?: "default" | "lg" | "sm" | "icon";
   disabled?: boolean;
   fullWidth?: boolean;
+  textColor?: string; // New prop for text color override
+  fontFamily?: string; // New prop for font family
 }
 
 export const Button = React.forwardRef<View, ButtonProps>(
@@ -37,6 +39,8 @@ export const Button = React.forwardRef<View, ButtonProps>(
       size = "default",
       disabled = false,
       fullWidth = false,
+      textColor, // Custom text color
+      fontFamily = "AeonikBold", // Default font family
       ...props
     },
     ref,
@@ -61,6 +65,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
     };
 
     const getTextColor = () => {
+      if (textColor) return textColor; // Use hardcoded color if provided
       if (disabled) return theme.colors.black;
       switch (variant) {
         case "outline":
@@ -90,7 +95,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
           return {
             paddingVertical: theme.spacing.s_8,
             paddingHorizontal: theme.spacing.m_16,
-            fontSize: theme.textVariants.body.fontSize,
+            fontSize: theme.textVariants.sm.fontSize,
           };
         case "icon":
           return { height: 36, width: 36 };
@@ -134,7 +139,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
                 style={{
                   color: getTextColor(),
                   fontSize: getSizeStyles().fontSize,
-                  fontFamily: "AeonikBold",
+                  fontFamily, // Use the custom or default font family
                   height: 20,
                 }}
               >

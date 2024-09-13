@@ -61,6 +61,9 @@ const theme = createTheme({
       fontSize: 64,
       fontWeight: "bold",
     },
+    sm: {
+      fontSize: 12,
+    },
   },
 });
 

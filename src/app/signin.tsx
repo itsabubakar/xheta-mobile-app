@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Lottie from "lottie-react-native";
 import React, { useState } from "react";
@@ -17,7 +18,6 @@ import { ControlledInput } from "../ui/form"; // Your existing ControlledInput c
 import { greenTick } from "~/assets/animations";
 import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
 import { Text, useTheme } from "~/theme";
-const { width } = Dimensions.get("window");
 
 type FormData = {
   name: string;
@@ -27,8 +27,9 @@ type FormData = {
 };
 
 const SignIn = () => {
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
+  const router = useRouter();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -59,16 +60,13 @@ const SignIn = () => {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Pressable style={{ width: 60, flexDirection: "row" }}>
-          <Xback />
-          <Text style={{ paddingLeft: 8 }}>Back</Text>
-        </Pressable>
-
         <View>
           <Text variant="title" style={styles.header}>
             Sign In to your account
           </Text>
-          <Text>Welcome back! Please sing in with</Text>
+          <Text variant="subtitle" style={styles.subHeader}>
+            Welcome back! Please sing in with
+          </Text>
         </View>
 
         <View style={styles.formView}>
@@ -110,13 +108,21 @@ const SignIn = () => {
               },
             }}
             placeholder="Your password"
-            secureTextEntry
+            type="password"
           />
           {errors.password && (
             <Text style={{ color: "red", marginBottom: 10 }}>
               {errors.password.message}
             </Text>
           )}
+          <Button
+            variant="link"
+            size="sm"
+            style={{ alignSelf: "flex-end" }}
+            label="Forgot Password"
+            fontFamily="AeonikMedium"
+            onPress={() => router.push("/forget-password")}
+          />
         </View>
 
         <View style={{ marginVertical: 24 }}>
@@ -141,10 +147,37 @@ const SignIn = () => {
             onPress={handleSubmit(onSubmit)}
           />
         </View>
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              onPress={() => router.push("/signup")}
+              variant="link"
+              label="Don't have an account?"
+              style={{ borderWidth: 0 }}
+              fontFamily="AeonikMedium"
+            />
+            <Text
+              style={{
+                color: theme.colors.primary,
+                fontFamily: "AeonikMedium",
+                height: 20,
+              }}
+            >
+              {" "}
+              Sign up
+            </Text>
+          </View>
+        </View>
         <Modal isVisible={isModalVisible}>
           <View
             style={{
-              marginTop: "50%",
+              marginTop: "25%",
               backgroundColor: theme.colors.white,
               padding: 16,
               borderRadius: 16,
@@ -155,7 +188,7 @@ const SignIn = () => {
                 alignSelf: "flex-end",
               }}
             >
-              <Pressable>
+              <Pressable onPress={toggleModal}>
                 <CircleX />
               </Pressable>
             </View>
@@ -179,7 +212,7 @@ const SignIn = () => {
           </View>
         </Modal>
       </ScrollView>
-      <StatusBar backgroundColor="#00000e" />
+      <StatusBar backgroundColor={isModalVisible ? "#000000B3" : "white"} />
     </View>
   );
 };
@@ -194,8 +227,12 @@ const styles = StyleSheet.create({
   },
   header: {
     textAlign: "center",
-    paddingBottom: 24,
+    paddingBottom: 8,
     paddingTop: 26,
+  },
+  subHeader: {
+    textAlign: "center",
+    marginBottom: 24,
   },
   dividerContainer: {
     flexDirection: "row",
@@ -224,8 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lottie: {
-    width: width * 0.95,
-    height: width,
-    marginBottom: 150,
+    width: 120,
+    height: 120,
   },
 });
