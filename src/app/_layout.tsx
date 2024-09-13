@@ -2,6 +2,7 @@ import { ThemeProvider } from "@shopify/restyle";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { theme } from "theme";
 
@@ -48,8 +49,12 @@ export default function RootLayout() {
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    </SafeAreaView>
+    <ThemeProvider theme={theme}>
+      <GestureHandlerRootView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+          {children}
+        </SafeAreaView>
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }

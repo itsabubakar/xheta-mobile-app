@@ -14,6 +14,7 @@ interface NInputProps extends TextInputProps {
   label?: string;
   disabled?: boolean;
   error?: string;
+  shadow?: boolean;
 }
 
 type TRule<T extends FieldValues> = RegisterOptions<T>;
@@ -35,11 +36,22 @@ interface ControlledInputProps<T extends FieldValues> extends NInputProps {
 }
 
 export const Input = React.forwardRef<RNTextInput, NInputProps>(
-  ({ label, error, style, ...props }, ref) => {
+  ({ label, error, style, shadow, ...props }, ref) => {
     const theme = useTheme();
     const [isFocused, setIsFocused] = React.useState(false);
     const onBlur = React.useCallback(() => setIsFocused(false), []);
     const onFocus = React.useCallback(() => setIsFocused(true), []);
+    const shadowStyles = shadow
+      ? {
+          // Shadow for iOS
+          shadowColor: "#101828",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.05,
+          shadowRadius: 2,
+          // Elevation for Android
+          elevation: 1,
+        }
+      : {};
 
     return (
       <Box mb="s_8">
@@ -66,6 +78,7 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
                   : "#D2D2D240",
             },
             style,
+            shadowStyles,
           ]}
           {...props}
         />

@@ -50,6 +50,10 @@ const theme = createTheme({
       fontSize: 16,
       fontFamily: "AeonikMedium",
     },
+    normal_bold: {
+      fontFamily: "AeonikBold",
+      fontSize: 16,
+    },
     large: {
       fontSize: 36,
     },

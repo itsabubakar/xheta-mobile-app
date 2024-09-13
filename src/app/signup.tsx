@@ -1,12 +1,23 @@
-import React from "react";
+import { StatusBar } from "expo-status-bar";
+import Lottie from "lottie-react-native";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import Modal from "react-native-modal";
 
-import { Button } from "../ui/button";
+import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
-import { GoogleIcon, Xback } from "~/assets/icons";
-import { Text } from "~/theme";
+import { greenTick } from "~/assets/animations";
+import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
+import { Text, useTheme } from "~/theme";
+const { width } = Dimensions.get("window");
 
 type FormData = {
   name: string;
@@ -15,7 +26,15 @@ type FormData = {
   confirmPassword: string;
 };
 
-const Login = () => {
+const SignUp = () => {
+  const [isModalVisible, setModalVisible] = useState(true);
+  const theme = useTheme();
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  // variables
   const {
     control,
     handleSubmit,
@@ -55,6 +74,7 @@ const Login = () => {
           {/* Name Field */}
           <ControlledInput
             name="name"
+            shadow
             control={control}
             label="Fullname"
             rules={{
@@ -74,6 +94,7 @@ const Login = () => {
           <ControlledInput
             name="email"
             control={control}
+            shadow
             label="Email"
             rules={{
               required: "Email is required",
@@ -97,6 +118,7 @@ const Login = () => {
           <ControlledInput
             name="password"
             control={control}
+            shadow
             label="Password"
             rules={{
               required: "Password is required",
@@ -120,6 +142,7 @@ const Login = () => {
           <ControlledInput
             name="confirmPassword"
             control={control}
+            shadow
             label="Confirm your password"
             rules={{
               required: "Please confirm your password",
@@ -138,7 +161,8 @@ const Login = () => {
 
         <View style={{ marginVertical: 24 }}>
           {/* Submit Button */}
-          <Button label="Create account" onPress={handleSubmit(onSubmit)} />
+          {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
+          <Button label="Create account" onPress={toggleModal} />
         </View>
 
         {/* Divider with OR */}
@@ -157,12 +181,50 @@ const Login = () => {
             onPress={handleSubmit(onSubmit)}
           />
         </View>
+        <Modal isVisible={isModalVisible}>
+          <View
+            style={{
+              marginTop: "50%",
+              backgroundColor: theme.colors.white,
+              padding: 16,
+              borderRadius: 16,
+            }}
+          >
+            <View
+              style={{
+                alignSelf: "flex-end",
+              }}
+            >
+              <Pressable>
+                <CircleX />
+              </Pressable>
+            </View>
+            <View style={{ alignSelf: "center" }}>
+              <Lottie
+                style={styles.lottie}
+                source={require("../../assets/animations/green-tick.json")}
+                autoPlay
+                loop
+              />
+            </View>
+
+            <Text
+              variant="normal_bold"
+              style={{ textAlign: "center", paddingVertical: 16 }}
+            >
+              Your account creation was successful
+            </Text>
+
+            <Button label="Proceed to dashboard" onPress={toggleModal} />
+          </View>
+        </Modal>
       </ScrollView>
+      <StatusBar backgroundColor="#00000e" />
     </View>
   );
 };
 
-export default Login;
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
@@ -192,5 +254,18 @@ const styles = StyleSheet.create({
 
   formView: {
     marginBottom: 16,
+  },
+  sheetContainer: {
+    // add horizontal space
+    marginHorizontal: 24,
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  lottie: {
+    width: width * 0.95,
+    height: width,
+    marginBottom: 150,
   },
 });
