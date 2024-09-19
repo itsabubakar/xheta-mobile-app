@@ -1,7 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
+import {
+  AssignmentSection,
+  CourseSection,
+  InformationBoardSection,
+} from "~/components";
 import { HeaderWithUsername } from "~/src/ui";
 import { theme } from "~/theme";
 
@@ -11,7 +16,11 @@ const Home = (props: Props) => {
   return (
     <View style={styles.container}>
       <HeaderWithUsername />
-      <Text>Home</Text>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <CourseSection />
+        <AssignmentSection />
+        <InformationBoardSection />
+      </ScrollView>
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>
   );

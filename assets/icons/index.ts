@@ -9,3 +9,5 @@ export { Tutors, TutorsFilled } from "./tutors";
 export { Learnings, LearningsFilled } from "./learnings";
 export { Courses, CoursesFilled } from "./courses";
 export { default as Notifications } from "./notifications";
+export { default as Python } from "./python";
+export { default as Class } from "./class";
