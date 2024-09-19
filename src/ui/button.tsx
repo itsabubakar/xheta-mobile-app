@@ -48,7 +48,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
     const theme = useTheme();
 
     const getBackgroundColor = () => {
-      if (disabled) return theme.colors.black;
+      if (disabled) return theme.colors.tertiary;
       switch (variant) {
         case "secondary":
           return theme.colors.gray || "#6B7280";
@@ -66,7 +66,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
 
     const getTextColor = () => {
       if (textColor) return textColor; // Use hardcoded color if provided
-      if (disabled) return theme.colors.black;
+      if (disabled) return theme.colors.white;
       switch (variant) {
         case "outline":
           return theme.colors.black;
@@ -79,7 +79,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
     };
 
     const getBorderColor = () => {
-      if (variant === "outline") return theme.colors.black || "#D1D5DB";
+      if (variant === "outline") return theme.colors.primary || "#D1D5DB";
       return "transparent";
     };
 

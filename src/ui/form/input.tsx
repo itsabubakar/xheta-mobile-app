@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-import { ClosedEye } from "~/assets/icons";
+import { ClosedEye, OpenedEye } from "~/assets/icons";
 import { Box, Text, useTheme } from "~/theme";
 
 interface NInputProps extends TextInputProps {
@@ -112,7 +112,7 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
               }}
             >
               {/* Change icon based on password visibility state */}
-              <Text>{isPasswordVisible ? <ClosedEye /> : <ClosedEye />}</Text>
+              <Text>{isPasswordVisible ? <OpenedEye /> : <ClosedEye />}</Text>
             </Pressable>
           )}
         </View>
@@ -144,7 +144,7 @@ export function ControlledInput<T extends FieldValues>({
       ref={field.ref}
       onChangeText={field.onChange}
       value={(field.value as string) || ""}
-      error={fieldState.error?.message}
+      // error={fieldState.error?.message}
       {...inputProps}
     />
   );

@@ -49,7 +49,31 @@ const CheckBox = ({
 };
 
 const OnBoarding = (props: Props) => {
-  const [isChecked, setChecked] = useState(false);
+  const [isLearnerChecked, setLearnerChecked] = useState(false);
+  const [isInstructorChecked, setInstructorChecked] = useState(false);
+
+  // When checking "Learner", uncheck "Instructor"
+  const handleLearnerChange = (newValue: SetStateAction<boolean>) => {
+    if (typeof newValue === "function") {
+      setLearnerChecked(newValue(isLearnerChecked));
+    } else {
+      setLearnerChecked(newValue);
+    }
+    if (newValue) setInstructorChecked(false);
+  };
+
+  const handleInstructorChange = (newValue: SetStateAction<boolean>) => {
+    if (typeof newValue === "function") {
+      setInstructorChecked(newValue(isInstructorChecked));
+    } else {
+      setInstructorChecked(newValue);
+    }
+    if (newValue) setLearnerChecked(false);
+  };
+
+  // Enable button if one checkbox is checked
+  const isButtonEnabled = isLearnerChecked || isInstructorChecked;
+
   return (
     <>
       <Image source={onboardingBg} style={{ width: "auto", height: 509 }} />
@@ -69,21 +93,25 @@ const OnBoarding = (props: Props) => {
             Kindly select the account type you will like to create
           </Text>
           <CheckBox
-            isChecked={isChecked}
-            setChecked={setChecked}
+            isChecked={isLearnerChecked}
+            setChecked={handleLearnerChange}
             header="Learner"
             text="Seeking to learn from others"
             mb
           />
           <CheckBox
-            isChecked={isChecked}
-            setChecked={setChecked}
+            isChecked={isInstructorChecked}
+            setChecked={handleInstructorChange}
             header="Instructor"
             text="Seeking to tutor others "
           />
 
           <View style={{ marginTop: 24 }}>
-            <Button onPress={() => router.push("/signup")} label="Proceed" />
+            <Button
+              disabled={!isButtonEnabled}
+              onPress={() => router.push("/(user)/home")}
+              label="Proceed"
+            />
           </View>
         </View>
         <View />

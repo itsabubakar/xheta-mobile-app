@@ -6,13 +6,16 @@ type NamedStyles<T> = {
 };
 
 const palette = {
-  gray: "##434343",
+  gray: "#434343",
   blue: "#007AFF",
   darkGray: "#38434D",
   white: "#FFFFFF",
   black: "#000000",
   purple: "#6366F1",
   primary: "#03363D",
+  tertiary: "#E7F2F3",
+  focus: "#57797E",
+  error: "#FDA29B",
 };
 
 const theme = createTheme({
@@ -40,6 +43,7 @@ const theme = createTheme({
       fontFamily: "AeonikNormal",
       fontSize: 14,
       color: "gray",
+      minHeight: 20,
     },
     body: {
       fontSize: 16,

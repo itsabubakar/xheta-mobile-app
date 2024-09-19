@@ -32,7 +32,7 @@ const ForgetPassword = (props: Props) => {
   const onSubmit = (data: FormData) => {
     console.log("Form submitted:", data);
 
-    router.replace("/reset-password");
+    router.replace("/otp");
   };
 
   return (
@@ -42,7 +42,7 @@ const ForgetPassword = (props: Props) => {
           Forgot password?
         </Text>
         <Text variant="subtitle" style={styles.subHeader}>
-          We'll send a six-digit code to your email"
+          We'll send a six-digit code to your email
         </Text>
       </View>
 
@@ -75,7 +75,7 @@ const ForgetPassword = (props: Props) => {
       </View>
 
       <Button
-        onPress={() => router.push("/signin")}
+        onPress={() => router.replace("/signin")}
         variant="link"
         label="Back to Sign In"
         fontFamily="AeonikMedium"

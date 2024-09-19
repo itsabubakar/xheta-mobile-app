@@ -97,7 +97,7 @@ const ResetPassword = () => {
               validate: (value: string) =>
                 value === password || "Passwords do not match",
             }}
-            placeholder="Confirm your password"
+            placeholder="Confirm your new password"
             type="password"
           />
           {errors.confirmPassword && (
@@ -110,7 +110,7 @@ const ResetPassword = () => {
         <View style={{ marginVertical: 24 }}>
           {/* Submit Button */}
           {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
-          <Button label="Change Password" onPress={toggleModal} />
+          <Button label="Reset Password" onPress={toggleModal} />
         </View>
 
         <Modal isVisible={isModalVisible}>

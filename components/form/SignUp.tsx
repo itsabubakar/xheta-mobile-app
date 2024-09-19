@@ -134,8 +134,8 @@ const SignUp = ({ toggleModal }: Props) => {
       </View>
       <View style={{ marginVertical: 24 }}>
         {/* Submit Button */}
-        {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
-        <Button label="Create account" onPress={toggleModal} />
+        <Button label="Create account" onPress={handleSubmit(onSubmit)} />
+        {/* <Button label="Create account" onPress={toggleModal} /> */}
       </View>
 
       {/* Divider with OR */}

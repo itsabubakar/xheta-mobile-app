@@ -1,20 +1,38 @@
 import { Stack, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import type { RefObject } from "react";
+import { useForm } from "react-hook-form";
 import type { TextInput } from "react-native";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
-  Text,
+  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 
+import { Button } from "../ui";
 import { OTPInput } from "../ui/form";
 
-export default function PhoneVerificationScreen() {
+import { Text, useTheme } from "~/theme";
+
+type FormData = {
+  otp: string;
+};
+const OTP = () => {
+  const theme = useTheme();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      otp: "",
+    },
+  });
   const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
+
   const refs: RefObject<TextInput>[] = [
     useRef<TextInput>(null),
     useRef<TextInput>(null),
@@ -28,11 +46,11 @@ export default function PhoneVerificationScreen() {
   const router = useRouter();
 
   const config = {
-    backgroundColor: "green",
-    textColor: "white",
-    borderColor: "red",
-    errorColor: "blue",
-    focusColor: "yellow",
+    backgroundColor: theme.colors.white,
+    textColor: "#686868",
+    borderColor: "#B4B4B4",
+    errorColor: theme.colors.error,
+    focusColor: theme.colors.focus,
   };
 
   const onChangeCode = (text: string, index: number) => {
@@ -52,8 +70,28 @@ export default function PhoneVerificationScreen() {
     }
   };
 
+  const onSubmit = (data: FormData) => {
+    console.log("Form submitted:", data);
+
+    router.replace("/otp");
+  };
+
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.white,
+        padding: 16,
+      }}
+    >
+      <View>
+        <Text variant="title" style={styles.header}>
+          Forgot password?
+        </Text>
+        <Text variant="subtitle" style={styles.subHeader}>
+          We'll send a six-digit code to your email
+        </Text>
+      </View>
       <OTPInput
         codes={codes!}
         errorMessages={errorMessages}
@@ -61,6 +99,29 @@ export default function PhoneVerificationScreen() {
         refs={refs}
         config={config}
       />
+      <View style={{ marginVertical: 32 }}>
+        <Button label="Verify" onPress={handleSubmit(onSubmit)} />
+      </View>
+
+      <Button
+        onPress={() => router.replace("/forget-password")}
+        variant="link"
+        label="Didn’t receive code? Resend"
+        fontFamily="AeonikMedium"
+      />
     </View>
   );
-}
+};
+export default OTP;
+
+const styles = StyleSheet.create({
+  header: {
+    textAlign: "center",
+    paddingBottom: 8,
+    paddingTop: 26,
+  },
+  subHeader: {
+    textAlign: "center",
+    marginBottom: 24,
+  },
+});
