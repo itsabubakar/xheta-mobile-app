@@ -68,6 +68,10 @@ const theme = createTheme({
     sm: {
       fontSize: 12,
     },
+    lg: {
+      fontSize: 18,
+      fontFamily: "AeonikBold",
+    },
   },
 });
 

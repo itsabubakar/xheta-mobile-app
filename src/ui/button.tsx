@@ -1,6 +1,7 @@
 import React from "react";
 import {
   ActivityIndicator,
+  DimensionValue,
   Pressable,
   Text,
   View,
@@ -23,7 +24,7 @@ interface ButtonProps extends Omit<PressableProps, "disabled"> {
     | "link";
   size?: "default" | "lg" | "sm" | "icon";
   disabled?: boolean;
-  fullWidth?: boolean;
+  width?: DimensionValue;
   textColor?: string; // New prop for text color override
   fontFamily?: string; // New prop for font family
 }
@@ -38,7 +39,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
       variant = "default",
       size = "default",
       disabled = false,
-      fullWidth = false,
+      width,
       textColor, // Custom text color
       fontFamily = "AeonikBold", // Default font family
       ...props
@@ -79,7 +80,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
     };
 
     const getBorderColor = () => {
-      if (variant === "outline") return theme.colors.primary || "#D1D5DB";
+      if (variant === "outline") return "#B4B4B4";
       return "transparent";
     };
 
@@ -120,7 +121,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
             alignItems: "center",
             justifyContent: "center",
             flexDirection: "row", // Allows icon and text to sit next to each other
-            width: fullWidth ? "100%" : "auto",
+            width: width ? width : "auto",
           },
           getSizeStyles(),
         ]}

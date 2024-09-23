@@ -1,4 +1,5 @@
 export { Button } from "./button";
+export { default as ScreenHeader } from "./screen-header";
 
 // Home screen
 export { default as HeaderWithUsername } from "./home/header-with-username";
