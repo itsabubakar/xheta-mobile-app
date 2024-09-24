@@ -109,7 +109,7 @@ const OnBoarding = (props: Props) => {
           <View style={{ marginTop: 24 }}>
             <Button
               disabled={!isButtonEnabled}
-              onPress={() => router.push("/(user)/home")}
+              onPress={() => router.push("/signup")}
               label="Proceed"
             />
           </View>

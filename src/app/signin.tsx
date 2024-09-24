@@ -3,9 +3,10 @@ import { StatusBar } from "expo-status-bar";
 import Lottie from "lottie-react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
+import { signIn } from "../api";
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
@@ -13,16 +14,21 @@ import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
 import { Text, useTheme } from "~/theme";
 
 type FormData = {
-  name: string;
+  // name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  // password_confirmation: string;
+  // role: string;
+  // time_zone: string;
 };
 
 const SignIn = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
   const router = useRouter();
+
+  // Manage loading state
+  const [loading, setLoading] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -36,19 +42,34 @@ const SignIn = () => {
     watch, // allows us to "watch" the value of a field
   } = useForm<FormData>({
     defaultValues: {
-      name: "",
+      // name: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      // password_confirmation: "",
+      // role: "",
+      // time_zone: "",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-  };
+  const onSubmit = async (data: FormData) => {
+    const cleanedEmail = data.email.toLowerCase();
+    setLoading(true); // Start loading when request is initiated
 
-  // Watch the password field to validate the confirm password field
-  const password = watch("password");
+    try {
+      const res = await signIn({
+        email: "sadiq12345@gmail.com",
+        password: "MyPassword",
+      });
+
+      console.log(res);
+
+      setLoading(false); // Stop loading once the request is complete
+      setModalVisible(true); // Show the modal after successful account creation
+    } catch (error) {
+      console.error(error);
+      setLoading(false); // Stop loading if the request fails
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -58,7 +79,7 @@ const SignIn = () => {
             Sign In to your account
           </Text>
           <Text variant="subtitle" style={styles.subHeader}>
-            Welcome back! Please sing in with
+            Welcome back! Please sign in with
           </Text>
         </View>
 
@@ -120,8 +141,12 @@ const SignIn = () => {
 
         <View style={{ marginVertical: 24 }}>
           {/* Submit Button */}
-          {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
-          <Button label="Sign In" onPress={toggleModal} />
+          <Button
+            label="Sign In"
+            onPress={handleSubmit(onSubmit)}
+            disabled={loading} // Disable button when loading
+            loading={loading} // Show loading spinner
+          />
         </View>
 
         {/* Divider with OR */}
@@ -167,6 +192,7 @@ const SignIn = () => {
             </Text>
           </View>
         </View>
+
         <Modal isVisible={isModalVisible}>
           <View
             style={{

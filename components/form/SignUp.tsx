@@ -1,11 +1,15 @@
 import { useRouter } from "expo-router";
-import React from "react";
+import LottieView from "lottie-react-native";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import Modal from "react-native-modal";
 
-import { GoogleIcon } from "~/assets/icons";
+import { CircleX, GoogleIcon } from "~/assets/icons";
+import { signUp } from "~/src/api";
 import { Button } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
+import { Text, useTheme } from "~/theme";
 
 type Props = {
   toggleModal: () => void;
@@ -15,33 +19,62 @@ type FormData = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  password_confirmation: string;
+  role: string;
+  time_zone: string;
 };
 
 const SignUp = ({ toggleModal }: Props) => {
   const router = useRouter();
+  const theme = useTheme();
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  // variables
+  // Manage loading state
+  const [loading, setLoading] = useState(false);
+
+  // Form hooks
   const {
     control,
     handleSubmit,
     formState: { errors },
-    watch, // allows us to "watch" the value of a field
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      password_confirmation: "",
+      role: "tutor",
+      time_zone: "America/New_York",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async (data: FormData) => {
+    const cleanedEmail = data.email.toLowerCase();
+
+    setLoading(true); // Start loading when request is initiated
+
+    try {
+      const res = await signUp({
+        name: data.name,
+        email: cleanedEmail,
+        password: data.password,
+        password_confirmation: data.password_confirmation,
+        role: "tutor",
+        time_zone: "America/New_York",
+      });
+
+      setLoading(false); // Stop loading once the request is complete
+      setModalVisible(true); // Show the modal after successful account creation
+    } catch (error) {
+      console.error(error);
+      setLoading(false); // Stop loading if the request fails
+    }
   };
 
   // Watch the password field to validate the confirm password field
   const password = watch("password");
+
   return (
     <>
       <View style={styles.formView}>
@@ -114,7 +147,7 @@ const SignUp = ({ toggleModal }: Props) => {
       <View>
         {/* Confirm Password Field */}
         <ControlledInput
-          name="confirmPassword"
+          name="password_confirmation"
           control={control}
           shadow
           label="Confirm your password"
@@ -126,16 +159,21 @@ const SignUp = ({ toggleModal }: Props) => {
           placeholder="Confirm your password"
           type="password"
         />
-        {errors.confirmPassword && (
+        {errors.password_confirmation && (
           <Text style={{ color: "red", marginBottom: 10 }}>
-            {errors.confirmPassword.message}
+            {errors.password_confirmation.message}
           </Text>
         )}
       </View>
+
       <View style={{ marginVertical: 24 }}>
-        {/* Submit Button */}
-        <Button label="Create account" onPress={handleSubmit(onSubmit)} />
-        {/* <Button label="Create account" onPress={toggleModal} /> */}
+        {/* Submit Button with loading state */}
+        <Button
+          label="Create account"
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading} // Disable button when loading
+          loading={loading} // Show loading spinner
+        />
       </View>
 
       {/* Divider with OR */}
@@ -163,6 +201,51 @@ const SignUp = ({ toggleModal }: Props) => {
           fontFamily="AeonikMedium"
         />
       </View>
+
+      {/* Modal for success message */}
+      <Modal isVisible={isModalVisible}>
+        <View
+          style={{
+            marginTop: "25%",
+            backgroundColor: theme.colors.white,
+            padding: 16,
+            borderRadius: 16,
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={() => setModalVisible(false)}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <LottieView
+              style={styles.lottie}
+              source={require("../../assets/animations/green-tick.json")}
+              autoPlay
+              loop={false}
+            />
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingVertical: 16 }}
+          >
+            Your account was created successfully!
+          </Text>
+
+          <Button
+            label="Proceed to dashboard"
+            onPress={() => {
+              setModalVisible(false);
+              router.replace("/(user)/home"); // Navigate to dashboard
+            }}
+          />
+        </View>
+      </Modal>
     </>
   );
 };
@@ -186,5 +269,9 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  lottie: {
+    width: 120,
+    height: 120,
   },
 });
