@@ -1,5 +1,5 @@
-import { Stack, useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { Stack, useRouter, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { useForm } from "react-hook-form";
 import type { TextInput } from "react-native";
@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  ActivityIndicator, // For loading state
 } from "react-native";
 
+import { sendResetPasswordCode, verifyOTPCode } from "../api/auth";
 import { Button } from "../ui";
 import { OTPInput } from "../ui/form";
 
@@ -20,8 +22,23 @@ import { Text, useTheme } from "~/theme";
 type FormData = {
   otp: string;
 };
+
 const OTP = () => {
   const theme = useTheme();
+  const router = useRouter();
+  const [resendDisabled, setResendDisabled] = useState(false); // Resend button state
+  const [counter, setCounter] = useState(60);
+
+  let { email } = useLocalSearchParams();
+  if (Array.isArray(email)) {
+    email = email[0]; // Ensure it's a string
+  }
+
+  if (!email || typeof email !== "string") {
+    // Handle missing or invalid email case
+    console.error("Invalid email parameter");
+  }
+
   const {
     control,
     handleSubmit,
@@ -31,7 +48,9 @@ const OTP = () => {
       otp: "",
     },
   });
-  const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
+  const [codes, setCodes] = useState<string[]>(Array(6).fill(""));
+  const [loading, setLoading] = useState(false); // Loading state
+  const [apiError, setApiError] = useState<string | null>(null); // API error state
 
   const refs: RefObject<TextInput>[] = [
     useRef<TextInput>(null),
@@ -43,7 +62,6 @@ const OTP = () => {
   ];
 
   const [errorMessages, setErrorMessages] = useState<string[]>();
-  const router = useRouter();
 
   const config = {
     backgroundColor: theme.colors.white,
@@ -70,11 +88,57 @@ const OTP = () => {
     }
   };
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async () => {
+    setLoading(true); // Start loading
+    setApiError(null); // Reset any previous error
+    const otpCode = codes.join(""); // Join the codes array to form the OTP string
 
-    router.replace("/otp");
+    try {
+      console.log("Submitting");
+
+      const response = await verifyOTPCode(otpCode);
+
+      // If successful, navigate to the next screen
+      router.replace({
+        pathname: "/reset-password",
+        params: { token: response.token }, // Pass token as param
+      });
+    } catch (error) {
+      console.error("Failed to verify OTP:", error);
+      setApiError("Invalid OTP. Please try again."); // Set the error message
+    } finally {
+      setLoading(false); // Stop loading
+    }
   };
+
+  const onResendSubmit = async () => {
+    setResendDisabled(true);
+    try {
+      // Call the API to send reset password code
+      const res = await sendResetPasswordCode(email);
+      console.log(res, "Reset password code sent successfully");
+    } catch (error) {
+      console.error("Failed to send reset password code:", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (resendDisabled && counter > 0) {
+      timer = setInterval(() => {
+        setCounter((prev) => prev - 1);
+      }, 1000);
+    } else if (counter === 0) {
+      setResendDisabled(false);
+      setCounter(60); // Reset counter
+      if (timer) clearInterval(timer);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [resendDisabled, counter]);
 
   return (
     <View
@@ -86,32 +150,47 @@ const OTP = () => {
     >
       <View>
         <Text variant="title" style={styles.header}>
-          Forgot password?
+          Enter OTP
         </Text>
         <Text variant="subtitle" style={styles.subHeader}>
-          We'll send a six-digit code to your email
+          Enter the six-digit code sent to your email
         </Text>
       </View>
+
       <OTPInput
-        codes={codes!}
+        codes={codes}
         errorMessages={errorMessages}
         onChangeCode={onChangeCode}
         refs={refs}
         config={config}
       />
+
+      {apiError && (
+        <Text style={{ color: "red", textAlign: "center", marginBottom: 16 }}>
+          {apiError}
+        </Text>
+      )}
+
       <View style={{ marginVertical: 32 }}>
-        <Button label="Verify" onPress={handleSubmit(onSubmit)} />
+        <Button
+          label="Verify" // Show loading spinner if loading
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading} // Disable the button while loading
+          loading={loading}
+        />
       </View>
 
       <Button
-        onPress={() => router.replace("/forget-password")}
+        onPress={onResendSubmit}
         variant="link"
-        label="Didn’t receive code? Resend"
+        label={`Didn’t receive code? Resend ${resendDisabled ? `in ${counter}s` : ""}`}
+        disabled={resendDisabled}
         fontFamily="AeonikMedium"
       />
     </View>
   );
 };
+
 export default OTP;
 
 const styles = StyleSheet.create({

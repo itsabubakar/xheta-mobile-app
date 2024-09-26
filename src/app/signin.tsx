@@ -7,6 +7,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
 import { signIn } from "../api";
+import { useAuthStore } from "../core/storage";
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
@@ -14,12 +15,8 @@ import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
 import { Text, useTheme } from "~/theme";
 
 type FormData = {
-  // name: string;
   email: string;
   password: string;
-  // password_confirmation: string;
-  // role: string;
-  // time_zone: string;
 };
 
 const SignIn = () => {
@@ -32,6 +29,7 @@ const SignIn = () => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+    router.replace("/(learner)/home");
   };
 
   // variables
@@ -57,8 +55,21 @@ const SignIn = () => {
 
     try {
       const res = await signIn({
-        email: "sadiq12345@gmail.com",
-        password: "MyPassword",
+        email: cleanedEmail,
+        password: data.password,
+      });
+
+      const { access_token, data: userData } = res;
+
+      // Use the Zustand store to set the auth data
+      await useAuthStore.getState().setAuthData({
+        access_token,
+        account_activated: userData.account_activated,
+        created_at: userData.created_at,
+        email: userData.email,
+        id: userData.id,
+        name: userData.name,
+        role: userData.role,
       });
 
       console.log(res);

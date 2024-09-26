@@ -13,8 +13,8 @@ import { useTheme } from "~/theme";
 interface ButtonProps extends Omit<PressableProps, "disabled"> {
   label?: string;
   loading?: boolean;
-  icon?: React.ReactNode; // New prop for icon
-  iconPosition?: "left" | "right"; // Positioning for the icon
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
   variant?:
     | "default"
     | "secondary"
@@ -25,8 +25,8 @@ interface ButtonProps extends Omit<PressableProps, "disabled"> {
   size?: "default" | "lg" | "sm" | "icon";
   disabled?: boolean;
   width?: DimensionValue;
-  textColor?: string; // New prop for text color override
-  fontFamily?: string; // New prop for font family
+  textColor?: string;
+  fontFamily?: string;
 }
 
 export const Button = React.forwardRef<View, ButtonProps>(
@@ -34,21 +34,23 @@ export const Button = React.forwardRef<View, ButtonProps>(
     {
       label,
       loading = false,
-      icon, // Icon component
-      iconPosition = "left", // Icon position default to left
+      icon,
+      iconPosition = "left",
       variant = "default",
       size = "default",
       disabled = false,
       width,
-      textColor, // Custom text color
-      fontFamily = "AeonikBold", // Default font family
+      textColor,
+      fontFamily = "AeonikBold",
       ...props
     },
     ref,
   ) => {
     const theme = useTheme();
 
+    // Keep the background transparent for 'link' even when disabled
     const getBackgroundColor = () => {
+      if (variant === "link") return "transparent"; // No background for link
       if (disabled) return theme.colors.tertiary;
       switch (variant) {
         case "secondary":
@@ -58,16 +60,19 @@ export const Button = React.forwardRef<View, ButtonProps>(
         case "destructive":
           return theme.colors.white || "#DC2626";
         case "ghost":
-        case "link":
           return "transparent";
         default:
           return theme.colors.primary;
       }
     };
 
+    // Make sure 'link' variant has a light gray text when disabled
     const getTextColor = () => {
-      if (textColor) return textColor; // Use hardcoded color if provided
-      if (disabled) return theme.colors.white;
+      if (textColor) return textColor;
+      if (disabled) {
+        if (variant === "link") return theme.colors.tertiary; // Light gray for disabled link
+        return theme.colors.white;
+      }
       switch (variant) {
         case "outline":
           return theme.colors.black;
@@ -120,7 +125,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
             borderColor: getBorderColor(),
             alignItems: "center",
             justifyContent: "center",
-            flexDirection: "row", // Allows icon and text to sit next to each other
+            flexDirection: "row",
             width: width ? width : "auto",
           },
           getSizeStyles(),
@@ -140,7 +145,7 @@ export const Button = React.forwardRef<View, ButtonProps>(
                 style={{
                   color: getTextColor(),
                   fontSize: getSizeStyles().fontSize,
-                  fontFamily, // Use the custom or default font family
+                  fontFamily,
                   height: 20,
                 }}
               >

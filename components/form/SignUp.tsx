@@ -7,6 +7,7 @@ import Modal from "react-native-modal";
 
 import { CircleX, GoogleIcon } from "~/assets/icons";
 import { signUp } from "~/src/api";
+import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
 import { Text, useTheme } from "~/theme";
@@ -62,6 +63,19 @@ const SignUp = ({ toggleModal }: Props) => {
         password_confirmation: data.password_confirmation,
         role: "tutor",
         time_zone: "America/New_York",
+      });
+
+      const { access_token, data: userData } = res;
+
+      // Use the Zustand store to set the auth data
+      await useAuthStore.getState().setAuthData({
+        access_token,
+        account_activated: userData.account_activated,
+        created_at: userData.created_at,
+        email: userData.email,
+        id: userData.id,
+        name: userData.name,
+        role: userData.role,
       });
 
       setLoading(false); // Stop loading once the request is complete
@@ -241,7 +255,7 @@ const SignUp = ({ toggleModal }: Props) => {
             label="Proceed to dashboard"
             onPress={() => {
               setModalVisible(false);
-              router.replace("/(user)/home"); // Navigate to dashboard
+              router.replace("/(learner)/home"); // Navigate to dashboard
             }}
           />
         </View>

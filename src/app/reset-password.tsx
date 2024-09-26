@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Lottie from "lottie-react-native";
 import React, { useState } from "react";
@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
+import { resetPassword } from "../api/auth";
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
@@ -13,19 +14,30 @@ import { CircleX, GoogleIcon, Xback } from "~/assets/icons";
 import { Text, useTheme } from "~/theme";
 
 type FormData = {
-  name: string;
-  email: string;
+  token: string;
   password: string;
-  confirmPassword: string;
+  password_confirmation: string;
 };
 
 const ResetPassword = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // State for loading indication
   const theme = useTheme();
   const router = useRouter();
 
+  let { token } = useLocalSearchParams();
+  if (Array.isArray(token)) {
+    token = token[0]; // Ensure it's a string
+  }
+
+  if (!token || typeof token !== "string") {
+    // Handle missing or invalid token case
+    console.error("Invalid token parameter");
+  }
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+    router.replace("/signin");
   };
 
   // variables
@@ -36,15 +48,29 @@ const ResetPassword = () => {
     watch, // allows us to "watch" the value of a field
   } = useForm<FormData>({
     defaultValues: {
-      name: "",
-      email: "",
+      token,
       password: "",
-      confirmPassword: "",
+      password_confirmation: "",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async (data: FormData) => {
+    setLoading(true); // Set loading to true when starting the request
+    try {
+      console.log(data);
+
+      const response = await resetPassword(data);
+
+      if (response) {
+        console.log("Password reset successful:", response);
+        setModalVisible(true); // Show success modal
+      } else {
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the request completes
+    }
   };
 
   // Watch the password field to validate the confirm password field
@@ -88,7 +114,7 @@ const ResetPassword = () => {
         <View>
           {/* Confirm Password Field */}
           <ControlledInput
-            name="confirmPassword"
+            name="password_confirmation"
             control={control}
             shadow
             label="Confirm new password"
@@ -100,9 +126,9 @@ const ResetPassword = () => {
             placeholder="Confirm your new password"
             type="password"
           />
-          {errors.confirmPassword && (
+          {errors.password_confirmation && (
             <Text style={{ color: "red", marginBottom: 10 }}>
-              {errors.confirmPassword.message}
+              {errors.password_confirmation.message}
             </Text>
           )}
         </View>
@@ -110,7 +136,12 @@ const ResetPassword = () => {
         <View style={{ marginVertical: 24 }}>
           {/* Submit Button */}
           {/* <Button label="Create account" onPress={handleSubmit(onSubmit)} /> */}
-          <Button label="Reset Password" onPress={toggleModal} />
+          <Button
+            loading={loading}
+            disabled={loading}
+            label="Reset Password"
+            onPress={handleSubmit(onSubmit)}
+          />
         </View>
 
         <Modal isVisible={isModalVisible}>
@@ -148,7 +179,7 @@ const ResetPassword = () => {
             </Text>
 
             <Button
-              label="Proceed to signin"
+              label="Proceed to sign in"
               onPress={() => router.replace("/signin")}
             />
           </View>

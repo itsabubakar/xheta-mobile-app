@@ -6,9 +6,11 @@ import { Notifications } from "~/assets/icons";
 import { profile } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
-type Props = object;
+type Props = {
+  name: string | undefined;
+};
 
-const HeaderWithUsername = (props: Props) => {
+const HeaderWithUsername = ({ name }: Props) => {
   const router = useRouter();
   return (
     <View
@@ -24,7 +26,7 @@ const HeaderWithUsername = (props: Props) => {
         <Text
           style={{ color: "white", fontFamily: "AeonikBold", fontSize: 14 }}
         >
-          Welcome Joseph Parker
+          Welcome {name}
         </Text>
         <Text
           style={{ color: "white", fontFamily: "AeonikNormal", fontSize: 12 }}

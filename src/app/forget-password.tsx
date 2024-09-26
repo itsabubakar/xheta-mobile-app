@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet, View, TextInput } from "react-native";
 
+import { sendResetPasswordCode } from "../api/auth";
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form";
 
@@ -17,6 +18,7 @@ type FormData = {
 
 const ForgetPassword = (props: Props) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const {
     control,
@@ -29,10 +31,23 @@ const ForgetPassword = (props: Props) => {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async (data: FormData) => {
+    setLoading(true); // Start loading when form is submitted
+    try {
+      // Call the API to send reset password code
+      const res = await sendResetPasswordCode(data.email.toLowerCase());
+      console.log(res, "Reset password code sent successfully");
 
-    router.replace("/otp");
+      // Pass the email as a query parameter to the OTP screen
+      router.push({
+        pathname: "/otp",
+        params: { email: data.email.toLowerCase() }, // Pass email as param
+      });
+    } catch (error) {
+      console.error("Failed to send reset password code:", error);
+    } finally {
+      setLoading(false); // Stop loading after the API call
+    }
   };
 
   return (
@@ -71,7 +86,12 @@ const ForgetPassword = (props: Props) => {
       </View>
 
       <View style={{ marginVertical: 32 }}>
-        <Button label="Send Code" onPress={handleSubmit(onSubmit)} />
+        <Button
+          label="Send Code" // Empty label if loading
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading} // Disable button during loading
+          loading={loading}
+        />
       </View>
 
       <Button

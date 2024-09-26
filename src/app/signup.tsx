@@ -18,6 +18,7 @@ const SignUp = () => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+    router.replace("/(learner)/home");
   };
 
   return (

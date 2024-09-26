@@ -18,3 +18,38 @@ export const signIn = async (data: { email: string; password: string }) => {
   const response = await client.post("/login", data);
   return response.data; // Adjust according to your response structure
 };
+
+export const sendResetPasswordCode = async (email: string) => {
+  try {
+    const response = await client.post("/v1/send-code-for-reset-password", {
+      email,
+    });
+    return response.data; // Adjust according to your response structure
+  } catch (error) {
+    console.error("Error sending reset password code:", error);
+    throw error;
+  }
+};
+
+// Function to verify OTP
+export const verifyOTPCode = async (code: string) => {
+  const response = await client.post("/v1/verify-code", {
+    code,
+  });
+  return response.data; // Adjust according to the actual response structure
+};
+
+// resetPassword function
+export const resetPassword = async (data: {
+  token: string;
+  password: string;
+  password_confirmation: string;
+}) => {
+  try {
+    const response = await client.post("/v1/reset-password", data);
+    return response.data; // Adjust according to your response structure
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw error; // Optionally throw the error for further handling
+  }
+};

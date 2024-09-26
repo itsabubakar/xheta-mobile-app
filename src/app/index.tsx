@@ -1,11 +1,12 @@
 import Checkbox from "expo-checkbox";
-import { router } from "expo-router";
-import { Dispatch, SetStateAction, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 
 import { Button } from "../ui/button";
 
 import { onboardingBg } from "~/assets/images";
+import { useAuthStore } from "~/src/core/storage"; // Import your auth store
 import { Text } from "~/theme";
 
 type Props = {
@@ -51,6 +52,47 @@ const CheckBox = ({
 const OnBoarding = (props: Props) => {
   const [isLearnerChecked, setLearnerChecked] = useState(false);
   const [isInstructorChecked, setInstructorChecked] = useState(false);
+  const [loading, setLoading] = useState(true); // State to handle loading
+  const router = useRouter();
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Access auth state
+  const hydrateAuthData = useAuthStore((state) => state.hydrateAuthData); // Hydrate auth data
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        // Hydrate auth data
+        await hydrateAuthData();
+      } catch (error) {
+        console.error("Error hydrating auth data", error);
+      } finally {
+        setLoading(false); // Stop loading after the check
+      }
+    };
+
+    checkAuthentication();
+  }, [hydrateAuthData]);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      // Redirect to 'learner/home' if authenticated
+      const redirectToHome = async () => {
+        setLoading(true); // Set loading state to true before routing
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Optional: Add a small delay
+        router.replace("/(learner)/home");
+      };
+      redirectToHome();
+    }
+  }, [loading, isAuthenticated, router]);
+
+  // Show spinner while loading
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="gray" />
+      </View>
+    );
+  }
 
   // When checking "Learner", uncheck "Instructor"
   const handleLearnerChange = (newValue: SetStateAction<boolean>) => {
@@ -132,5 +174,10 @@ const styles = StyleSheet.create({
   },
   centeredText: {
     textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
