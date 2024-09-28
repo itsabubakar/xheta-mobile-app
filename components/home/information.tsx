@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Class } from "~/assets/icons";
-import { Text } from "~/theme";
+import { Text, theme } from "~/theme";
 
 type Props = object;
 
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1D1D1D",
     borderWidth: 1,
-    borderColor: "#F7F7F9",
+    borderColor: theme.colors.lightGray,
     padding: 8,
     borderRadius: 8,
   },

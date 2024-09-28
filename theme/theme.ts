@@ -16,6 +16,7 @@ const palette = {
   tertiary: "#E7F2F3",
   focus: "#57797E",
   error: "#FDA29B",
+  lightGray: "#F7F7F9",
 };
 
 const theme = createTheme({

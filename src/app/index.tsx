@@ -53,6 +53,7 @@ const OnBoarding = (props: Props) => {
   const [isLearnerChecked, setLearnerChecked] = useState(false);
   const [isInstructorChecked, setInstructorChecked] = useState(false);
   const [loading, setLoading] = useState(true); // State to handle loading
+  const [selectedRole, setSelectedRole] = useState<string | null>(null); // Track selected role
   const router = useRouter();
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Access auth state
@@ -94,14 +95,17 @@ const OnBoarding = (props: Props) => {
     );
   }
 
-  // When checking "Learner", uncheck "Instructor"
+  // When checking "Learner", uncheck "Instructor" and set selected role
   const handleLearnerChange = (newValue: SetStateAction<boolean>) => {
     if (typeof newValue === "function") {
       setLearnerChecked(newValue(isLearnerChecked));
     } else {
       setLearnerChecked(newValue);
     }
-    if (newValue) setInstructorChecked(false);
+    if (newValue) {
+      setInstructorChecked(false);
+      setSelectedRole("learner");
+    }
   };
 
   const handleInstructorChange = (newValue: SetStateAction<boolean>) => {
@@ -110,7 +114,10 @@ const OnBoarding = (props: Props) => {
     } else {
       setInstructorChecked(newValue);
     }
-    if (newValue) setLearnerChecked(false);
+    if (newValue) {
+      setLearnerChecked(false);
+      setSelectedRole("instructor");
+    }
   };
 
   // Enable button if one checkbox is checked
@@ -151,7 +158,7 @@ const OnBoarding = (props: Props) => {
           <View style={{ marginTop: 24 }}>
             <Button
               disabled={!isButtonEnabled}
-              onPress={() => router.push("/signup")}
+              onPress={() => router.push(`/signup?role=${selectedRole}`)} // Pass the selected role to the next screen
               label="Proceed"
             />
           </View>

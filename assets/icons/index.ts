@@ -12,3 +12,4 @@ export { default as Notifications } from "./notifications";
 export { default as Python } from "./python";
 export { default as Class } from "./class";
 export { default as RoundBack } from "./round-back";
+export { default as Chevron } from "./chevron";

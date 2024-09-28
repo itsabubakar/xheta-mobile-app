@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Lottie from "lottie-react-native";
 import React, { useState } from "react";
@@ -15,6 +15,10 @@ const SignUp = () => {
   const router = useRouter();
   const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
+  let { role } = useLocalSearchParams();
+  if (Array.isArray(role)) {
+    role = role[0]; // Ensure it's a string
+  }
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -29,7 +33,7 @@ const SignUp = () => {
       >
         <Pressable
           style={{ width: 60, flexDirection: "row" }}
-          onPress={() => router.back()} // Go back when pressed
+          onPress={() => router.replace("/")} // Go back when pressed
         >
           <Xback />
           <Text style={{ paddingLeft: 8 }}>Back</Text>
@@ -42,7 +46,7 @@ const SignUp = () => {
         </View>
 
         {/* Sign up form component */}
-        <SignUpForm toggleModal={toggleModal} />
+        <SignUpForm role={role} />
 
         <Modal isVisible={isModalVisible}>
           <View

@@ -1,8 +1,9 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import React from "react";
-import { Text } from "~/theme";
-import { RoundBack } from "~/assets/icons";
 import { useRouter } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+
+import { RoundBack } from "~/assets/icons";
+import { Text } from "~/theme";
 
 type Props = {
   title: string;
@@ -19,7 +20,7 @@ const ScreenHeader = ({ title }: Props) => {
       <Text variant="lg" style={styles.title}>
         {title}
       </Text>
-      <View style={{ width: 40 }}></View>
+      <View style={{ width: 40 }} />
     </View>
   );
 };

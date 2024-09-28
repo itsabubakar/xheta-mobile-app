@@ -13,7 +13,7 @@ import { ControlledInput } from "~/src/ui/form";
 import { Text, useTheme } from "~/theme";
 
 type Props = {
-  toggleModal: () => void;
+  role: string;
 };
 
 type FormData = {
@@ -25,7 +25,7 @@ type FormData = {
   time_zone: string;
 };
 
-const SignUp = ({ toggleModal }: Props) => {
+const SignUp = ({ role }: Props) => {
   const router = useRouter();
   const theme = useTheme();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -45,7 +45,7 @@ const SignUp = ({ toggleModal }: Props) => {
       email: "",
       password: "",
       password_confirmation: "",
-      role: "tutor",
+      role,
       time_zone: "America/New_York",
     },
   });

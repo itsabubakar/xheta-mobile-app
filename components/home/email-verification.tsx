@@ -1,19 +1,32 @@
 import LottieView from "lottie-react-native";
-import React, { RefObject, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet, TextInput, View } from "react-native";
+
 import { Button } from "~/src/ui";
 import { ControlledInput, OTPInput } from "~/src/ui/form";
 import { Text, useTheme } from "~/theme";
 
-type Props = {};
+type Props = {
+  onSetBottomSheet: Dispatch<
+    SetStateAction<
+      "welcome" | "email-verification" | "profile-update" | "update-succesfull"
+    >
+  >;
+};
 
 type FormData = {
   email?: string;
   otp?: string;
 };
 
-const EmailVerification = (props: Props) => {
+const EmailVerification = ({ onSetBottomSheet }: Props) => {
   const theme = useTheme();
   const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
   const [step, setStep] = useState(1); // Step state to track the current screen
@@ -76,7 +89,7 @@ const EmailVerification = (props: Props) => {
   };
 
   const handleProfileUpdate = () => {
-    setStep(4); // Move to the congratulations screen
+    onSetBottomSheet("profile-update"); // Move to the congratulations screen
   };
 
   // Render the appropriate screen based on the step state
