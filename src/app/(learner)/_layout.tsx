@@ -1,7 +1,4 @@
 import { Tabs } from "expo-router";
-
-import { TabBarIcon } from "../../../components/TabBarIcon";
-
 import {
   Home,
   HomeFilled,
@@ -64,7 +61,7 @@ export default function TabLayout() {
       })}
     >
       <Tabs.Screen name="home" options={{ title: "Home" }} />
-      <Tabs.Screen name="courses" options={{ title: "Courses" }} />
+      <Tabs.Screen name="(courses)/courses" options={{ title: "Courses" }} />
       <Tabs.Screen name="tutors" options={{ title: "Tutors" }} />
       <Tabs.Screen name="learnings" options={{ title: "Learnings" }} />
       <Tabs.Screen name="more" options={{ title: "More" }} />

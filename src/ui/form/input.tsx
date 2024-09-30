@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Control,
   FieldValues,
@@ -14,7 +14,7 @@ import {
   StyleSheet,
 } from "react-native";
 
-import { Chevron, ClosedEye, OpenedEye } from "~/assets/icons";
+import { Chevron, ClosedEye, Microscope, OpenedEye } from "~/assets/icons";
 import { Box, Text, theme } from "~/theme";
 
 interface NInputProps extends TextInputProps {
@@ -372,3 +372,61 @@ export function ControlledDropdown<T extends FieldValues>({
     />
   );
 }
+
+
+
+interface SearchInputProps extends TextInputProps {
+  onSearch: (query: string) => void; // Function to handle the search query
+  placeholder?: string
+}
+
+export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, placeholder, ...props }) => {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<RNTextInput>(null);
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      onSearch(query.trim());
+    }
+  };
+
+  return (
+    <Box mb="s_8">
+      <View style={{ position: "relative" }}>
+        <RNTextInput
+          ref={inputRef}
+          value={query}
+          onChangeText={setQuery}
+          onSubmitEditing={handleSearch} // Trigger search when Enter is pressed
+          placeholder={placeholder}
+          placeholderTextColor="#686868"
+          style={[
+            {
+              borderRadius: 8,
+              padding: 10,
+              backgroundColor: "#FFFFFF", // White background
+              borderColor: "#D2D2D240",
+              paddingLeft: 40, // Add padding for the icon
+            },
+          ]}
+          {...props}
+        />
+        {/* Microscope Icon */}
+        <Pressable
+          onPress={handleSearch}
+          style={{
+            position: "absolute",
+            left: 12,
+            top: "25%",
+            height: 24,
+            width: 24,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Microscope />
+        </Pressable>
+      </View>
+    </Box>
+  );
+};

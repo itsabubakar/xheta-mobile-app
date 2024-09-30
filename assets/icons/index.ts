@@ -13,3 +13,7 @@ export { default as Python } from "./python";
 export { default as Class } from "./class";
 export { default as RoundBack } from "./round-back";
 export { default as Chevron } from "./chevron";
+export { default as Microscope } from "./microscope";
+export { default as Technology } from "./technology";
+export { default as Art } from "./art";
+export { default as Science } from "./science";
