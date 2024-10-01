@@ -17,3 +17,6 @@ export { default as Microscope } from "./microscope";
 export { default as Technology } from "./technology";
 export { default as Art } from "./art";
 export { default as Science } from "./science";
+export { default as PlayIcon } from "./play";
+export { default as StarIcon } from "./golden-star";
+export { default as ClockIcon } from "./clock";

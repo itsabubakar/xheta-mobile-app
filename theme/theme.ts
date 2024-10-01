@@ -10,7 +10,7 @@ const palette = {
   blue: "#007AFF",
   darkGray: "#38434D",
   white: "#FFFFFF",
-  black: "#000000",
+  black: "#1D1D1D",
   purple: "#6366F1",
   primary: "#03363D",
   tertiary: "#E7F2F3",
@@ -78,6 +78,7 @@ const theme = createTheme({
     lg: {
       fontSize: 18,
       fontFamily: "AeonikBold",
+      color: "black",
     },
   },
 });

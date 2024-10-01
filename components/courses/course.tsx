@@ -1,5 +1,6 @@
+import { Link, useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
@@ -7,46 +8,54 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const Course = (props: Props) => {
+  const router = useRouter();
   return (
-    <View style={styles.container}>
-      <View>
-        <Image
+    <Link
+      asChild
+      href="/(courses)/1"
+      // onPress={() => router.navigate("/(courses)/1")}
+      style={styles.container}
+    >
+      <Pressable onPress={() => router.navigate("/(courses)/1")}>
+        <View>
+          <Image
+            style={{
+              width: "100%",
+              height: 106,
+              borderRadius: 8,
+            }}
+            source={course}
+          />
+        </View>
+        <Text
           style={{
-            width: "100%",
-            height: 106,
-            borderRadius: 8,
+            paddingTop: 8,
+            paddingBottom: 4,
+            color: "#1D1D1D",
           }}
-          source={course}
-        />
-      </View>
-      <Text
-        style={{
-          paddingTop: 8,
-          paddingBottom: 4,
-          color: "#1D1D1D",
-        }}
-        variant="md"
-      >
-        UI/UX Design
-      </Text>
-      <Text
-        style={{
-          color: theme.colors.lightBlack,
-        }}
-      >
-        Master the art of creating intuitive user interfaces (UI)...
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingTop: 4,
-        }}
-      >
-        <Text style={styles.price}>#5000</Text>
-        <Text style={styles.price}>5.0</Text>
-      </View>
-    </View>
+          variant="md"
+        >
+          UI/UX Design
+        </Text>
+        <Text
+          style={{
+            color: theme.colors.lightBlack,
+          }}
+        >
+          Master the art of creating intuitive user interfaces (UI)...
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingTop: 4,
+          }}
+        >
+          <Text style={styles.price}>#5000</Text>
+          <Text style={styles.price}>5.0</Text>
+        </View>
+      </Pressable>
+    </Link>
   );
 };
 

@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ScreenHeader } from "../ui";
 
-import { Text, useTheme, theme } from "~/theme";
+import { Text, theme } from "~/theme";
 
 type Props = object;
 

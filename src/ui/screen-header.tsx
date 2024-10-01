@@ -3,21 +3,27 @@ import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { RoundBack } from "~/assets/icons";
-import { Text } from "~/theme";
+import { Text, theme } from "~/theme";
 
 type Props = {
   title: string;
+  bg?: boolean;
 };
 
-const ScreenHeader = ({ title }: Props) => {
+const ScreenHeader = ({ title, bg }: Props) => {
   const router = useRouter(); // Initialize the navigate function
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: bg ? theme.colors.primary : "" },
+      ]}
+    >
       <Pressable onPress={() => router.back()}>
         <RoundBack />
       </Pressable>
-      <Text variant="lg" style={styles.title}>
+      <Text variant="lg" style={[styles.title, { color: bg ? "white" : "" }]}>
         {title}
       </Text>
       <View style={{ width: 40 }} />
