@@ -20,3 +20,6 @@ export { default as Science } from "./science";
 export { default as PlayIcon } from "./play";
 export { default as StarIcon } from "./golden-star";
 export { default as ClockIcon } from "./clock";
+export { default as PayStackIcon } from "./paystack";
+export { default as Stripecon } from "./stripe";
+export { default as FlutterWaveIcon } from "./flutterwave";

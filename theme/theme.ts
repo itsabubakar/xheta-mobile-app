@@ -52,7 +52,7 @@ const theme = createTheme({
       fontSize: 16,
       fontFamily: "AeonikNormal",
     },
-    title: { fontSize: 24, fontFamily: "AeonikBold" },
+    title: { fontSize: 24, fontFamily: "AeonikBold", color: "black" },
     subtitle: {
       fontSize: 16,
       fontFamily: "AeonikMedium",

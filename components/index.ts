@@ -11,3 +11,5 @@ export { default as CourseInfo } from "./courses/course-details";
 export { default as CourseTopic } from "./courses/course-topic";
 export { default as Tutor } from "./tutors/tutor";
 export { default as TutorsSection } from "./tutors/tutors-section";
+
+export { default as PaymentOption } from "./payment/payment-option";

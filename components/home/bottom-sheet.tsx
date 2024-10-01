@@ -30,27 +30,6 @@ const HomeBottomSheet = () => {
   const { control } = useForm({});
 
   // bottomSheetRef.current?.expand();
-  // bottomSheetRef.current?.expand();
-  // bottomSheetRef.current?.expand();
-  // bottomSheetRef.current?.expand();
-  // bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-
   const closeBottomSheet = () => {
     bottomSheetRef.current?.close();
   };
