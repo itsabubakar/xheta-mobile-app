@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import Course from "./course";
+import Tutor from "./tutor";
 
 import { Art, Science, Technology } from "~/assets/icons";
 import { Text, theme } from "~/theme";
 
 type Props = object;
 
-const CategoriesSection = (props: Props) => {
+const TutorsSection = (props: Props) => {
   // State to track the currently active category
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
@@ -17,7 +17,7 @@ const CategoriesSection = (props: Props) => {
 
   // Define the number of courses to render for each category
   const courseCounts: Record<string, number> = {
-    All: 19,
+    All: 24,
     Technology: 7,
     Art: 9,
     Science: 9,
@@ -85,7 +85,7 @@ const CategoriesSection = (props: Props) => {
           {/* Render the number of courses based on the selected category */}
           {Array.from({ length: courseCounts[activeCategory] }).map(
             (_, index) => (
-              <Course key={index} />
+              <Tutor key={index} />
             ),
           )}
         </View>
@@ -94,7 +94,7 @@ const CategoriesSection = (props: Props) => {
   );
 };
 
-export default CategoriesSection;
+export default TutorsSection;
 
 const styles = StyleSheet.create({
   container: {

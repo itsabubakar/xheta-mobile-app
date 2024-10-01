@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+
 import {
   Home,
   HomeFilled,
@@ -38,10 +39,10 @@ export default function TabLayout() {
             case "home":
               IconComponent = focused ? HomeFilled : Home;
               break;
-            case "courses":
+            case "(courses)/courses":
               IconComponent = focused ? CoursesFilled : Courses;
               break;
-            case "tutors":
+            case "(tutors)/tutors":
               IconComponent = focused ? TutorsFilled : Tutors;
               break;
             case "learnings":
@@ -62,7 +63,7 @@ export default function TabLayout() {
     >
       <Tabs.Screen name="home" options={{ title: "Home" }} />
       <Tabs.Screen name="(courses)/courses" options={{ title: "Courses" }} />
-      <Tabs.Screen name="tutors" options={{ title: "Tutors" }} />
+      <Tabs.Screen name="(tutors)/tutors" options={{ title: "Tutors" }} />
       <Tabs.Screen name="learnings" options={{ title: "Learnings" }} />
       <Tabs.Screen name="more" options={{ title: "More" }} />
     </Tabs>

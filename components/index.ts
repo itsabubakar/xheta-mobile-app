@@ -5,3 +5,6 @@ export { default as InformationBoardSection } from "./home/information-board-sec
 export { default as EmailVerification } from "./home/email-verification";
 export { default as HomeBottomSheet } from "./home/bottom-sheet";
 export { default as CategoriesSection } from "./courses/categories-section";
+export { default as Course } from "./courses/course";
+export { default as Tutor } from "./tutors/tutor";
+export { default as TutorsSection } from "./tutors/tutors-section";

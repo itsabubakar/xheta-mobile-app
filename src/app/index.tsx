@@ -1,13 +1,13 @@
 import Checkbox from "expo-checkbox";
 import { useRouter } from "expo-router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 
 import { Button } from "../ui/button";
 
 import { onboardingBg } from "~/assets/images";
 import { useAuthStore } from "~/src/core/storage"; // Import your auth store
-import { Text } from "~/theme";
+import { Text, theme } from "~/theme";
 
 type Props = {
   text: string;
@@ -32,7 +32,7 @@ const CheckBox = ({
         flexDirection: "row",
         justifyContent: "space-between",
         borderWidth: 1,
-        borderColor: "#D2D2D266",
+        borderColor: theme.colors.borderColor,
         borderRadius: 8,
         padding: 16,
         marginBottom: mb ? 16 : 0,

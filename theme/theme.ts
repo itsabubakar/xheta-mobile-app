@@ -17,6 +17,8 @@ const palette = {
   focus: "#57797E",
   error: "#FDA29B",
   lightGray: "#F7F7F9",
+  borderColor: "#D2D2D266",
+  lightBlack: "#686868",
 };
 
 const theme = createTheme({
@@ -71,7 +73,7 @@ const theme = createTheme({
     },
     md: {
       fontSize: 14,
-      fontWeight: "AeonikMedium",
+      fontFamily: "AeonikMedium",
     },
     lg: {
       fontSize: 18,

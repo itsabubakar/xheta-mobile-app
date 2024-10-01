@@ -2,13 +2,11 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import * as Progress from "react-native-progress";
 
-import { Text, useTheme } from "~/theme";
+import { Text, theme } from "~/theme";
 
 type Props = object;
 
 const Course = (props: Props) => {
-  const theme = useTheme();
-
   const percentage = 60;
 
   // Function to get color that transitions from green to red
@@ -66,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 16,
-    borderColor: "#D2D2D266",
+    borderColor: theme.colors.borderColor,
     padding: 16,
     columnGap: 16,
     marginBottom: 16,
