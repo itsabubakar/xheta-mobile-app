@@ -1,36 +1,18 @@
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
-import React, { useCallback, useRef } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
+import React, { useRef } from "react";
+import { View, ScrollView } from "react-native";
 
-import { TutorsInfo } from "~/components";
+import { TutorsBottomSheet, TutorsInfo } from "~/components";
 import { Button, ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 const Tutor = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const closeBottomSheet = () => {
-    bottomSheetRef.current?.close();
-  };
+
   const openBottomSheet = () => {
     bottomSheetRef.current?.expand();
   };
-  const renderBackdrop = useCallback(
-    (
-      props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps,
-    ) => <BottomSheetBackdrop {...props} opacity={0.7} />,
-    [],
-  );
 
-  const handleSheetChanges = useCallback((index: number) => {
-    // handle index changes
-  }, []);
-
-  const renderHandle = () => (
-    <View style={styles.handleContainer}>
-      <View style={styles.bottomSheetIndicator} />
-    </View>
-  );
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenHeader bg title="Tutor's details" />
@@ -84,25 +66,9 @@ const Tutor = () => {
           <Button onPress={openBottomSheet} label="Book tutor" />
         </View>
       </View>
+      <TutorsBottomSheet bottomSheetRef={bottomSheetRef} />
     </View>
   );
 };
 
 export default Tutor;
-
-const styles = StyleSheet.create({
-  handleContainer: {
-    alignItems: "center",
-    paddingTop: 10,
-  },
-  bottomSheetIndicator: {
-    width: 70,
-    height: 6,
-    backgroundColor: "#D2D2D2",
-    borderRadius: 3,
-  },
-  lottie: {
-    width: 120,
-    height: 120,
-  },
-});

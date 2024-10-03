@@ -195,7 +195,11 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <Box mb="m_16">
-      {label && <Text mb="s_8">{label}</Text>}
+      {label && (
+        <Text variant="md" mb="s_8">
+          {label}
+        </Text>
+      )}
       <Pressable
         onPress={toggleDropdown}
         disabled={disabled}
@@ -225,7 +229,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             ? `${selectedValues.length} selected`
             : selectedValue
               ? options.find((o) => o.value === selectedValue)?.label
-              : "Select"}
+              : "Nil"}
         </Text>
         <View
           style={{
@@ -373,14 +377,16 @@ export function ControlledDropdown<T extends FieldValues>({
   );
 }
 
-
-
 interface SearchInputProps extends TextInputProps {
   onSearch: (query: string) => void; // Function to handle the search query
-  placeholder?: string
+  placeholder?: string;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, placeholder, ...props }) => {
+export const SearchInput: React.FC<SearchInputProps> = ({
+  onSearch,
+  placeholder,
+  ...props
+}) => {
   const [query, setQuery] = useState("");
   const inputRef = useRef<RNTextInput>(null);
 

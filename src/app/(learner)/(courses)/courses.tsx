@@ -1,9 +1,9 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { CategoriesSection } from "~/components";
 import { HeaderWithSearchBar } from "~/src/ui";
-import { Text, theme } from "~/theme";
+import { theme } from "~/theme";
 
 type Props = object;
 

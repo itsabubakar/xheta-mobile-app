@@ -25,3 +25,5 @@ export { default as Stripecon } from "./stripe";
 export { default as FlutterWaveIcon } from "./flutterwave";
 export { default as PdfIcon } from "./pdf";
 export { default as CircularArrowIcon } from "./circular-arrow";
+export { FilledStar, HalfFilledStar, EmptyStar } from "./star-rating";
+export { default as CalenderIcon } from "./calender";
