@@ -23,3 +23,5 @@ export { default as ClockIcon } from "./clock";
 export { default as PayStackIcon } from "./paystack";
 export { default as Stripecon } from "./stripe";
 export { default as FlutterWaveIcon } from "./flutterwave";
+export { default as PdfIcon } from "./pdf";
+export { default as CircularArrowIcon } from "./circular-arrow";

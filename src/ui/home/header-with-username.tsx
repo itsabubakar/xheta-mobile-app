@@ -21,7 +21,10 @@ const HeaderWithUsername = ({ name }: Props) => {
         },
       ]}
     >
-      <Image style={{ width: 48, height: 48 }} source={profile} />
+      <Image
+        style={{ width: 48, height: 48, borderRadius: 9999 }}
+        source={profile}
+      />
       <View style={{ marginLeft: 8 }}>
         <Text
           style={{ color: "white", fontFamily: "AeonikBold", fontSize: 14 }}

@@ -60,6 +60,7 @@ const theme = createTheme({
     normal_bold: {
       fontFamily: "AeonikBold",
       fontSize: 16,
+      color: "black",
     },
     large: {
       fontSize: 36,

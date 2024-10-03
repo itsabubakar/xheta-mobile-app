@@ -1,5 +1,6 @@
+import { useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
@@ -7,8 +8,12 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const Tutor = (props: Props) => {
+  const router = useRouter();
   return (
-    <View style={styles.container}>
+    <Pressable
+      onPress={() => router.navigate("/(tutors)/1")}
+      style={styles.container}
+    >
       <View>
         <Image
           style={{
@@ -46,7 +51,7 @@ const Tutor = (props: Props) => {
         <Text style={styles.price}>#5000</Text>
         <Text style={styles.price}>5.0</Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

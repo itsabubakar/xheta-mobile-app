@@ -5,7 +5,7 @@ import BottomSheet, {
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import LottieView from "lottie-react-native";
 import React, { useCallback, useRef, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { greenTick } from "~/assets/animations";
 import {
@@ -127,7 +127,6 @@ const CourseDetails = (props: Props) => {
               <View
                 style={{
                   paddingHorizontal: 16,
-                  // paddingVertical: 24,
                 }}
               >
                 <Text variant="normal_bold">Make Payment</Text>
