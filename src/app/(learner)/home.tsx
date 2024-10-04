@@ -1,11 +1,7 @@
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View, Image, Dimensions } from "react-native";
+import React from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import {
   AssignmentSection,
@@ -15,7 +11,7 @@ import {
 } from "~/components";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, HeaderWithUsername } from "~/src/ui";
-import { Text, theme } from "~/theme";
+import { theme } from "~/theme";
 
 type Props = object;
 

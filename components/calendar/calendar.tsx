@@ -6,45 +6,99 @@ import {
   getDay,
   addMonths,
   subMonths,
+  subDays,
+  addDays,
+  isBefore,
 } from "date-fns";
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import { View, Pressable, StyleSheet } from "react-native";
 
-const CustomCalendar = () => {
+import { Chevron } from "~/assets/icons";
+import { Text, theme } from "~/theme";
+
+interface Props {
+  setPickedDate: Dispatch<SetStateAction<Date | null>>;
+  setShowCalendar: Dispatch<SetStateAction<boolean>>;
+  pickedDate?: Date | null;
+}
+
+const CustomCalendar = ({
+  setPickedDate,
+  setShowCalendar,
+  pickedDate,
+}: Props) => {
   const [currentDate, setCurrentDate] = useState(new Date()); // Current month
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Selected date
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    pickedDate || null,
+  ); // Selected date
+  const today = new Date(); // Today's date
 
   // Generate days for the current month
   const startDate = startOfMonth(currentDate);
   const endDate = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
 
-  // Calculate padding for the first week (offset)
-  const firstDayOfMonth = getDay(startDate);
+  // Calculate padding for the first week (previous month's days)
+  const firstDayOfMonth = (getDay(startDate) + 6) % 7; // Adjust to start week from Monday
+  const previousMonthDays = Array.from({ length: firstDayOfMonth }).map(
+    (_, index) => subDays(startDate, firstDayOfMonth - index),
+  );
+
+  // Calculate remaining days to fill the last row (next month's days)
+  const totalDisplayedDays = firstDayOfMonth + daysInMonth.length;
+  const remainingDays =
+    totalDisplayedDays % 7 === 0 ? 0 : 7 - (totalDisplayedDays % 7);
+  const nextMonthDays = Array.from({ length: remainingDays }).map((_, index) =>
+    addDays(endDate, index + 1),
+  );
 
   // Navigate between months
   const goToNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const goToPreviousMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  // Format date
-  const formattedMonth = format(currentDate, "MMMM yyyy");
+  // Extract formatted month and year separately
+  const formattedMonth = format(currentDate, "MMMM");
+  const formattedYear = format(currentDate, "yyyy");
+
+  console.log(selectedDate);
 
   return (
     <View style={styles.container}>
       {/* Header for Month Navigation */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={goToPreviousMonth}>
-          <Text style={styles.arrow}>{"<"}</Text>
-        </TouchableOpacity>
-        <Text style={styles.month}>{formattedMonth}</Text>
-        <TouchableOpacity onPress={goToNextMonth}>
-          <Text style={styles.arrow}>{">"}</Text>
-        </TouchableOpacity>
+        <Pressable onPress={goToPreviousMonth}>
+          <View
+            style={{
+              transform: [{ rotate: "90deg" }],
+              backgroundColor: "#F5F5F5",
+              padding: 9,
+              borderRadius: 12,
+            }}
+          >
+            <Chevron />
+          </View>
+        </Pressable>
+        <View style={styles.monthYearContainer}>
+          <Text style={styles.month}>{formattedMonth}</Text>
+          <Text style={styles.year}>{formattedYear}</Text>
+        </View>
+        <Pressable onPress={goToNextMonth}>
+          <View
+            style={{
+              transform: [{ rotate: "-90deg" }],
+              backgroundColor: "#F5F5F5",
+              padding: 9,
+              borderRadius: 12,
+            }}
+          >
+            <Chevron />
+          </View>
+        </Pressable>
       </View>
 
       {/* Day Labels */}
       <View style={styles.weekDaysContainer}>
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+        {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day, index) => (
           <Text key={index} style={styles.weekDay}>
             {day}
           </Text>
@@ -53,38 +107,57 @@ const CustomCalendar = () => {
 
       {/* Dates Grid */}
       <View style={styles.datesContainer}>
-        {/* Add padding for first week */}
-        {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-          <View key={index} style={styles.emptyDate} />
+        {/* Render previous month's days */}
+        {previousMonthDays.map((date, index) => (
+          <View key={`prev-${index}`} style={styles.date}>
+            <Text style={styles.inactiveDateText}>{format(date, "d")}</Text>
+          </View>
         ))}
 
-        {/* Render days of the month */}
+        {/* Render current month's days */}
         {daysInMonth.map((date, index) => {
           const formattedDate = format(date, "d");
           const isSelected =
             selectedDate &&
             format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
+          const isPastDate = isBefore(date, today);
 
           return (
-            <TouchableOpacity
+            <Pressable
               key={index}
-              style={[styles.date, isSelected ? styles.selectedDate : null]}
+              style={[
+                styles.date,
+                isSelected ? styles.selectedDate : null,
+                isPastDate ? styles.pastDate : null,
+              ]}
               onPress={() => {
-                setSelectedDate(date);
-                console.log("Selected Date:", format(date, "yyyy-MM-dd"));
-              }}
+                if (!isPastDate) {
+                  setSelectedDate(date);
+                  setPickedDate(date); // Set picked date
+                  setShowCalendar(false); // Hide calendar
+                }
+              }} // Disable click for past dates
+              disabled={isPastDate} // Disable interaction for past dates
             >
               <Text
                 style={[
                   styles.dateText,
                   isSelected ? styles.selectedDateText : null,
+                  isPastDate ? styles.pastDateText : null,
                 ]}
               >
                 {formattedDate}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
+
+        {/* Render next month's days */}
+        {nextMonthDays.map((date, index) => (
+          <View key={`next-${index}`} style={styles.date}>
+            <Text style={styles.inactiveDateText}>{format(date, "d")}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -94,7 +167,6 @@ const CustomCalendar = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "white",
     borderRadius: 8,
   },
   header: {
@@ -103,29 +175,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
+  monthYearContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
   month: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "AeonikMedium",
+    color: "#434343",
+    marginRight: 8, // Spacing between month and year
   },
-  arrow: {
-    fontSize: 18,
-    fontWeight: "bold",
+  year: {
+    fontSize: 16,
+    color: "#8E8E8E",
   },
   weekDaysContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 22,
+    paddingHorizontal: 35,
   },
   weekDay: {
     flex: 1,
     textAlign: "center",
-    fontWeight: "500",
-    color: "#888",
+    color: "#8E8E8E",
   },
   datesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    paddingHorizontal: 35,
+    alignItems: "flex-start",
   },
   date: {
     width: "14.28%",
@@ -135,19 +215,26 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   dateText: {
-    fontSize: 16,
+    fontSize: 14,
   },
   selectedDate: {
-    backgroundColor: "#4CAF50",
-    borderRadius: 50,
+    // borderRadius: 12,
   },
   selectedDateText: {
     color: "white",
-    fontWeight: "600",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    backgroundColor: theme.colors.primary,
   },
-  emptyDate: {
-    width: "14.28%",
-    aspectRatio: 1,
+  pastDate: {
+    // backgroundColor: "#f2f2f2", // Light background for past dates
+  },
+  pastDateText: {
+    color: "#aaa", // Grayed-out text for past dates
+  },
+  inactiveDateText: {
+    color: "#ccc", // Light gray for inactive days (previous and next month)
   },
 });
 

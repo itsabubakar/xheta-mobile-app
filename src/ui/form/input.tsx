@@ -341,6 +341,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: "auto",
   },
+  textArea: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: theme.colors.white,
+    textAlignVertical: "top", // Align text to the top of the text area
+  },
 });
 
 // Exported Controlled Dropdown for React Hook Form
@@ -436,3 +443,85 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     </Box>
   );
 };
+
+interface TextAreaProps {
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  onChangeText?: (text: string) => void;
+  error?: string;
+  disabled?: boolean;
+}
+
+const TextArea: React.FC<TextAreaProps> = ({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  error,
+  disabled = false,
+}) => {
+  return (
+    <Box mb="s_8">
+      {label && (
+        <Text variant="subtitle" mb="s_8">
+          {label}
+        </Text>
+      )}
+      <View style={{ position: "relative" }}>
+        <RNTextInput
+          multiline
+          numberOfLines={6}
+          placeholder={placeholder}
+          placeholderTextColor="#686868"
+          value={value}
+          onChangeText={onChangeText}
+          editable={!disabled}
+          style={[
+            styles.textArea,
+            {
+              borderColor: error ? "#FF6B6B" : "#D2D2D240",
+            },
+          ]}
+        />
+      </View>
+      {error && (
+        <Text variant="body" color="gray" mt="s_8">
+          {error}
+        </Text>
+      )}
+    </Box>
+  );
+};
+
+interface ControlledTextAreaProps<T extends FieldValues> {
+  name: Path<T>;
+  control: Control<T>;
+  rules?: any;
+  label: string; // Add label prop to ControlledTextAreaProps
+  placeholder: string;
+}
+
+export function ControlledTextArea<T extends FieldValues>({
+  name,
+  control,
+  rules,
+  label, // Destructure the label prop
+  ...textAreaProps
+}: ControlledTextAreaProps<T>) {
+  const { field, fieldState } = useController({
+    control,
+    name,
+    rules: rules as any, // Cast rules to any
+  });
+
+  return (
+    <TextArea
+      label={label} // Pass the label to TextArea
+      value={field.value as string}
+      onChangeText={field.onChange}
+      error={fieldState.error?.message}
+      {...textAreaProps}
+    />
+  );
+}

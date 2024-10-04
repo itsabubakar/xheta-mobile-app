@@ -13,14 +13,14 @@ import { PaymentOption } from "../payment";
 
 import { greenTick } from "~/assets/animations";
 import {
-  Chevron,
+  CalenderIcon,
   CircleX,
   FlutterWaveIcon,
   PayStackIcon,
   Stripecon,
 } from "~/assets/icons";
 import { Button } from "~/src/ui";
-import { ControlledDropdown } from "~/src/ui/form/input";
+import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 
 type PaymentBottomSheetProps = {
@@ -30,7 +30,10 @@ type PaymentBottomSheetProps = {
 const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
   const { control } = useForm({});
 
-  const [currentSection, setCurrentSection] = useState(4); // Track the current section
+  const [currentSection, setCurrentSection] = useState(0); // Track the current section
+  const [pickedDate, setPickedDate] = useState<Date | null>(null);
+
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleProceedToPayment = () => setCurrentSection(1);
   const handlePurchaseConfirmation = () => setCurrentSection(2);
@@ -66,44 +69,92 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
         {/* Section 1: Introduction Section */}
         {currentSection === 0 && (
           <View style={{ paddingHorizontal: 16 }}>
-            <Text variant="subtitle">Book Tutor</Text>
-            <View style={styles.dropDownView} />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                columnGap: 16,
-              }}
-            >
-              <View style={{ width: "50%", flex: 1 }}>
-                <ControlledDropdown
-                  name="to"
-                  control={control}
-                  rules={{ required: "Please select a time" }}
-                  label="To"
-                  options={[
-                    { label: "7am", value: "7am" },
-                    { label: "8am", value: "8am" },
-                    { label: "9am", value: "9am" },
-                  ]}
-                />
-              </View>
-              <View style={{ width: "50%", flex: 1 }}>
-                <ControlledDropdown
-                  name="from"
-                  control={control}
-                  rules={{ required: "Please select a time" }}
-                  label="From"
-                  options={[
-                    { label: "8am", value: "8am" },
-                    { label: "9am", value: "9am" },
-                    { label: "10am", value: "10am" },
-                  ]}
-                />
-              </View>
-            </View>
+            {showCalendar ? (
+              <CustomCalendar
+                pickedDate={pickedDate}
+                setPickedDate={setPickedDate}
+                setShowCalendar={setShowCalendar}
+              />
+            ) : (
+              <>
+                <Text variant="subtitle">Book Tutor</Text>
+                <View style={styles.dropDownView} />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    columnGap: 16,
+                  }}
+                >
+                  <View style={{ width: "50%", flex: 1 }}>
+                    <ControlledDropdown
+                      name="to"
+                      control={control}
+                      rules={{ required: "Please select a time" }}
+                      label="To"
+                      options={[
+                        { label: "7am", value: "7am" },
+                        { label: "8am", value: "8am" },
+                        { label: "9am", value: "9am" },
+                      ]}
+                    />
+                  </View>
+                  <View style={{ width: "50%", flex: 1 }}>
+                    <ControlledDropdown
+                      name="from"
+                      control={control}
+                      rules={{ required: "Please select a time" }}
+                      label="From"
+                      options={[
+                        { label: "8am", value: "8am" },
+                        { label: "9am", value: "9am" },
+                        { label: "10am", value: "10am" },
+                      ]}
+                    />
+                  </View>
+                </View>
 
-            <Button label="Proceed" onPress={() => setCurrentSection(1)} />
+                {/* Date Picker Button */}
+                <View>
+                  <Text style={styles.datePickerLabel}>Date</Text>
+                  <Pressable
+                    onPress={() => {
+                      setShowCalendar(true); // Show the calendar
+                    }}
+                    style={styles.datePicker}
+                  >
+                    <Text style={styles.selectedDate}>
+                      {pickedDate ? pickedDate.toDateString() : "Nil"}
+                    </Text>
+                    {/* Add your calendar icon here */}
+                    <View
+                      style={{
+                        justifyContent: "flex-end",
+                        alignItems: "flex-end",
+                      }}
+                    >
+                      <CalenderIcon />
+                    </View>
+                  </Pressable>
+                </View>
+                <ControlledTextArea
+                  control={control}
+                  name="message"
+                  label="Message"
+                  placeholder="Enter a short description..."
+                />
+                <View
+                  style={{
+                    marginTop: 24,
+                  }}
+                >
+                  <Button
+                    label="Proceed"
+                    onPress={() => setCurrentSection(1)}
+                  />
+                </View>
+              </>
+            )}
           </View>
         )}
 
@@ -153,17 +204,24 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
                 loop
               />
             </View>
-            <Text variant="subtitle" style={styles.confirmationText}>
-              You have purchased this course successfully
+            <Text
+              variant="subtitle"
+              style={[styles.confirmationText, { paddingBottom: 4 }]}
+            >
+              Learning slot booked successfully
             </Text>
-            <Button onPress={closeBottomSheet} label="Dismiss" />
-          </View>
-        )}
-
-        {/* Section 4: Calendar Section */}
-        {currentSection === 4 && (
-          <View>
-            <CustomCalendar />
+            <Text style={styles.confirmationText}>
+              Your tutor will be notified, upon accepting you will also get
+              notified.
+            </Text>
+            <View
+              style={{
+                width: "100%",
+                paddingTop: 24,
+              }}
+            >
+              <Button onPress={closeBottomSheet} label="Dismiss" />
+            </View>
           </View>
         )}
       </BottomSheetScrollView>
@@ -174,6 +232,36 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
 export default PaymentBottomSheet;
 
 const styles = StyleSheet.create({
+  datePicker: {
+    marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: theme.colors.lightGray,
+
+    // Shadow for iOS
+    shadowColor: "#101828",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+
+    // Elevation for Android
+    elevation: 1,
+  },
+  datePickerLabel: {
+    color: "#344054",
+    fontFamily: "AeonikMedium",
+    marginBottom: 6, // Add spacing from previous elements
+  },
+  selectedDate: {
+    flex: 1, // Make this take available space
+  },
+  calendarIcon: {
+    marginLeft: 8, // Space between date text and icon
+  },
+
   introSection: {
     padding: 16,
     alignItems: "center",
@@ -199,7 +287,6 @@ const styles = StyleSheet.create({
   },
   confirmationText: {
     textAlign: "center",
-    paddingBottom: 24,
   },
   handleContainer: {
     alignItems: "center",

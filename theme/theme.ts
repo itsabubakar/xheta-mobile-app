@@ -7,7 +7,6 @@ type NamedStyles<T> = {
 
 const palette = {
   gray: "#434343",
-  blue: "#007AFF",
   darkGray: "#38434D",
   white: "#FFFFFF",
   black: "#1D1D1D",

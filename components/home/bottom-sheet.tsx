@@ -29,7 +29,10 @@ const HomeBottomSheet = () => {
   >("welcome"); // State for managing steps
   const { control } = useForm({});
 
-  // bottomSheetRef.current?.expand();
+  bottomSheetRef.current?.expand();
+  bottomSheetRef.current?.expand();
+  bottomSheetRef.current?.expand();
+
   const closeBottomSheet = () => {
     bottomSheetRef.current?.close();
   };
@@ -203,9 +206,9 @@ const HomeBottomSheet = () => {
               variant="subtitle"
               style={{ textAlign: "center", paddingBottom: 24 }}
             >
-              Your email verification is successful
+              Your profile update is successful
             </Text>
-            <Button label="Proceed" />
+            <Button onPress={() => setStep("welcome")} label="Proceed" />
           </View>
         )}
       </BottomSheetScrollView>
