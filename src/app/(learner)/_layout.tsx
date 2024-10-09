@@ -48,7 +48,7 @@ export default function TabLayout() {
             case "(learnings)":
               IconComponent = focused ? LearningsFilled : Learnings;
               break;
-            case "more":
+            case "(more)":
               IconComponent = focused ? MoreFilled : More;
               break;
             default:
@@ -65,7 +65,7 @@ export default function TabLayout() {
       <Tabs.Screen name="(courses)" options={{ title: "Courses" }} />
       <Tabs.Screen name="(tutors)" options={{ title: "Tutors" }} />
       <Tabs.Screen name="(learnings)" options={{ title: "Learnings" }} />
-      <Tabs.Screen name="more" options={{ title: "More" }} />
+      <Tabs.Screen name="(more)" options={{ title: "More" }} />
     </Tabs>
   );
 }

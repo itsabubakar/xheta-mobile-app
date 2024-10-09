@@ -10,21 +10,13 @@ import {
   InformationBoardSection,
 } from "~/components";
 import { useAuthStore } from "~/src/core/storage";
-import { Button, HeaderWithUsername } from "~/src/ui";
+import { HeaderWithUsername } from "~/src/ui";
 import { theme } from "~/theme";
 
 type Props = object;
 
 const Home = (props: Props) => {
-  const router = useRouter();
-  const clearAuthData = useAuthStore((state) => state.clearAuthData);
   const authData = useAuthStore((state) => state.authData);
-
-  const handleLogout = async () => {
-    await clearAuthData();
-    // Optionally navigate to login or home screen after logout
-    router.replace("/signin"); // Adjust the route as necessary
-  };
 
   return (
     <View style={styles.container}>
@@ -33,7 +25,6 @@ const Home = (props: Props) => {
         <CourseSection />
         <AssignmentSection />
         <InformationBoardSection />
-        <Button label="Logout" onPress={handleLogout} />
       </ScrollView>
       <HomeBottomSheet />
 

@@ -28,3 +28,15 @@ export { default as CircularArrowIcon } from "./circular-arrow";
 export { FilledStar, HalfFilledStar, EmptyStar } from "./star-rating";
 export { default as CalenderIcon } from "./calender";
 export { default as SmallGreenTick } from "./small-green-tick";
+export { default as PencilIcon } from "./pencil";
+export { default as SlimChevronIcon } from "./slim-chevron";
+export {
+  Bootcamp,
+  Community,
+  Profile,
+  Security,
+  Accomplisment,
+  Preferences,
+  Support,
+  Logout,
+} from "./moreIcons";

@@ -1,49 +1,70 @@
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 
 import { tutor } from "~/assets/images";
-import Information from "~/components/home/information";
+import { UpcomingClass } from "~/components";
+import { ScheduledClassTime } from "~/components/learnings/personalized-details-info";
 import { ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 const PersonalizedDetails = () => {
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.white,
+      }}
+    >
       <ScreenHeader bg title="Course module" />
-
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.textContainer}>
-            <Text variant="sm" style={styles.verifiedText}>
-              Verified
-            </Text>
-            <Text variant="subtitle">Shanon Wills</Text>
+      <View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.container}
+        >
+          <View style={styles.headerContainer}>
+            <View style={styles.textContainer}>
+              <Text variant="sm" style={styles.verifiedText}>
+                Verified
+              </Text>
+              <Text variant="subtitle">Shanon Wills</Text>
+            </View>
+            <Image style={styles.tutorImage} source={tutor} />
           </View>
-          <Image style={styles.tutorImage} source={tutor} />
-        </View>
-        <Text style={styles.descriptionText}>
-          Lorem ipsum dolor sit amet consectetur. Aliquet curabitur eget viverra
-          sed imperdiet. Quam dui volutpat eu hendrerit. Tortor elementum
-          integer nisi varius facilisi gravida elementum. Magna urna dolor
-          imperdiet congue commodo et arcu. Lorem ipsum dolor sit amet
-          consectetur. Aliquet curabitur eget viverra sed imperdiet. Quam dui
-          volutpat eu hendrerit. Tortor elementum integer nisi varius facilisi
-          gravida elementum. Magna urna dolor imperdiet congue commodo et arcu.
-        </Text>
-        <View>
-          <Text variant="md" style={styles.expertiseText}>
-            Area of expertise
+          <Text style={styles.descriptionText}>
+            Lorem ipsum dolor sit amet consectetur. Aliquet curabitur eget
+            viverra sed imperdiet. Quam dui volutpat eu hendrerit. Tortor
+            elementum integer nisi varius facilisi gravida elementum. Magna urna
+            dolor imperdiet congue commodo et arcu. Lorem ipsum dolor sit amet
+            consectetur. Aliquet curabitur eget viverra sed imperdiet. Quam dui
+            volutpat eu hendrerit. Tortor elementum integer nisi varius facilisi
+            gravida elementum. Magna urna dolor imperdiet congue commodo et
+            arcu.
           </Text>
-          <View style={styles.tagContainer}>
-            <Tag>Web Dev</Tag>
-            <Tag>Web Design</Tag>
-            <Tag>Web Design</Tag>
-            <Tag>Web Design</Tag>
-            <Tag>Web Design</Tag>
-            <Tag>Web Work</Tag>
+          <View>
+            <Text variant="md" style={styles.expertiseText}>
+              Area of expertise
+            </Text>
+            <View style={styles.tagContainer}>
+              <Tag>Web Dev</Tag>
+              <Tag>Web Design</Tag>
+              <Tag>Web Design</Tag>
+              <Tag>Web Design</Tag>
+              <Tag>Web Design</Tag>
+              <Tag>Web Work</Tag>
+            </View>
           </View>
-        </View>
-        <Information />
+          <View
+            style={{
+              paddingTop: 24,
+            }}
+          >
+            <Text style={{ marginBottom: 8 }} variant="md">
+              Upcoming classes
+            </Text>
+            <UpcomingClass />
+            <ScheduledClassTime />
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -61,10 +82,8 @@ export default PersonalizedDetails;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    height: "100%",
     padding: 16,
-    backgroundColor: theme.colors.white,
+    paddingBottom: 100,
   },
   headerContainer: {
     flexDirection: "row",
