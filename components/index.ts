@@ -15,3 +15,9 @@ export { default as TutorsInfo } from "./tutors/tutor-info";
 export { default as TutorsBottomSheet } from "./tutors/tutor-bottomsheet";
 
 export { default as PaymentOption } from "./payment/payment-option";
+
+// learnings
+
+export { default as LearningsSection } from "./learnings/learnings-section";
+export { default as LearningsCourseCard } from "./learnings/learning-course-card";
+export { default as LearningsModule } from "./learnings/learning-module";

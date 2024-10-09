@@ -27,3 +27,4 @@ export { default as PdfIcon } from "./pdf";
 export { default as CircularArrowIcon } from "./circular-arrow";
 export { FilledStar, HalfFilledStar, EmptyStar } from "./star-rating";
 export { default as CalenderIcon } from "./calender";
+export { default as SmallGreenTick } from "./small-green-tick";

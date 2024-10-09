@@ -10,12 +10,7 @@ type Props = object;
 const Course = (props: Props) => {
   const router = useRouter();
   return (
-    <Link
-      asChild
-      href="/(courses)/1"
-      // onPress={() => router.navigate("/(courses)/1")}
-      style={styles.container}
-    >
+    <Link asChild href="/(courses)/1" style={styles.container}>
       <Pressable onPress={() => router.navigate("/(courses)/1")}>
         <View>
           <Image
