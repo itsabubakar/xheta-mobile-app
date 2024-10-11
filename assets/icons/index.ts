@@ -40,3 +40,5 @@ export {
   Support,
   Logout,
 } from "./moreIcons";
+export { default as DownloadIcon } from "./download";
+export { default as EditIcon } from "./edit";

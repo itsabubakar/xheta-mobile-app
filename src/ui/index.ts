@@ -1,4 +1,5 @@
 export { Button } from "./button";
+export { default as CustomSwitch } from "./switch";
 export { default as ScreenHeader } from "./screen-header";
 
 // Home screen

@@ -1,10 +1,24 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, ScrollView } from "react-native";
+
+import { ScreenHeader } from "~/src/ui";
+import { Text } from "~/theme";
 
 const Bootcamp = () => {
   return (
-    <View>
-      <Text>Bootcamp</Text>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+      }}
+    >
+      <ScreenHeader bg title="Accomplishment" />
+      <ScrollView
+        contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 24 }}
+      >
+        <Text variant="subtitle">Completed courses</Text>
+        <View style={{ rowGap: 16, marginTop: 8 }} />
+      </ScrollView>
     </View>
   );
 };

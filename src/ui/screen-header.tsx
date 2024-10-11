@@ -2,15 +2,16 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
-import { RoundBack } from "~/assets/icons";
+import { EditIcon, RoundBack } from "~/assets/icons";
 import { Text, theme } from "~/theme";
 
 type Props = {
   title: string;
   bg?: boolean;
+  editIcon?: boolean;
 };
 
-const ScreenHeader = ({ title, bg }: Props) => {
+const ScreenHeader = ({ title, bg, editIcon }: Props) => {
   const router = useRouter(); // Initialize the navigate function
 
   return (
@@ -26,7 +27,13 @@ const ScreenHeader = ({ title, bg }: Props) => {
       <Text variant="lg" style={[styles.title, { color: bg ? "white" : "" }]}>
         {title}
       </Text>
-      <View style={{ width: 40 }} />
+      {editIcon ? (
+        <View>
+          <EditIcon />
+        </View>
+      ) : (
+        <View style={{ width: 40 }} />
+      )}
     </View>
   );
 };
