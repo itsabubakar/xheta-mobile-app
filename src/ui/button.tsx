@@ -22,7 +22,7 @@ interface ButtonProps extends Omit<PressableProps, "disabled"> {
     | "destructive"
     | "ghost"
     | "link";
-  size?: "default" | "lg" | "sm" | "icon";
+  size?: "default" | "lg" | "sm" | "icon" | "md";
   disabled?: boolean;
   width?: DimensionValue;
   textColor?: string;
@@ -93,13 +93,19 @@ export const Button = React.forwardRef<View, ButtonProps>(
       switch (size) {
         case "lg":
           return {
-            paddingVertical: theme.spacing.m_16,
+            paddingVertical: 10,
             paddingHorizontal: theme.spacing.l_32,
             fontSize: theme.textVariants.large.fontSize,
           };
+        case "md":
+          return {
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            fontSize: theme.textVariants.md.fontSize,
+          };
         case "sm":
           return {
-            paddingVertical: theme.spacing.s_8,
+            paddingVertical: 10,
             paddingHorizontal: theme.spacing.m_16,
             fontSize: theme.textVariants.sm.fontSize,
           };
@@ -107,9 +113,9 @@ export const Button = React.forwardRef<View, ButtonProps>(
           return { height: 36, width: 36 };
         default:
           return {
-            paddingVertical: theme.spacing.m_16,
-            paddingHorizontal: theme.spacing.m_16,
-            fontSize: theme.textVariants.body.fontSize,
+            paddingVertical: 10,
+            paddingHorizontal: 16,
+            fontSize: theme.textVariants.md.fontSize,
           };
       }
     };

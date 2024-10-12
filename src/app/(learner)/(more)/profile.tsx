@@ -1,9 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { TrashIcon } from "~/assets/icons";
+import { profile } from "~/assets/images";
 import { ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
+import { ControlledDropdown } from "~/src/ui/form/input";
+import { Text, theme } from "~/theme";
 
 type FormData = {
   firstName: string;
@@ -42,6 +46,26 @@ const Profile = () => {
         contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 24 }}
       >
         <View>
+          <Text
+            style={{
+              paddingBottom: 16,
+            }}
+            variant="subtitle"
+          >
+            Personal details
+          </Text>
+          <View
+            style={{
+              width: 60,
+              height: 60,
+              borderWidth: 2,
+              borderColor: theme.colors.primary,
+              borderRadius: 16,
+              marginBottom: 16,
+            }}
+          >
+            <Image style={{ width: 56, height: 60 }} source={profile} />
+          </View>
           <View style={styles.formView}>
             {/* First name Field */}
             <ControlledInput
@@ -107,74 +131,56 @@ const Profile = () => {
               </Text>
             )}
           </View>
-          <View style={styles.formView}>
-            {/* Gender Field */}
-            <ControlledInput
+          <View>
+            <ControlledDropdown
               name="gender"
               control={control}
-              shadow
+              rules={{ required: "Please select a type" }}
               label="Gender"
-              rules={{
-                required: "Gender is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Please enter a valid email address",
-                },
-              }}
-              placeholder="jo.parker@gmail.com"
-              keyboardType="email-address"
+              options={[
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" },
+                { label: "Prefer not to say", value: "prefer not to say" },
+              ]}
             />
-            {errors.email && (
-              <Text style={{ color: "red", marginBottom: 10 }}>
-                {errors.email.message}
-              </Text>
-            )}
           </View>
-          <View style={styles.formView}>
-            {/* Email Field */}
-            <ControlledInput
-              name="email"
+          <View>
+            <ControlledDropdown
+              name="education"
               control={control}
-              shadow
-              label="Email"
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Please enter a valid email address",
-                },
-              }}
-              placeholder="jo.parker@gmail.com"
-              keyboardType="email-address"
+              rules={{ required: "Please select a type" }}
+              label="Level of education"
+              options={[
+                { label: "Bachelors", value: "bachelors" },
+                { label: "Female", value: "female" },
+                { label: "Prefer not to say", value: "prefer not to say" },
+              ]}
             />
-            {errors.email && (
-              <Text style={{ color: "red", marginBottom: 10 }}>
-                {errors.email.message}
-              </Text>
-            )}
           </View>
-          <View style={styles.formView}>
-            {/* Email Field */}
-            <ControlledInput
-              name="email"
+          <View>
+            <ControlledDropdown
+              name="interest"
               control={control}
-              shadow
-              label="Email"
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Please enter a valid email address",
-                },
-              }}
-              placeholder="jo.parker@gmail.com"
-              keyboardType="email-address"
+              rules={{ required: "Please select a type" }}
+              label="Area of Interest"
+              options={[
+                { label: "UI/UX Design", value: "ui/ux design" },
+                { label: "Female", value: "female" },
+                { label: "Prefer not to say", value: "prefer not to say" },
+              ]}
             />
-            {errors.email && (
-              <Text style={{ color: "red", marginBottom: 10 }}>
-                {errors.email.message}
-              </Text>
-            )}
+          </View>
+
+          <View style={{ marginTop: 24, alignItems: "flex-end" }}>
+            <Pressable
+              style={{
+                backgroundColor: theme.colors.primary,
+                padding: 10,
+                borderRadius: 12,
+              }}
+            >
+              <TrashIcon />
+            </Pressable>
           </View>
         </View>
       </ScrollView>

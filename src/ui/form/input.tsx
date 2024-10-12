@@ -67,11 +67,7 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
 
     return (
       <Box mb="s_8">
-        {label && (
-          <Text variant="subtitle" mb="s_8">
-            {label}
-          </Text>
-        )}
+        {label && <Text mb="s_8">{label}</Text>}
         <View style={{ position: "relative" }}>
           <RNTextInput
             ref={ref}
