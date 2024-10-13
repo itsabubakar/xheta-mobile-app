@@ -43,3 +43,6 @@ export {
 export { default as DownloadIcon } from "./download";
 export { default as EditIcon } from "./edit";
 export { default as TrashIcon } from "./trash";
+export { default as Persons } from "./persons";
+export { default as ImageIcon } from "./image";
+export { default as SendIcon } from "./send";
