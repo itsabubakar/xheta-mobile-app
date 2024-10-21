@@ -22,3 +22,7 @@ export { default as LearningsSection } from "./learnings/learnings-section";
 export { default as LearningsCourseCard } from "./learnings/learning-course-card";
 export { default as LearningsModule } from "./learnings/learning-module";
 export { UpcomingClass } from "./learnings/personalized-details-info";
+
+// Bootcamp
+
+export { default as BootcampSection } from "./bootcamp/bootcamp-section";

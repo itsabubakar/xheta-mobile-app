@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 
 import CourseTopic from "./course-topic";
 
-import { ClockIcon } from "~/assets/icons";
 import { Text, theme } from "~/theme";
 
 type Props = object;

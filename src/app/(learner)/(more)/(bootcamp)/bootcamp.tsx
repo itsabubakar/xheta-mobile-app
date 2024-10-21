@@ -1,6 +1,7 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
 
+import { BootcampSection } from "~/components";
 import { ScreenHeader } from "~/src/ui";
 import { Text } from "~/theme";
 
@@ -12,12 +13,11 @@ const Bootcamp = () => {
         backgroundColor: "white",
       }}
     >
-      <ScreenHeader bg title="Accomplishment" />
+      <ScreenHeader bg title="Bootcamps" />
       <ScrollView
         contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 24 }}
       >
-        <Text variant="subtitle">Completed courses</Text>
-        <View style={{ rowGap: 16, marginTop: 8 }} />
+        <BootcampSection />
       </ScrollView>
     </View>
   );
