@@ -66,6 +66,15 @@ export default function TabLayout() {
       <Tabs.Screen name="(tutors)" options={{ title: "Tutors" }} />
       <Tabs.Screen name="(learnings)" options={{ title: "Learnings" }} />
       <Tabs.Screen name="(more)" options={{ title: "More" }} />
+
+      {/* Hidden Notifications Route */}
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "Notifications",
+          tabBarButton: () => null, // Hides the tab button
+        }}
+      />
     </Tabs>
   );
 }

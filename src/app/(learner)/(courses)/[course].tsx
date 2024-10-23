@@ -59,7 +59,7 @@ const CourseDetails = (props: Props) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <ScreenHeader bg title="Course details" />
+      <ScreenHeader bg title="Course detailssss" />
 
       <ScrollView
         contentContainerStyle={{

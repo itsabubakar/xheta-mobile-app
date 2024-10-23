@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
@@ -39,10 +40,15 @@ const HeaderWithUsername = ({ name }: Props) => {
       </View>
       <Pressable
         style={styles.notificationButton}
-        onPress={() => router.push("/notifications")}
+        onPress={() => {
+          console.log("Navigating to /notifications"); // Log the path
+          router.push("/notifications"); // Ensure this is the correct path
+        }}
       >
         <Notifications />
       </Pressable>
+
+      <StatusBar />
     </View>
   );
 };

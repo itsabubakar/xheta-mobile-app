@@ -26,7 +26,7 @@ const More = (props: Props) => {
   const handleLogout = async () => {
     await clearAuthData();
     // Optionally navigate to login or home screen after logout
-    router.replace("/signin"); // Adjust the route as necessary
+    router.replace("/"); // Adjust the route as necessary
   };
   return (
     <View style={styles.container}>
