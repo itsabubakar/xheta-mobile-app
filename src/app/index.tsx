@@ -158,7 +158,7 @@ const OnBoarding = (props: Props) => {
           <View style={{ marginTop: 24 }}>
             <Button
               disabled={!isButtonEnabled}
-              onPress={() => router.push(`/(instructor)/home`)} // Pass the selected role to the next screen
+              onPress={() => router.push(`/signup?role=${selectedRole}`)} // Pass the selected role to the next screen
               label="Proceed"
             />
           </View>
