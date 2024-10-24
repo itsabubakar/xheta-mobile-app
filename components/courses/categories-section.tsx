@@ -1,27 +1,27 @@
 import React, { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  FlatList,
+} from "react-native";
 
 import Course from "./course";
 
 import { Art, Science, Technology } from "~/assets/icons";
 import { Text, theme } from "~/theme";
 
-type Props = object;
+type Props = {
+  courses: { data: any[] }; // Adjust the type based on your course structure
+};
 
-const CategoriesSection = (props: Props) => {
+const CategoriesSection = ({ courses }: Props) => {
   // State to track the currently active category
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
   // Categories List
   const categories = ["All", "Technology", "Art", "Science"];
-
-  // Define the number of courses to render for each category
-  const courseCounts: Record<string, number> = {
-    All: 19,
-    Technology: 7,
-    Art: 9,
-    Science: 9,
-  };
 
   // Function to render icons based on category name
   const renderCategoryIcon = (category: string) => {
@@ -36,6 +36,12 @@ const CategoriesSection = (props: Props) => {
         return null;
     }
   };
+
+  // Filter courses based on the active category
+  const filteredCourses =
+    activeCategory === "All"
+      ? courses.data
+      : courses?.data?.filter((course) => course.category === activeCategory);
 
   return (
     <View>
@@ -72,24 +78,15 @@ const CategoriesSection = (props: Props) => {
         ))}
       </ScrollView>
 
-      {/* Vertical Scroll Section */}
-      <ScrollView contentContainerStyle={styles.container}>
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            rowGap: 16,
-            columnGap: 16,
-          }}
-        >
-          {/* Render the number of courses based on the selected category */}
-          {Array.from({ length: courseCounts[activeCategory] }).map(
-            (_, index) => (
-              <Course key={index} />
-            ),
-          )}
-        </View>
-      </ScrollView>
+      {/* FlatList to render the courses */}
+      <FlatList
+        data={filteredCourses}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <Course course={item} />}
+        contentContainerStyle={styles.container}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+      />
     </View>
   );
 };
@@ -131,11 +128,5 @@ const styles = StyleSheet.create({
   },
   activeCategoryText: {
     color: "#ffffff",
-  },
-  contentText: {
-    padding: 8,
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
 });

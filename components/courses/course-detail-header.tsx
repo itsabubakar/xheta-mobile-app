@@ -7,7 +7,10 @@ import { Text, theme } from "~/theme";
 
 type Props = object;
 
-const CourseDetailsHeader = (props: Props) => {
+const CourseDetailsHeader = ({ info }: Props) => {
+  console.log("Category Details:", JSON.stringify(info.category, null, 2));
+  console.log("Owner Details:", JSON.stringify(info.owner, null, 2));
+
   return (
     <View>
       <View style={styles.imageContainer}>
@@ -26,18 +29,14 @@ const CourseDetailsHeader = (props: Props) => {
       </View>
       <View style={{ paddingTop: 16 }}>
         <Text style={{ color: theme.colors.black }} variant="subtitle">
-          UI/UX Design Course
+          {info.course_name}
         </Text>
         <Text
           style={{
             paddingTop: 8,
           }}
         >
-          Welcome to our UI/UX Design course! This comprehensive program will
-          equip you with the knowledge and skills to create exceptional user
-          interfaces (UI) and enhance user experiences (UX). Dive into the world
-          of design thinking, wireframing, prototyping, and usability testing.
-          Below is an overview of the curriculum
+          {info.course_description}
         </Text>
         <View
           style={{
@@ -47,7 +46,8 @@ const CourseDetailsHeader = (props: Props) => {
           }}
         >
           <Text>
-            Language of instruction: <Text style={styles.bold}>English</Text>
+            Language of instruction:{" "}
+            <Text style={styles.bold}>{info.language_of_instruction}</Text>
           </Text>
 
           <Text>
@@ -62,7 +62,7 @@ const CourseDetailsHeader = (props: Props) => {
           }}
         >
           <Text>
-            Instructor: <Text style={styles.bold}>Joe Zaza</Text>
+            Instructor: <Text style={styles.bold}>{info.owner.name}</Text>
           </Text>
 
           <Text>

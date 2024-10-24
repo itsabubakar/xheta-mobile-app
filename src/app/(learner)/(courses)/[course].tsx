@@ -3,6 +3,7 @@ import BottomSheet, {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
@@ -25,6 +26,9 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const CourseDetails = (props: Props) => {
+  const courseDetails = useLocalSearchParams(); // Pulling the 'id' from the dynamic route
+
+  console.log(courseDetails.id, "param");
   const [purchased, setPurchased] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const closeBottomSheet = () => {
@@ -59,7 +63,7 @@ const CourseDetails = (props: Props) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <ScreenHeader bg title="Course detailssss" />
+      <ScreenHeader bg title="Course details" />
 
       <ScrollView
         contentContainerStyle={{
@@ -68,7 +72,7 @@ const CourseDetails = (props: Props) => {
           backgroundColor: "white",
         }}
       >
-        <CourseDetailHeader />
+        <CourseDetailHeader info={courseDetails} />
         <CourseInfo />
       </ScrollView>
       <View
@@ -96,7 +100,7 @@ const CourseDetails = (props: Props) => {
           >
             Price
           </Text>
-          <Text variant="title">#5,000</Text>
+          <Text variant="title">{courseDetails.course_price}</Text>
         </View>
         <View style={{ width: "50%" }}>
           <Button onPress={openBottomSheet} label="Enroll" />

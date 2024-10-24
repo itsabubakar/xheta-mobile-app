@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 
 import { CategoriesSection } from "~/components";
 import { fetchCourses } from "~/src/api/auth";
@@ -13,7 +13,7 @@ const Courses = (props: Props) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token;
 
-  const [courses, setCourses] = useState<any[]>([]); // Adjust the type as necessary
+  const [courses, setCourses] = useState<{ data: any[] }>({ data: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +45,14 @@ const Courses = (props: Props) => {
         title="Courses"
         onSearch={(query) => console.log(query)}
       />
-      <CategoriesSection />
+
+      {loading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : (
+        <CategoriesSection courses={courses} /> // Pass courses to CategoriesSection
+      )}
     </View>
   );
 };
@@ -56,5 +63,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.white,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

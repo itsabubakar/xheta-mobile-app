@@ -2,16 +2,30 @@ import { Link, useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
-import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
-type Props = object;
+type Props = {
+  course: {
+    id: number;
+    course_image: string;
+    course_name: string;
+    course_description: string;
+    course_price: string;
+  };
+};
 
-const Course = (props: Props) => {
+const Course = ({ course }: Props) => {
   const router = useRouter();
   return (
-    <Link asChild href="/(courses)/1" style={styles.container}>
-      <Pressable onPress={() => router.navigate("/(courses)/1")}>
+    <Link
+      asChild
+      href={{
+        pathname: `/(courses)/${course?.id}`,
+        params: course,
+      }}
+      style={styles.container}
+    >
+      <Pressable>
         <View>
           <Image
             style={{
@@ -19,7 +33,7 @@ const Course = (props: Props) => {
               height: 106,
               borderRadius: 8,
             }}
-            source={course}
+            source={{ uri: course.course_image }}
           />
         </View>
         <Text
@@ -30,14 +44,16 @@ const Course = (props: Props) => {
           }}
           variant="md"
         >
-          UI/UX Design
+          {course?.course_name}
         </Text>
         <Text
+          numberOfLines={3}
+          ellipsizeMode="tail"
           style={{
             color: theme.colors.lightBlack,
           }}
         >
-          Master the art of creating intuitive user interfaces (UI)...
+          {course?.course_description}
         </Text>
         <View
           style={{
@@ -46,7 +62,7 @@ const Course = (props: Props) => {
             paddingTop: 4,
           }}
         >
-          <Text style={styles.price}>#5000</Text>
+          <Text style={styles.price}>{course?.course_price}</Text>
           <Text style={styles.price}>5.0</Text>
         </View>
       </Pressable>
@@ -65,6 +81,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: theme.colors.borderColor,
     maxWidth: 163.5,
+    marginBottom: 24,
   },
   price: {
     fontFamily: "AeonikBold",
