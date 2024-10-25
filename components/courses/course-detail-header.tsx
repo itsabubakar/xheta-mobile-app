@@ -5,38 +5,41 @@ import { PlayIcon, StarIcon } from "~/assets/icons";
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
-type Props = object;
+type Props = {
+  info: any;
+};
 
 const CourseDetailsHeader = ({ info }: Props) => {
-  console.log("Category Details:", JSON.stringify(info.category, null, 2));
-  console.log("Owner Details:", JSON.stringify(info.owner, null, 2));
+  console.log(info.course_intro_video);
 
   return (
     <View>
-      <View style={styles.imageContainer}>
-        {/* Dark overlay to highlight the PlayIcon */}
-        <View style={styles.overlay} />
+      {info.course_intro_video && (
+        <View style={styles.imageContainer}>
+          {/* Dark overlay to highlight the PlayIcon */}
+          <View style={styles.overlay} />
 
-        {/* Wrapper for PlayIcon to position it in the middle */}
-        <Pressable
-          onPress={() => console.log("play button clicked")}
-          style={styles.playIconWrapper}
-        >
-          <PlayIcon />
-        </Pressable>
+          {/* Wrapper for PlayIcon to position it in the middle */}
+          <Pressable
+            onPress={() => console.log("play button clicked")}
+            style={styles.playIconWrapper}
+          >
+            <PlayIcon />
+          </Pressable>
 
-        <Image style={styles.image} source={course} />
-      </View>
+          <Image style={styles.image} source={course} />
+        </View>
+      )}
       <View style={{ paddingTop: 16 }}>
         <Text style={{ color: theme.colors.black }} variant="subtitle">
-          {info.course_name}
+          {info?.course_name}
         </Text>
         <Text
           style={{
             paddingTop: 8,
           }}
         >
-          {info.course_description}
+          {info?.course_description}
         </Text>
         <View
           style={{
@@ -47,7 +50,7 @@ const CourseDetailsHeader = ({ info }: Props) => {
         >
           <Text>
             Language of instruction:{" "}
-            <Text style={styles.bold}>{info.language_of_instruction}</Text>
+            <Text style={styles.bold}>{info?.language_of_instruction}</Text>
           </Text>
 
           <Text>
@@ -61,8 +64,8 @@ const CourseDetailsHeader = ({ info }: Props) => {
             justifyContent: "space-between",
           }}
         >
-          <Text>
-            Instructor: <Text style={styles.bold}>{info.owner.name}</Text>
+          <Text style={{ flex: 1 }}>
+            Instructor: <Text style={styles.bold}>{info?.category_name}</Text>
           </Text>
 
           <Text>
@@ -123,5 +126,6 @@ const styles = StyleSheet.create({
   bold: {
     fontFamily: "AeonikBold",
     color: theme.colors.black,
+    textTransform: "capitalize",
   },
 });

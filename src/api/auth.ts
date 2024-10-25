@@ -54,19 +54,3 @@ export const resetPassword = async (data: {
     throw error; // Optionally throw the error for further handling
   }
 };
-
-// Fetch courses function
-export const fetchCourses = async (accessToken: string) => {
-  console.log(accessToken, "access token");
-
-  const response = await client.get(
-    "https://xheta-api.eknoxbit.com/api/v1/learner/courses",
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`, // Include the bearer token
-      },
-    },
-  );
-
-  return response.data; // Assuming "courses" is the correct field
-};

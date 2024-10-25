@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 
 import { CategoriesSection } from "~/components";
-import { fetchCourses } from "~/src/api/auth";
+import { fetchCourses, fetchCategories } from "~/src/api";
 import { useAuthStore } from "~/src/core/storage";
 import { HeaderWithSearchBar } from "~/src/ui";
 import { theme } from "~/theme";
@@ -14,29 +14,38 @@ const Courses = (props: Props) => {
   const accessToken = authData?.access_token;
 
   const [courses, setCourses] = useState<{ data: any[] }>({ data: [] });
+  const [categories, setCategories] = useState<any[]>([]); // New state for categories
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getCourses = async () => {
+    const getCoursesAndCategories = async () => {
       if (!accessToken) return; // Do nothing if there's no token
       setLoading(true);
       setError(null);
       try {
-        console.log("Fetching courses..."); // Log before fetching
+        console.log("Fetching courses and categories...");
 
-        const fetchedCourses = await fetchCourses(accessToken);
+        // Fetch courses and categories in parallel
+        const [fetchedCourses, fetchedCategories] = await Promise.all([
+          fetchCourses(accessToken),
+          fetchCategories(accessToken),
+        ]);
+
         setCourses(fetchedCourses); // Set the fetched courses
-        console.log(fetchedCourses, "Fetched courses"); // Log the fetched courses
+        setCategories(fetchedCategories); // Set the fetched categories
+
+        // console.log(fetchedCourses, "Fetched courses");
+        // console.log(fetchedCategories, "Fetched categories");
       } catch (err) {
-        console.error("Error fetching courses:", err); // Log the error
-        setError("Error fetching courses"); // Handle the error
+        console.error("Error fetching data:", err); // Log the error
+        setError("Error fetching data"); // Handle the error
       } finally {
         setLoading(false); // Stop loading
       }
     };
 
-    getCourses();
+    getCoursesAndCategories();
   }, [accessToken]); // Re-run effect if accessToken changes
 
   return (
@@ -50,9 +59,12 @@ const Courses = (props: Props) => {
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
+      ) : error ? (
+        <Text>{error}</Text>
       ) : (
-        <CategoriesSection courses={courses} /> // Pass courses to CategoriesSection
+        <CategoriesSection categories={categories} courses={courses} /> // Pass courses to CategoriesSection
       )}
+      {/* You can pass categories to another component or use them in this screen */}
     </View>
   );
 };

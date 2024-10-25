@@ -5,36 +5,36 @@ import {
   StyleSheet,
   View,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 
 import Course from "./course";
 
-import { Art, Science, Technology } from "~/assets/icons";
 import { Text, theme } from "~/theme";
 
 type Props = {
-  courses: { data: any[] }; // Adjust the type based on your course structure
+  courses: { data: any[] };
+  categories: any;
 };
 
-const CategoriesSection = ({ courses }: Props) => {
-  // State to track the currently active category
+const CategoriesSection = ({ courses, categories }: Props) => {
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [loading, setLoading] = useState<boolean>(false); // State for loading
+  const [noCoursesMessage, setNoCoursesMessage] = useState<string>(""); // State for no courses message
 
-  // Categories List
-  const categories = ["All", "Technology", "Art", "Science"];
+  // Function to simulate a fetch request for a category
+  const fetchCategoryData = async (categorySlug: string) => {
+    console.log(`Fetching data for category: ${categorySlug}`);
+    setLoading(true); // Set loading state to true
+    setNoCoursesMessage(""); // Reset no courses message
 
-  // Function to render icons based on category name
-  const renderCategoryIcon = (category: string) => {
-    switch (category) {
-      case "Technology":
-        return <Technology />;
-      case "Art":
-        return <Art />;
-      case "Science":
-        return <Science />;
-      default:
-        return null;
-    }
+    // Simulate a fetch request
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(`Data fetched for category: ${categorySlug}`);
+        resolve(`Fetched data for ${categorySlug}`);
+      }, 1000);
+    });
   };
 
   // Filter courses based on the active category
@@ -42,6 +42,17 @@ const CategoriesSection = ({ courses }: Props) => {
     activeCategory === "All"
       ? courses.data
       : courses?.data?.filter((course) => course.category === activeCategory);
+
+  // Effect to check for no courses message
+  React.useEffect(() => {
+    if (!loading) {
+      if (filteredCourses.length === 0 && activeCategory !== "All") {
+        setNoCoursesMessage(
+          `No courses available in the "${activeCategory}" category.`,
+        );
+      }
+    }
+  }, [loading, filteredCourses, activeCategory]);
 
   return (
     <View>
@@ -55,28 +66,68 @@ const CategoriesSection = ({ courses }: Props) => {
         contentContainerStyle={styles.horizontalScroll}
         showsHorizontalScrollIndicator={false}
       >
-        {categories.map((category) => (
+        <Pressable
+          style={[
+            styles.categoryItem,
+            activeCategory === "All" && styles.activeCategoryItem,
+          ]}
+          onPress={() => {
+            setActiveCategory("All");
+            setNoCoursesMessage(""); // Reset no courses message
+          }}
+        >
+          <Text
+            variant="md"
+            style={[
+              styles.categoryText,
+              activeCategory === "All" && styles.activeCategoryText,
+            ]}
+          >
+            All
+          </Text>
+        </Pressable>
+
+        {categories.data.map((category: any) => (
           <Pressable
-            key={category}
+            key={category.id}
             style={[
               styles.categoryItem,
-              activeCategory === category && styles.activeCategoryItem,
+              activeCategory === category.category_name &&
+                styles.activeCategoryItem,
             ]}
-            onPress={() => setActiveCategory(category)}
+            onPress={async () => {
+              setActiveCategory(category.category_name); // Set the active category
+              await fetchCategoryData(category.category_slug); // Fetch data for the selected category
+              setLoading(false); // Reset loading state after fetch
+            }}
           >
-            {renderCategoryIcon(category)}
             <Text
               variant="md"
               style={[
                 styles.categoryText,
-                activeCategory === category && styles.activeCategoryText,
+                activeCategory === category.category_name &&
+                  styles.activeCategoryText,
               ]}
             >
-              {category}
+              {category.category_name}
             </Text>
           </Pressable>
         ))}
       </ScrollView>
+
+      {/* Display loading indicator */}
+      {loading && (
+        <View
+          style={{
+            // flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            height: 400,
+          }}
+        >
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      )}
 
       {/* FlatList to render the courses */}
       <FlatList
@@ -87,6 +138,13 @@ const CategoriesSection = ({ courses }: Props) => {
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
       />
+
+      {/* Display no courses message */}
+      {noCoursesMessage && (
+        <Text variant="subtitle" style={styles.noCoursesText}>
+          {noCoursesMessage}
+        </Text>
+      )}
     </View>
   );
 };
@@ -109,11 +167,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   categoryItem: {
-    flexDirection: "row",
-    columnGap: 10,
-    marginRight: 8,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingBottom: 14,
+    paddingTop: 8,
+    marginRight: 8,
     borderRadius: 200,
     borderWidth: 1,
     borderColor: theme.colors.borderColor,
@@ -128,5 +185,10 @@ const styles = StyleSheet.create({
   },
   activeCategoryText: {
     color: "#ffffff",
+  },
+  noCoursesText: {
+    textAlign: "center",
+    color: theme.colors.black,
+    paddingHorizontal: 16,
   },
 });
