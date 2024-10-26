@@ -17,9 +17,29 @@ export const fetchCourses = async (accessToken: string) => {
 export const fetchCategories = async (accessToken: string) => {
   const response = await client.get("v1/course-categories", {
     headers: {
-      Authorization: `Bearer 486|mAccNrwdDzUhTcTZWLmRMreCdus89CX7nMkW6OQ74637514d`, // Include the bearer token
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
     },
   });
 
-  return response.data; // Adjust based on your API's response structure
+  return response.data;
+};
+
+// Fetch courses based on user input
+export const searchForCourse = async (
+  courseName: string,
+  accessToken: string,
+) => {
+  try {
+    const response = await client.get(`v1/learner/search-for-course`, {
+      params: { course_name: courseName }, // Attach query parameters
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Use dynamic token
+      },
+    });
+
+    return response.data; // Adjust based on your API's response structure
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    throw error; // Ensure errors are handled properly
+  }
 };

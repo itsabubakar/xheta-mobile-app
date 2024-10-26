@@ -1,2 +1,3 @@
 export { signUp, signIn } from "./auth";
-export { fetchCourses, fetchCategories } from "./courses";
+export { fetchCourses, fetchCategories, searchForCourse } from "./courses";
+export { fetchPreference } from "./profile";

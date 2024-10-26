@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingBottom: 8,
     paddingTop: 8,
     marginRight: 8,
     borderRadius: 200,
