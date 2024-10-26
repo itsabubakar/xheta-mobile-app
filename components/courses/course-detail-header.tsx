@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
+import Video, { VideoRef } from "react-native-video";
 
 import { PlayIcon, StarIcon } from "~/assets/icons";
 import { course } from "~/assets/images";
@@ -11,23 +12,30 @@ type Props = {
 
 const CourseDetailsHeader = ({ info }: Props) => {
   console.log(info.course_intro_video);
+  const videoRef = useRef<VideoRef>(null);
 
+  const onBuffer = () => {
+    console.log("buffering");
+  };
+
+  const onError = () => {
+    console.log("Error buffering");
+  };
   return (
     <View>
       {info.course_intro_video && (
         <View style={styles.imageContainer}>
-          {/* Dark overlay to highlight the PlayIcon */}
-          <View style={styles.overlay} />
-
-          {/* Wrapper for PlayIcon to position it in the middle */}
-          <Pressable
-            onPress={() => console.log("play button clicked")}
-            style={styles.playIconWrapper}
-          >
-            <PlayIcon />
-          </Pressable>
-
-          <Image style={styles.image} source={course} />
+          <Video
+            // Can be a URL or a local file.
+            source={{ uri: info.course_intro_video }}
+            // Store reference
+            ref={videoRef}
+            // Callback when remote video is buffering
+            onBuffer={onBuffer}
+            // Callback when video cannot be loaded
+            onError={onError}
+            style={styles.backgroundVideo}
+          />
         </View>
       )}
       <View style={{ paddingTop: 16 }}>
@@ -92,6 +100,13 @@ const CourseDetailsHeader = ({ info }: Props) => {
 export default CourseDetailsHeader;
 
 const styles = StyleSheet.create({
+  backgroundVideo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
   imageContainer: {
     width: "100%", // Match the container width
     height: 200, // Set container height

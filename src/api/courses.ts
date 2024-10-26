@@ -17,7 +17,7 @@ export const fetchCourses = async (accessToken: string) => {
 export const fetchCategories = async (accessToken: string) => {
   const response = await client.get("v1/course-categories", {
     headers: {
-      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      Authorization: `Bearer 486|mAccNrwdDzUhTcTZWLmRMreCdus89CX7nMkW6OQ74637514d`, // Include the bearer token
     },
   });
 

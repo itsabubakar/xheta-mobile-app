@@ -38,6 +38,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.thetrueseeker.xhetaapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7ee470b2-7b04-446c-8795-50b3066e74e6"
+      }
     }
   }
 }

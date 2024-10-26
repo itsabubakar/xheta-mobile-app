@@ -60,7 +60,9 @@ const Courses = (props: Props) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : error ? (
-        <Text>{error}</Text>
+        <View>
+          <Text>{error}</Text>
+        </View>
       ) : (
         <CategoriesSection categories={categories} courses={courses} /> // Pass courses to CategoriesSection
       )}
