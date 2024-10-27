@@ -5,3 +5,4 @@ export const course = require("./course.png");
 export const tutor = require("./tutor.png");
 export const intro = require("./intro.png");
 export const certificate = require("./certificate.png");
+export const noAccomplishments = require("./no-accomplishments.png");

@@ -53,13 +53,6 @@ const Preferences = () => {
     );
   }
 
-  console.log(
-    preferences.desktop_notifications,
-    preferences.email_notifications,
-    preferences.sms_notifications,
-    preferences.in_app_notifications,
-  );
-
   return (
     <View style={styles.container}>
       <ScreenHeader bg title="Preferences" />
