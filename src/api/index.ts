@@ -5,4 +5,5 @@ export {
   fetchAccomplishments,
   createComplaint,
   updatePassword,
+  updateProfile,
 } from "./profile";

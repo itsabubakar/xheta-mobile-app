@@ -1,9 +1,9 @@
 - [x] Look up displaying video in react native
 - [x] Get course search bar working
 - [x] Get course search bar working
-- [] Add small api in more screen
-
-- [] Implement api without video integration
-- [] Figure out why your emails can't access api
+- [] Add profile screen api
+- [] Add notifications screen api
+- [] Add bootcamp screen api
+- [] Add tutors screen api
 - [] Use react native library to build video player
-- [] Add backend api for tutors
+- [] Figure out why your emails can't access api

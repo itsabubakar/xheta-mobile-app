@@ -44,7 +44,10 @@ interface ControlledInputProps<T extends FieldValues> extends NInputProps {
 }
 
 export const Input = React.forwardRef<RNTextInput, NInputProps>(
-  ({ label, error, style, shadow, type = "text", ...props }, ref) => {
+  (
+    { label, error, style, shadow, type = "text", disabled = false, ...props },
+    ref,
+  ) => {
     const [isFocused, setIsFocused] = React.useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
@@ -74,12 +77,13 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
             onFocus={onFocus}
             onBlur={onBlur}
             placeholderTextColor="#808080"
+            editable={!disabled} // Disable editing if disabled is true
             style={[
               {
                 borderWidth: 1,
                 borderRadius: 8,
                 padding: 12,
-                backgroundColor: theme.colors.lightGray,
+                backgroundColor: theme.colors.lightGray, // Change background for disabled state
                 borderColor: error
                   ? "#FF6B6B"
                   : isFocused
@@ -94,7 +98,7 @@ export const Input = React.forwardRef<RNTextInput, NInputProps>(
             {...props}
           />
 
-          {type === "password" && (
+          {type === "password" && !disabled && (
             <Pressable
               onPress={togglePasswordVisibility}
               style={{
@@ -127,6 +131,7 @@ export function ControlledInput<T extends FieldValues>({
   name,
   control,
   rules,
+  disabled, // Add the disabled prop here
   ...inputProps
 }: ControlledInputProps<T>) {
   const { field, fieldState } = useController({
@@ -140,6 +145,7 @@ export function ControlledInput<T extends FieldValues>({
       ref={field.ref}
       onChangeText={field.onChange}
       value={(field.value as string) || ""}
+      disabled={disabled} // Pass the disabled prop to Input
       // error={fieldState.error?.message}
       {...inputProps}
     />
@@ -176,11 +182,14 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleDropdown = () => setIsOpen((prev) => !prev);
+  const toggleDropdown = () => {
+    if (!disabled) {
+      setIsOpen((prev) => !prev);
+    }
+  };
 
   const handleMultiSelect = (value: string | number) => {
-    if (onMultiSelect) {
-      // Toggle the value in the selected values array
+    if (onMultiSelect && !disabled) {
       const updatedValues = selectedValues.includes(value)
         ? selectedValues.filter((v) => v !== value)
         : [...selectedValues, value];
@@ -207,6 +216,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               : isOpen
                 ? theme.colors.primary
                 : "#D2D2D240",
+            opacity: disabled ? 0.8 : 1, // Reduce opacity if disabled
           },
         ]}
       >
@@ -218,7 +228,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 ? theme.colors.black
                 : selectedValue
                   ? theme.colors.black
-                  : "#686868", // Set gray color when no value is selected
+                  : "#686868",
           }}
         >
           {multiSelect && selectedValues.length > 0
@@ -235,7 +245,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           <Chevron />
         </View>
       </Pressable>
-      {isOpen && (
+      {isOpen && !disabled && (
         <Box mt="s_8" style={styles.dropdownContent}>
           {options.map((option) => (
             <Pressable
@@ -262,7 +272,6 @@ const Dropdown: React.FC<DropdownProps> = ({
               ]}
             >
               <Text>{option.label}</Text>
-
               {multiSelect && (
                 <View
                   style={[
@@ -359,23 +368,25 @@ export function ControlledDropdown<T extends FieldValues>({
   control,
   rules,
   multiSelect = false,
+  disabled = false, // Add disabled prop here
   ...dropdownProps
 }: ControlledDropdownProps<T>) {
   const { field, fieldState } = useController({
     control,
     name,
-    rules: rules as any, // Cast rules to any
+    rules: rules as any,
   });
 
   return (
     <Dropdown
       selectedValue={multiSelect ? undefined : (field.value as string | number)}
       selectedValues={multiSelect ? (field.value as (string | number)[]) : []}
-      onSelect={(value) => field.onChange(value)} // Handle single select
-      onMultiSelect={(values) => field.onChange(values)} // Handle multi-select
+      onSelect={(value) => field.onChange(value)}
+      onMultiSelect={(values) => field.onChange(values)}
       error={fieldState.error?.message}
       multiSelect={multiSelect}
-      {...dropdownProps} // Remove onSelect from being spread here
+      disabled={disabled} // Pass the disabled prop
+      {...dropdownProps}
     />
   );
 }

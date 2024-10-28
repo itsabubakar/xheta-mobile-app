@@ -70,6 +70,9 @@ const SignIn = () => {
         id: userData.id,
         name: userData.name,
         role: userData.role,
+        gender: userData.gender,
+        profile_image: userData.profile_image,
+        level_of_education: userData.level_of_education,
       });
 
       console.log(res);

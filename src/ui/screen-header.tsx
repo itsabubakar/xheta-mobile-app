@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
@@ -9,9 +9,10 @@ type Props = {
   title: string;
   bg?: boolean;
   editIcon?: boolean;
+  editButtonFunction?: () => void;
 };
 
-const ScreenHeader = ({ title, bg, editIcon }: Props) => {
+const ScreenHeader = ({ title, bg, editIcon, editButtonFunction }: Props) => {
   const router = useRouter(); // Initialize the navigate function
 
   return (
@@ -25,12 +26,12 @@ const ScreenHeader = ({ title, bg, editIcon }: Props) => {
         <RoundBack />
       </Pressable>
       <Text variant="lg" style={[styles.title, { color: bg ? "white" : "" }]}>
-        {title}
+        {!editIcon ? "Edit" : ""} {title}
       </Text>
       {editIcon ? (
-        <View>
+        <Pressable onPress={editButtonFunction}>
           <EditIcon />
-        </View>
+        </Pressable>
       ) : (
         <View style={{ width: 40 }} />
       )}

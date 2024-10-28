@@ -1,24 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { TrashIcon } from "~/assets/icons";
 import { profile } from "~/assets/images";
-import { ScreenHeader } from "~/src/ui";
+import { useAuthStore, AuthData } from "~/src/core/storage";
+import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
 import { ControlledDropdown } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
-
 type FormData = {
   firstName: string;
   lastName: string;
   email: string;
   gender: string;
   education: string;
-  interest: string;
+  interest: string[];
 };
 
 const Profile = () => {
+  const authState = useAuthStore((state) => state.authData);
+  const [disabled, setDisabled] = useState(true);
+  const { name, email, id, gender, profile_image, level_of_education } =
+    authState as AuthData;
+
+  const getNames = (fullName: string) => {
+    const [firstName, ...lastNameParts] = fullName.trim().split(" ");
+    const lastName = lastNameParts.join(" ");
+    return { firstName, lastName };
+  };
+
+  const { firstName, lastName } = getNames(name);
+
   const {
     control,
     handleSubmit,
@@ -26,14 +39,22 @@ const Profile = () => {
     watch, // allows us to "watch" the value of a field
   } = useForm<FormData>({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      gender: "",
-      education: "",
-      interest: "",
+      firstName: firstName || "",
+      lastName: lastName || "",
+      email: email || "",
+      gender: gender || "",
+      education: level_of_education || "",
+      interest: ["ui/ux design", "female"],
     },
   });
+
+  const onSubmit = () => {
+    setDisabled(!disabled);
+  };
+
+  const handleEdit = () => {
+    setDisabled(!disabled);
+  };
   return (
     <View
       style={{
@@ -41,7 +62,12 @@ const Profile = () => {
         backgroundColor: "white",
       }}
     >
-      <ScreenHeader editIcon bg title="Profile" />
+      <ScreenHeader
+        editButtonFunction={handleEdit}
+        editIcon={disabled}
+        bg
+        title="Profile"
+      />
       <ScrollView
         contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 24 }}
       >
@@ -52,7 +78,7 @@ const Profile = () => {
             }}
             variant="subtitle"
           >
-            Personal details
+            {!disabled ? "Edit" : ""} Personal details
           </Text>
           <View
             style={{
@@ -62,13 +88,27 @@ const Profile = () => {
               borderColor: theme.colors.primary,
               borderRadius: 16,
               marginBottom: 16,
+              overflow: "hidden", // Clips the image within the rounded border
             }}
           >
-            <Image style={{ width: 56, height: 60 }} source={profile} />
+            <Image
+              source={{ uri: profile_image }}
+              style={{
+                position: "absolute", // Fills the parent view
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                width: "100%",
+                height: "100%",
+                resizeMode: "cover", // Ensures proportional scaling without distortion
+              }}
+            />
           </View>
           <View style={styles.formView}>
             {/* First name Field */}
             <ControlledInput
+              disabled={disabled}
               name="firstName"
               control={control}
               shadow
@@ -90,6 +130,7 @@ const Profile = () => {
           <View style={styles.formView}>
             {/* Last name Field */}
             <ControlledInput
+              disabled={disabled}
               name="lastName"
               control={control}
               shadow
@@ -111,6 +152,7 @@ const Profile = () => {
           <View style={styles.formView}>
             {/* Email Field */}
             <ControlledInput
+              disabled={disabled}
               name="email"
               control={control}
               shadow
@@ -133,6 +175,7 @@ const Profile = () => {
           </View>
           <View>
             <ControlledDropdown
+              disabled={disabled}
               name="gender"
               control={control}
               rules={{ required: "Please select a type" }}
@@ -146,21 +189,24 @@ const Profile = () => {
           </View>
           <View>
             <ControlledDropdown
+              disabled={disabled}
               name="education"
               control={control}
               rules={{ required: "Please select a type" }}
               label="Level of education"
               options={[
                 { label: "Bachelors", value: "bachelors" },
-                { label: "Female", value: "female" },
+                { label: "Beginner", value: "Beginner" },
                 { label: "Prefer not to say", value: "prefer not to say" },
               ]}
             />
           </View>
           <View>
             <ControlledDropdown
+              disabled={disabled}
               name="interest"
               control={control}
+              multiSelect
               rules={{ required: "Please select a type" }}
               label="Area of Interest"
               options={[
@@ -171,17 +217,11 @@ const Profile = () => {
             />
           </View>
 
-          <View style={{ marginTop: 24, alignItems: "flex-end" }}>
-            <Pressable
-              style={{
-                backgroundColor: theme.colors.primary,
-                padding: 10,
-                borderRadius: 12,
-              }}
-            >
-              <TrashIcon />
-            </Pressable>
-          </View>
+          {!disabled && (
+            <View style={{ marginTop: 24 }}>
+              <Button label="Save Changes" onPress={handleSubmit(onSubmit)} />
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>

@@ -2,7 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
 
 // Define the types for your data
-type AuthData = {
+export type AuthData = {
   access_token: string;
   account_activated: boolean;
   created_at: string;
@@ -10,6 +10,9 @@ type AuthData = {
   id: number;
   name: string;
   role: string;
+  gender: string;
+  profile_image: string;
+  level_of_education: string;
 };
 
 type AuthState = {
