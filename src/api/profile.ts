@@ -1,3 +1,5 @@
+import axios from "axios";
+
 import { client } from "./client";
 
 // Fetch categories function
@@ -98,6 +100,7 @@ export const updatePassword = async (
 
 // update password
 export const updateProfile = async (accessToken: string, data: any) => {
+  console.log(data, "datasent to backend");
   try {
     const response = await client.put(
       "/v1/learner/profile/update",
@@ -111,7 +114,41 @@ export const updateProfile = async (accessToken: string, data: any) => {
 
     return response.data; // Adjust according to your response structure
   } catch (error) {
-    console.error("Error updating password:", error);
+    console.error("Error updating profile:", error);
     throw error; // Optionally throw the error for further handling
+  }
+};
+
+// Update profile image
+
+export const updateProfilePicture = async (accessToken: string, data: any) => {
+  try {
+    const response = await axios.post(
+      "https://xheta-api.eknoxbit.com/api/v1/learner/profile/image/update",
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data; // Adjust according to your response structure
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    throw error; // Optionally throw the error for further handling
+  }
+};
+
+export const fetchProfilePicture = async (accessToken: string) => {
+  try {
+    const response = await client.get("/v1/learner/fetch/profile-image", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return response.data; // Adjust according to your response structure
+  } catch (error) {
+    console.error("Error fetching profile picture:", error);
   }
 };

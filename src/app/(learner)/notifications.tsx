@@ -1,7 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { getNotifications } from "~/src/api";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -9,6 +11,25 @@ type Props = object;
 
 const Notifications = (props: Props) => {
   const [activeTab, setActiveTab] = useState<"all" | "unread" | "read">("all");
+  const [notifications, setNotifications] = useState([]);
+
+  const accessToken = useAuthStore((state) => state.authData?.access_token);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    const fetchNotifications = async () => {
+      try {
+        const notifications = await getNotifications(accessToken);
+        console.log(notifications.data);
+        setNotifications(notifications.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+      }
+    };
+    fetchNotifications();
+  }, [accessToken]);
+
   return (
     <View style={styles.container}>
       <ScreenHeader title="Notifications" />
@@ -17,13 +38,13 @@ const Notifications = (props: Props) => {
           label="All"
           isActive={activeTab === "all"}
           onPress={() => setActiveTab("all")}
-          badgeCount={20}
+          badgeCount={0}
         />
         <TabButton
           label="Unread"
           isActive={activeTab === "unread"}
           onPress={() => setActiveTab("unread")}
-          badgeCount={2}
+          badgeCount={0}
         />
         <TabButton
           label="Read"
@@ -32,42 +53,51 @@ const Notifications = (props: Props) => {
         />
       </View>
 
-      {/* Conditional Rendering based on Tab */}
-      <ScrollView contentContainerStyle={styles.content}>
-        {activeTab === "all" && (
-          <View>
-            <Notification />
-            <Notification />
-            <Notification />
-          </View>
-        )}
-        {activeTab === "unread" && (
-          <View>
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-          </View>
-        )}
-        {activeTab === "read" && (
-          <View>
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-            <Notification />
-          </View>
-        )}
-      </ScrollView>
+      {notifications?.length !== 0 ? (
+        <ScrollView contentContainerStyle={styles.content}>
+          {activeTab === "all" && (
+            <View>
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+            </View>
+          )}
+          {activeTab === "unread" && (
+            <View>
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+            </View>
+          )}
+          {activeTab === "read" && (
+            <View>
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+              <Notification />
+            </View>
+          )}
+        </ScrollView>
+      ) : (
+        <View style={styles.noNotificationContainer}>
+          <Text>Notifications will appear here</Text>
+        </View>
+      )}
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>
   );
@@ -211,6 +241,11 @@ const styles = StyleSheet.create({
   },
   notificationText: {
     color: "#1D1D1D",
+  },
+  noNotificationContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

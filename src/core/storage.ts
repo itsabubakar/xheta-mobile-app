@@ -10,9 +10,10 @@ export type AuthData = {
   id: number;
   name: string;
   role: string;
-  gender: string;
-  profile_image: string;
-  level_of_education: string;
+  gender?: string;
+  profile_image?: string;
+  level_of_education?: string;
+  area_of_interest?: any;
 };
 
 type AuthState = {

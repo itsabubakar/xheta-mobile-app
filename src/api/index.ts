@@ -6,4 +6,8 @@ export {
   createComplaint,
   updatePassword,
   updateProfile,
+  updateProfilePicture,
+  fetchProfilePicture,
 } from "./profile";
+
+export { getNotifications } from "./notifications";
