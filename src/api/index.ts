@@ -11,3 +11,6 @@ export {
 } from "./profile";
 
 export { getNotifications } from "./notifications";
+export { fetchBootcamps, fetchOneBootcamp } from "./bootcamp";
+
+export { fetchTutors, searchForTutors } from "./tutors";

@@ -245,6 +245,7 @@ const Profile = () => {
         editIcon={disabled}
         bg
         title="Profile"
+        showEditText
       />
       <ScrollView
         contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 24 }}

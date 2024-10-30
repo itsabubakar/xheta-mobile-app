@@ -7,11 +7,14 @@ import { Text, theme } from "~/theme";
 
 type Props = object;
 
-const Tutor = (props: Props) => {
+const Tutor = ({ tutor }: any) => {
   const router = useRouter();
+  console.log(tutor.id);
+
+  const { id } = tutor;
   return (
     <Pressable
-      onPress={() => router.navigate("/(tutors)/1")}
+      onPress={() => router.navigate(`/(tutors)/1`)}
       style={styles.container}
     >
       <View>

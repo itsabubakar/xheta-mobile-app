@@ -2,17 +2,20 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
-import { CalenderIcon } from "~/assets/icons";
+import { CalenderGreen } from "~/assets/icons";
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
-type Props = object;
+type Props = {
+  id: number;
+  title: string;
+};
 
-const Bootcamp = (props: Props) => {
+const Bootcamp = ({ bootcamp }: any) => {
   const router = useRouter();
   return (
     <Pressable
-      onPress={() => router.navigate("/(bootcamp)/1")}
+      onPress={() => router.navigate(`/(bootcamp)/${bootcamp?.id}`)}
       style={styles.container}
     >
       <View>
@@ -22,7 +25,7 @@ const Bootcamp = (props: Props) => {
             height: 106,
             borderRadius: 8,
           }}
-          source={course}
+          source={bootcamp.cover_image ? { uri: bootcamp.cover_image } : course}
         />
         <View
           style={{
@@ -37,14 +40,14 @@ const Bootcamp = (props: Props) => {
             columnGap: 8,
           }}
         >
-          <CalenderIcon />
+          <CalenderGreen />
           <Text
             style={{
               color: theme.colors.gray,
               fontSize: 12,
             }}
           >
-            26 - 27 April
+            {bootcamp?.start_and_end_date}
           </Text>
         </View>
       </View>
@@ -55,22 +58,26 @@ const Bootcamp = (props: Props) => {
           color: "#1D1D1D",
         }}
         variant="md"
+        numberOfLines={2}
+        ellipsizeMode="tail"
       >
-        UI/UX Design
+        {bootcamp?.title}
       </Text>
       <Text
         style={{
           color: theme.colors.lightBlack,
         }}
+        numberOfLines={3}
+        ellipsizeMode="tail"
       >
-        Master the art of creating intuitive user interfaces (UI)...
+        {bootcamp?.description}
       </Text>
       <View
         style={{
           paddingTop: 4,
         }}
       >
-        <Text style={styles.price}>#5000</Text>
+        <Text style={styles.price}>#{bootcamp?.price}</Text>
       </View>
     </Pressable>
   );

@@ -10,9 +10,16 @@ type Props = {
   bg?: boolean;
   editIcon?: boolean;
   editButtonFunction?: () => void;
+  showEditText?: boolean;
 };
 
-const ScreenHeader = ({ title, bg, editIcon, editButtonFunction }: Props) => {
+const ScreenHeader = ({
+  title,
+  bg,
+  editIcon,
+  editButtonFunction,
+  showEditText,
+}: Props) => {
   const router = useRouter(); // Initialize the navigate function
 
   return (
@@ -26,7 +33,7 @@ const ScreenHeader = ({ title, bg, editIcon, editButtonFunction }: Props) => {
         <RoundBack />
       </Pressable>
       <Text variant="lg" style={[styles.title, { color: bg ? "white" : "" }]}>
-        {!editIcon ? "Edit" : ""} {title}
+        {showEditText && !editIcon ? "Edit" : ""} {title}
       </Text>
       {editIcon ? (
         <Pressable onPress={editButtonFunction}>

@@ -46,3 +46,4 @@ export { default as TrashIcon } from "./trash";
 export { default as Persons } from "./persons";
 export { default as ImageIcon } from "./image";
 export { default as SendIcon } from "./send";
+export { default as CalenderGreen } from "./calender-green";
