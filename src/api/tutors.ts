@@ -35,7 +35,7 @@ export const searchForTutors = async (
 
 export const fetchOneTutor = async (accessToken: string, id: string) => {
   console.log(id);
-  const response = await client.get(`v1/learner/bootcamps/${id}`, {
+  const response = await client.get(`v1/learner/tutor/${id}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`, // Include the bearer token
     },

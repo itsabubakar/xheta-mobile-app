@@ -9,9 +9,10 @@ type Props = {
   title: string;
   link: string;
   subheading?: string;
+  showSeeMore?: boolean;
 };
 
-const SectionHeader = ({ title, link, subheading }: Props) => {
+const SectionHeader = ({ title, link, subheading, showSeeMore }: Props) => {
   return (
     <View style={styles.container}>
       <View>
@@ -24,7 +25,7 @@ const SectionHeader = ({ title, link, subheading }: Props) => {
         style={{ borderWidth: 0 }}
         variant="link"
         size="sm"
-        label="See more"
+        label={showSeeMore ? "See more" : ""}
         fontFamily="AeonikNormal"
       />
     </View>

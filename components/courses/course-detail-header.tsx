@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import Video, { VideoRef } from "react-native-video";
 
+import { CustomVideoPlayer } from "../video";
+
 import { PlayIcon, StarIcon } from "~/assets/icons";
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
@@ -24,19 +26,7 @@ const CourseDetailsHeader = ({ info }: Props) => {
   return (
     <View>
       {info.course_intro_video && (
-        <View style={styles.imageContainer}>
-          <Video
-            // Can be a URL or a local file.
-            source={{ uri: info.course_intro_video }}
-            // Store reference
-            ref={videoRef}
-            // Callback when remote video is buffering
-            onBuffer={onBuffer}
-            // Callback when video cannot be loaded
-            onError={onError}
-            style={styles.backgroundVideo}
-          />
-        </View>
+        <CustomVideoPlayer source={info.course_intro_video} />
       )}
       <View style={{ paddingTop: 16 }}>
         <Text style={{ color: theme.colors.black }} variant="subtitle">

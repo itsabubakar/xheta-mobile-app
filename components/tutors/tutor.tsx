@@ -12,9 +12,10 @@ const Tutor = ({ tutor }: any) => {
   console.log(tutor.id);
 
   const { id } = tutor;
+
   return (
     <Pressable
-      onPress={() => router.navigate(`/(tutors)/1`)}
+      onPress={() => router.navigate(`/(tutors)/${id}`)}
       style={styles.container}
     >
       <View>

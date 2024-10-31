@@ -6,8 +6,8 @@ import { Text, theme } from "~/theme";
 
 type Props = object;
 
-const Course = (props: Props) => {
-  const percentage = 60;
+const Course = ({ course }: any) => {
+  const percentage = course.course_progress;
 
   // Function to get color that transitions from green to red
   // Function to transition from red to orange to green based on percentage
@@ -33,9 +33,12 @@ const Course = (props: Props) => {
             style={{ color: theme.colors.primary, paddingBottom: 4 }}
             variant="subtitle"
           >
-            Introduction to Python
+            {course.course_name}
           </Text>
-          <Text>Lorem ipsum dolor sit amet consectetur. Eget ac massa ...</Text>
+          <Text numberOfLines={3} ellipsizeMode="tail">
+            {" "}
+            {course.course_description}
+          </Text>
         </View>
         {/* Circular Progress Bar */}
         <Progress.Circle

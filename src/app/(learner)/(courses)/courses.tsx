@@ -47,6 +47,7 @@ const Courses = (props: Props) => {
     };
 
     getCoursesAndCategories();
+    getCoursesAndCategories();
   }, [accessToken]); // Re-run effect if accessToken changes
 
   const handleSearch = async (query: string) => {

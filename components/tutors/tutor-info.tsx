@@ -1,5 +1,6 @@
+import * as FileSystem from "expo-file-system";
 import React from "react";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, View } from "react-native";
 
 import {
   CircularArrowIcon,
@@ -12,80 +13,79 @@ import {
 import { intro, tutor } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
-const TutorInfo = () => {
+const TutorInfo = ({ info }: any) => {
   return (
     <View>
       <View style={styles.headerContainer}>
         <View style={styles.textContainer}>
           <Text variant="sm" style={styles.verifiedText}>
-            Verified
+            {info?.account_activated}
           </Text>
-          <Text variant="subtitle">Shanon Wills</Text>
+          <Text variant="subtitle">{info.name}</Text>
         </View>
-        <Image style={styles.tutorImage} source={tutor} />
+        <Image
+          style={styles.tutorImage}
+          source={info.profile_image ? { uri: info.profile_image } : tutor}
+        />
       </View>
-      <Text style={styles.descriptionText}>
-        Lorem ipsum dolor sit amet consectetur. Aliquet curabitur eget viverra
-        sed imperdiet. Quam dui volutpat eu hendrerit. Tortor elementum integer
-        nisi varius facilisi gravida elementum. Magna urna dolor imperdiet
-        congue commodo et arcu. Lorem ipsum dolor sit amet consectetur. Aliquet
-        curabitur eget viverra sed imperdiet. Quam dui volutpat eu hendrerit.
-        Tortor elementum integer nisi varius facilisi gravida elementum. Magna
-        urna dolor imperdiet congue commodo et arcu.
-      </Text>
+      <Text style={styles.descriptionText}>{info?.bio}</Text>
       <View>
         <Text variant="md" style={styles.expertiseText}>
           Area of expertise
         </Text>
         <View style={styles.tagContainer}>
-          <Tag>Web Dev</Tag>
-          <Tag>Web Design</Tag>
-          <Tag>Web Design</Tag>
-          <Tag>Web Design</Tag>
-          <Tag>Web Design</Tag>
-          <Tag>Web Work</Tag>
+          {info?.areas_of_expertise.map((expertise: string) => (
+            <Tag key={expertise}>{expertise}</Tag>
+          ))}
         </View>
       </View>
-      <View style={styles.introVideoContainer}>
-        <Text variant="subtitle">Intro Video</Text>
-        <View style={styles.imageContainer}>
-          <View style={styles.overlay} />
-          <Pressable
-            onPress={() => console.log("play button clicked")}
-            style={styles.playIconWrapper}
-          >
-            <PlayIcon />
-          </Pressable>
-          <Image style={styles.image} source={intro} />
+      {info.intro_video && (
+        <View style={styles.introVideoContainer}>
+          <Text variant="subtitle">Intro Video</Text>
+          <View style={styles.imageContainer}>
+            <View style={styles.overlay} />
+            <Pressable
+              onPress={() => console.log("play button clicked")}
+              style={styles.playIconWrapper}
+            >
+              <PlayIcon />
+            </Pressable>
+            <Image style={styles.image} source={intro} />
+          </View>
         </View>
-      </View>
+      )}
       <View style={styles.certificationContainer}>
         <Text variant="subtitle">Certifications</Text>
-        <Certificate text="Certificate" />
-        <Certificate text="Certificate" />
+        {info.certifications.map((certification: string) => (
+          <Certificate
+            url={certification}
+            key={certification}
+            text="Certificate"
+          />
+        ))}
       </View>
       <View style={styles.reviewsContainer}>
         <Text style={styles.reviewTitle} variant="subtitle">
           Reviews
         </Text>
-        <Review rating={3} />
-        <Review rating={2} />
-        <Review rating={4.5} />
-        <Review rating={1.5} />
+
+        {info?.tutorReviews.map((review: any) => (
+          <Review review={review} key={review.id} />
+        ))}
       </View>
     </View>
   );
 };
 
-const Review = ({ rating }: { rating: number }) => {
-  const filledStars = Math.floor(rating);
-  const hasHalfStar = rating - filledStars >= 0.5;
+const Review = ({ review }: any) => {
+  const filledStars = Math.floor(review.rating);
+  const hasHalfStar = review.rating - filledStars >= 0.5;
   const emptyStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
 
   return (
     <View style={styles.reviewContainer}>
       <View style={styles.reviewHeader}>
-        <Text style={styles.reviewTitleText}>Student Feedback</Text>
+        <Text style={styles.reviewTitleText}>{review.reviewer}</Text>
         <Text style={styles.reviewDateText}>July 17</Text>
       </View>
       <View style={styles.starContainer}>
@@ -98,23 +98,46 @@ const Review = ({ rating }: { rating: number }) => {
         ))}
       </View>
       <Text variant="body" style={styles.reviewDescriptionText}>
-        Lorem ipsum dolor sit amet consectetur. Gravida donec non bibendum sed
-        nibh tincidunt eget ultricies. Arcu ut sodales ac erat nisi fames enim
-        risus. Scelerisque dignissim adipiscing sed facilisi enim. Gravida donec
-        non bibendum sed nibh tincidunt eget ultricies. Arcu ut sodales ac erat
-        nisi fames enim risus.
+        {review.review}
       </Text>
     </View>
   );
 };
 
-const Certificate = ({ text }: { text: string }) => (
-  <View style={styles.certificateContainer}>
-    <PdfIcon />
-    <Text style={styles.certificateText}>{text}</Text>
-    <CircularArrowIcon />
-  </View>
-);
+const Certificate = ({ text, url }: { text: string; url: string }) => {
+  const handleDownload = async () => {
+    try {
+      // Define the path where the file will be saved
+      const fileUri = `${FileSystem.documentDirectory}${text}.pdf`;
+
+      // Download the file
+      const downloadResult = await FileSystem.downloadAsync(url, fileUri);
+
+      // Confirm download success
+      if (downloadResult.status === 200) {
+        Alert.alert(
+          "Download Successful",
+          `File saved to ${downloadResult.uri}`,
+        );
+      } else {
+        Alert.alert("Download Failed", "An error occurred while downloading.");
+      }
+    } catch (error) {
+      console.error("Download error:", error);
+      Alert.alert(
+        "Download Error",
+        "An error occurred while downloading the file.",
+      );
+    }
+  };
+  return (
+    <Pressable onPress={handleDownload} style={styles.certificateContainer}>
+      <PdfIcon />
+      <Text style={styles.certificateText}>{text}</Text>
+      <CircularArrowIcon />
+    </Pressable>
+  );
+};
 
 const Tag = ({ children }: { children: string }) => (
   <View style={styles.tag}>

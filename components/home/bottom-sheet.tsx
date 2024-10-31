@@ -29,10 +29,6 @@ const HomeBottomSheet = () => {
   >("welcome"); // State for managing steps
   const { control } = useForm({});
 
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-  bottomSheetRef.current?.expand();
-
   const closeBottomSheet = () => {
     bottomSheetRef.current?.close();
   };

@@ -21,11 +21,6 @@ type Props = {
 const Course = ({ course }: Props) => {
   const router = useRouter();
 
-  // console.log(JSON.stringify(course, null, 2), "course");
-  // console.log(JSON.stringify(course, null, 2), "course");
-  // console.log(JSON.stringify(course, null, 2), "course");
-  // console.log(JSON.stringify(course, null, 2), "course");
-
   const {
     id,
     course_image,

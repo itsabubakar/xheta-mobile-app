@@ -9,9 +9,10 @@ import { Text, theme } from "~/theme";
 
 type Props = {
   name: string | undefined;
+  profileImage: string | undefined;
 };
 
-const HeaderWithUsername = ({ name }: Props) => {
+const HeaderWithUsername = ({ name, profileImage }: Props) => {
   const router = useRouter();
   return (
     <View
@@ -24,7 +25,7 @@ const HeaderWithUsername = ({ name }: Props) => {
     >
       <Image
         style={{ width: 48, height: 48, borderRadius: 9999 }}
-        source={profile}
+        source={profileImage ? { uri: profileImage } : profile}
       />
       <View style={{ marginLeft: 8 }}>
         <Text

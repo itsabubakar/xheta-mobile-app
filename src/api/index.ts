@@ -13,4 +13,10 @@ export {
 export { getNotifications } from "./notifications";
 export { fetchBootcamps, fetchOneBootcamp } from "./bootcamp";
 
-export { fetchTutors, searchForTutors } from "./tutors";
+export { fetchTutors, searchForTutors, fetchOneTutor } from "./tutors";
+
+export {
+  getDashboardCourses,
+  getDashboardAssignments,
+  getUpcomingClasses,
+} from "./dashboard";
