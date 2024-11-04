@@ -6,6 +6,7 @@ const courses = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="tutors" />
       <Stack.Screen name="[tutor]" />
+      <Stack.Screen name="search-tutor" />
     </Stack>
   );
 };

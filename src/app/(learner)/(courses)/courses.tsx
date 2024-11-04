@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 
@@ -10,6 +11,7 @@ import { theme } from "~/theme";
 type Props = object;
 
 const Courses = (props: Props) => {
+  const router = useRouter();
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token;
 
@@ -27,8 +29,6 @@ const Courses = (props: Props) => {
       setError(null);
 
       try {
-        console.log("Fetching courses and categories...");
-        console.log("Fetching courses and categories...");
         console.log("Fetching courses and categories...");
         // Fetch courses and categories in parallel
         const [fetchedCourses, fetchedCategories] = await Promise.all([
@@ -49,7 +49,9 @@ const Courses = (props: Props) => {
     getCoursesAndCategories();
     getCoursesAndCategories();
   }, [accessToken]); // Re-run effect if accessToken changes
-
+  // if (searchResult.length === 0) {
+  //   console.log("No courses found");
+  // }
   const handleSearch = async (query: string) => {
     if (!accessToken) return; // Ensure token is available
 
@@ -58,15 +60,17 @@ const Courses = (props: Props) => {
 
     try {
       console.log(`Searching for course: ${query}`);
-      setSearchQuery(query);
-      const data = await searchForCourse(query, accessToken); // Perform search
-      const searchResult = data[0]?.data || []; // Extract result from response
+      router.push("/(learner)/search-course");
+      router.setParams({ query });
+      // setSearchQuery(query);
+      // const data = await searchForCourse(query, accessToken); // Perform search
+      // const searchResult = data[0]?.data || []; // Extract result from response
 
-      setCourses(searchResult); // Update courses with search result
+      // setCourses(searchResult); // Update courses with search result
 
-      if (searchResult.length === 0) {
-        console.log("No courses found");
-      }
+      // if (searchResult.length === 0) {
+      //   console.log("No courses found");
+      // }
     } catch (err) {
       console.error("Error during search:", err);
       setError("Error during search");

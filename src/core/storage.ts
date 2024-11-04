@@ -14,6 +14,7 @@ export type AuthData = {
   profile_image?: string;
   level_of_education?: string;
   area_of_interest?: any;
+  is_first_time: boolean;
 };
 
 type AuthState = {

@@ -80,6 +80,10 @@ const theme = createTheme({
       fontFamily: "AeonikBold",
       color: "black",
     },
+    italic: {
+      fontFamily: "AeonikNormalItalic",
+      fontSize: 16,
+    },
   },
 });
 

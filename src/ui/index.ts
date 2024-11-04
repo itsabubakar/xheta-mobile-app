@@ -9,3 +9,6 @@ export { default as HeaderWithSearchBar } from "./screen-header-with-search-bar"
 
 // Learnings
 export { default as ScreenHeaderWithTabs } from "./screen-header-with-tabs";
+
+// courses and tutors
+export { default as ScreenHeaderWithSearchBarAndBack } from "./screen-header-with-search-bar-back-btn";

@@ -13,6 +13,8 @@ type Props = object;
 const CourseSection = ({ courses }: any) => {
   const router = useRouter();
   const { enrolled_courses } = courses;
+
+  if (!enrolled_courses) return;
   return (
     <View style={styles.sectionContainer}>
       <SectionHeader title="Course progress" link="/" />

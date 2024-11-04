@@ -29,6 +29,7 @@ export const searchForCourse = async (
   courseName: string,
   accessToken: string,
 ) => {
+  console.log(courseName, "starting search");
   try {
     const response = await client.get(`v1/learner/search-for-course`, {
       params: { course_name: courseName }, // Attach query parameters

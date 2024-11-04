@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
@@ -10,6 +11,7 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const Tutors = (props: Props) => {
+  const router = useRouter();
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token;
 
@@ -45,6 +47,7 @@ const Tutors = (props: Props) => {
 
     getTutorsAndCategories();
   }, [accessToken]); // Re-run effect if accessToken changes
+
   const handleSearch = async (query: string) => {
     if (!accessToken) return; // Ensure token is available
 
@@ -53,15 +56,8 @@ const Tutors = (props: Props) => {
 
     try {
       console.log(`Searching for course: ${query}`);
-      setSearchQuery(query);
-      const data = await searchForTutors(query, accessToken); // Perform search
-      const searchResult = data[0]?.data || []; // Extract result from response
-
-      setTutors(searchResult); // Update tutors with search result
-
-      if (searchResult.length === 0) {
-        console.log("No tutors found");
-      }
+      router.push("/search-tutor");
+      router.setParams({ query });
     } catch (err) {
       console.error("Error during search:", err);
       setError("Error during search");
@@ -69,6 +65,7 @@ const Tutors = (props: Props) => {
       setSearchLoading(false); // Stop search loading
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.container}>
