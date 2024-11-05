@@ -8,6 +8,8 @@ export { More, MoreFilled } from "./more";
 export { Tutors, TutorsFilled } from "./tutors";
 export { Learnings, LearningsFilled } from "./learnings";
 export { Courses, CoursesFilled } from "./courses";
+export { BootCampIconFilled, BootCampIcon } from "./bootcamp";
+export { LessonIcon, LessonIconFilled } from "./lesson";
 export { default as Notifications } from "./notifications";
 export { default as Python } from "./python";
 export { default as Class } from "./class";

@@ -73,6 +73,7 @@ const SignIn = () => {
         gender: userData.gender,
         profile_image: userData.profile_image,
         level_of_education: userData.level_of_education,
+        is_first_time: true,
       });
 
       console.log(res);
