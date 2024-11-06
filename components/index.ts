@@ -26,3 +26,10 @@ export { UpcomingClass } from "./learnings/personalized-details-info";
 // Bootcamp
 
 export { default as BootcampSection } from "./bootcamp/bootcamp-section";
+
+// ## Instructor
+
+// home screen
+
+export { default as Hero } from "./instructor/hero";
+export { default as UpcomingClassSchedule } from "./instructor/upcoming-class";
