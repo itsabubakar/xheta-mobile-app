@@ -50,3 +50,11 @@ export { default as ImageIcon } from "./image";
 export { default as SendIcon } from "./send";
 export { default as CalenderGreen } from "./calender-green";
 export { default as NoContentIcon } from "./no-content";
+
+export { default as SquircleCancelledClasses } from "./squircle-cancelled-classes";
+export { default as SquircleCompletedClasses } from "./squircle-classes";
+
+export { default as SquircleStar } from "./squircle-star";
+export { default as SquircleDollar } from "./squircle-dollar";
+export { default as SquircleLearner } from "./squircle-learner";
+export { default as SquircleCourses } from "./squircle-course";

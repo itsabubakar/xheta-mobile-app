@@ -33,3 +33,4 @@ export { default as BootcampSection } from "./bootcamp/bootcamp-section";
 
 export { default as Hero } from "./instructor/hero";
 export { default as UpcomingClassSchedule } from "./instructor/upcoming-class";
+export { default as DatePicker } from "./instructor/date-picker";

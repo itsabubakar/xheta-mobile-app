@@ -1,16 +1,25 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+import { DatePicker } from "..";
+
+import { Text } from "~/theme";
 
 type Props = object;
 
 const UpcomingClass = (props: Props) => {
   return (
-    <View>
-      <Text>UpcomingClass</Text>
+    <View style={styles.container}>
+      <Text>Upcoming Class Schedule</Text>
+      <DatePicker />
     </View>
   );
 };
 
 export default UpcomingClass;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 24,
+  },
+});

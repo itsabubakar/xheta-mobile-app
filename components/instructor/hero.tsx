@@ -1,7 +1,15 @@
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
-import { StarIcon } from "~/assets/icons";
+import {
+  SquircleCancelledClasses,
+  SquircleCompletedClasses,
+  SquircleCourses,
+  SquircleLearner,
+  SquircleStar,
+  StarIcon,
+} from "~/assets/icons";
+import SquircleDollar from "~/assets/icons/squircle-dollar";
 import { Text, theme } from "~/theme";
 
 type Props = object;
@@ -11,16 +19,28 @@ const Hero = (props: Props) => {
     <View>
       <Withdraw />
       <View style={{ paddingTop: 24, flexDirection: "row", gap: 16 }}>
-        <Cube text="Hourly charges" number={500} />
-        <Cube text="Created courses" number={5} />
+        <Cube icon={<SquircleDollar />} text="Hourly charges" number={500} />
+        <Cube icon={<SquircleCourses />} text="Created courses" number={5} />
       </View>
       <View style={{ paddingTop: 16, flexDirection: "row", gap: 16 }}>
-        <Cube text="Personalized learners" number={5} />
-        <Cube text="Completed classes" number={5} />
+        <Cube
+          icon={<SquircleLearner />}
+          text="Personalized learners"
+          number={5}
+        />
+        <Cube
+          icon={<SquircleCompletedClasses />}
+          text="Completed classes"
+          number={5}
+        />
       </View>
       <View style={{ paddingTop: 16, flexDirection: "row", gap: 16 }}>
-        <Cube text="Cancelled classes" number={5} />
-        <Cube icon={<StarIcon />} text="Platform rating" number={5} />
+        <Cube
+          icon={<SquircleCancelledClasses />}
+          text="Cancelled classes"
+          number={5}
+        />
+        <Cube icon={<SquircleStar />} text="Platform rating" number={5} />
       </View>
     </View>
   );
@@ -56,7 +76,16 @@ const Cube = ({
         }}
       >
         <Text>{text}</Text>
-        <Text>{number}</Text>
+        <Text
+          style={{
+            color: theme.colors.primary,
+            fontSize: 20,
+            fontFamily: "AeonikMedium",
+            marginTop: 4,
+          }}
+        >
+          {number}
+        </Text>
       </View>
     </View>
   );
