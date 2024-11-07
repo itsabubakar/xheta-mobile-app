@@ -36,7 +36,7 @@ export default function TabLayout() {
           let IconComponent;
 
           switch (route.name) {
-            case "home":
+            case "(home)":
               IconComponent = focused ? HomeFilled : Home;
               break;
             case "(courses)":
@@ -61,7 +61,7 @@ export default function TabLayout() {
         },
       })}
     >
-      <Tabs.Screen name="home" options={{ title: "Home" }} />
+      <Tabs.Screen name="(home)" options={{ title: "Home" }} />
       <Tabs.Screen name="(courses)" options={{ title: "Courses" }} />
       <Tabs.Screen name="(bootcamp)" options={{ title: "Bootcamp" }} />
       <Tabs.Screen name="(lessons)" options={{ title: "Lessons" }} />

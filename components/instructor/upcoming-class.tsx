@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-import { DatePicker } from "..";
+import DatePicker from "./date-picker";
 
 import { Text } from "~/theme";
 

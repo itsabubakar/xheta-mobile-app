@@ -36,6 +36,7 @@ const Tutors = (props: Props) => {
           fetchCategories(accessToken),
         ]);
         setTutors(fetchedTutors.data || []); // Set fetched tutors
+        console.log(fetchedTutors.data, "tutors");
         setCategories(fetchedCategories); // Set fetched categories
       } catch (err) {
         console.error("Error fetching data:", err);

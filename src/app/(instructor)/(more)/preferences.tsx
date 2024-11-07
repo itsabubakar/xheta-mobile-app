@@ -37,7 +37,11 @@ const Preferences = () => {
     try {
       console.log(key, value);
 
-      const updatedPref = await updatePreference(accessToken, key, value); // Update on API
+      const updatedPref = await updatePreference(
+        "578|2Gh29TnCz1ZE7RhHH2gQe3DuKp54uSjFZnx9N5Ak62c3bddb",
+        key,
+        value,
+      ); // Update on API
       setPreferences((prev) => ({ ...prev, [key]: value })); // Update local state
       console.log(updatedPref);
     } catch (error) {
@@ -110,6 +114,7 @@ const styles = {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "white",
   },
   preferencesContainer: {
     paddingVertical: 16,

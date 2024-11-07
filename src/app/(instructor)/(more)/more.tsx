@@ -79,7 +79,7 @@ const MoreLink = ({
 }) => {
   const router = useRouter();
   const href =
-    `/(learner)/(more)/${title.toLowerCase()}` as Href<`/(learner)/(more)/${string}`>;
+    `/(instructor)/(more)/${title.toLowerCase()}` as Href<`/(instructor)/(more)/${string}`>;
 
   return (
     <Pressable onPress={() => router.push(href)} style={styles.moreLink}>

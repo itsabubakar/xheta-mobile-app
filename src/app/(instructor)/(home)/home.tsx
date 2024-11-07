@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 
-import { Hero, UpcomingClassSchedule } from "~/components";
+import { Hero, InstructorClass, UpcomingClassSchedule } from "~/components";
 import { HeaderWithUsername } from "~/src/ui";
 import { theme } from "~/theme";
 
@@ -15,6 +15,9 @@ const Home = () => {
       >
         <Hero />
         <UpcomingClassSchedule />
+        <InstructorClass />
+        <InstructorClass />
+        <InstructorClass />
       </ScrollView>
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>

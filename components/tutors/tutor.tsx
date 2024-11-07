@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
+import { StarIcon } from "~/assets/icons";
 import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
@@ -43,7 +44,7 @@ const Tutor = ({ tutor }: any) => {
           color: theme.colors.lightBlack,
         }}
       >
-        Master the art of creating intuitive user interfaces (UI)...
+        By {tutor.name}
       </Text>
       <View
         style={{
@@ -52,8 +53,13 @@ const Tutor = ({ tutor }: any) => {
           paddingTop: 4,
         }}
       >
-        <Text style={styles.price}>#5000</Text>
-        <Text style={styles.price}>5.0</Text>
+        <Text style={styles.price}>#{tutor.TutorHourlyCharge} / hr</Text>
+        <Text style={styles.price}>
+          <View>
+            <StarIcon size={20} />
+          </View>
+          5.0
+        </Text>
       </View>
     </Pressable>
   );
@@ -75,5 +81,7 @@ const styles = StyleSheet.create({
     fontFamily: "AeonikBold",
     fontSize: 14,
     color: "#1D1D1D",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

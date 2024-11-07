@@ -51,6 +51,7 @@ const OTP = () => {
   const [codes, setCodes] = useState<string[]>(Array(6).fill(""));
   const [loading, setLoading] = useState(false); // Loading state
   const [apiError, setApiError] = useState<string | null>(null); // API error state
+  const [errorMessages, setErrorMessages] = useState<string[]>();
 
   const refs: RefObject<TextInput>[] = [
     useRef<TextInput>(null),
@@ -60,8 +61,6 @@ const OTP = () => {
     useRef<TextInput>(null),
     useRef<TextInput>(null),
   ];
-
-  const [errorMessages, setErrorMessages] = useState<string[]>();
 
   const config = {
     backgroundColor: theme.colors.white,

@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
@@ -92,6 +93,7 @@ const Cube = ({
 };
 
 const Withdraw = () => {
+  const router = useRouter();
   return (
     <View
       style={{
@@ -124,6 +126,7 @@ const Withdraw = () => {
           #50,000
         </Text>
         <Pressable
+          onPress={() => router.push("/wallet")}
           style={{
             backgroundColor: "#CDD7D8",
             paddingVertical: 8,
