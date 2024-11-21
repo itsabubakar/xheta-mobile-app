@@ -8,3 +8,4 @@ export const certificate = require("./certificate.png");
 export const noAccomplishments = require("./no-accomplishments.png");
 export const noContent = require("./no-content.png");
 export const payment = require("./payment.png");
+export const info = require("./info.png");

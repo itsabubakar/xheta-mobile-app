@@ -3,6 +3,15 @@
     "development": {
       "distribution": "internal",
       "developmentClient": true
+    },
+    "preview": {
+      "android": {
+        "distribution": "internal",
+        "buildType": "apk",
+        "env": {
+          "EXPO_PUBLIC_API_URL": "https://xheta-api.eknoxbit.com/api/"
+        }
+      }
     }
   }
 }

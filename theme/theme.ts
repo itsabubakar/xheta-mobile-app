@@ -12,6 +12,7 @@ const palette = {
   black: "#1D1D1D",
   purple: "#6366F1",
   primary: "#03363D",
+  lightPrimary: "#CDD7D8",
   tertiary: "#E7F2F3",
   focus: "#57797E",
   error: "#FDA29B",

@@ -20,6 +20,7 @@ interface ButtonProps extends Omit<PressableProps, "disabled"> {
     | "secondary"
     | "outline"
     | "destructive"
+    | "lightPrimary"
     | "ghost"
     | "link";
   size?: "default" | "lg" | "sm" | "icon" | "md";
@@ -55,6 +56,8 @@ export const Button = React.forwardRef<View, ButtonProps>(
       switch (variant) {
         case "secondary":
           return theme.colors.gray || "#6B7280";
+        case "lightPrimary":
+          return theme.colors.lightPrimary || "#6B7280";
         case "outline":
           return "transparent";
         case "destructive":
@@ -76,6 +79,8 @@ export const Button = React.forwardRef<View, ButtonProps>(
       switch (variant) {
         case "outline":
           return theme.colors.black;
+        case "lightPrimary":
+          return theme.colors.primary;
         case "ghost":
         case "link":
           return theme.colors.black;
