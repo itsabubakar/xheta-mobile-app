@@ -244,7 +244,7 @@ const Profile = () => {
         editButtonFunction={handleEdit}
         editIcon={disabled}
         bg
-        title="Profile"
+        title="Tutors Profile"
         showEditText
       />
       <ScrollView

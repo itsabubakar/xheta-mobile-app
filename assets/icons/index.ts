@@ -60,3 +60,5 @@ export { default as SquircleLearner } from "./squircle-learner";
 export { default as SquircleCourses } from "./squircle-course";
 export { default as UIUX } from "./ui-ux";
 export { UBA } from "./bank-icons";
+export { default as SimplePencilIcon } from "./simple-pencil";
+export { default as ExclamationIcon } from "./exclamation";
