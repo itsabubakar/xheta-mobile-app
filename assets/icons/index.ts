@@ -62,3 +62,5 @@ export { default as UIUX } from "./ui-ux";
 export { UBA } from "./bank-icons";
 export { default as SimplePencilIcon } from "./simple-pencil";
 export { default as ExclamationIcon } from "./exclamation";
+export { default as PlusIcon } from "./plus";
+export { default as FileIcon } from "./file";

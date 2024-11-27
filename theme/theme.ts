@@ -19,6 +19,8 @@ const palette = {
   lightGray: "#F7F7F9",
   borderColor: "#D2D2D266",
   lightBlack: "#686868",
+  green: "#027A48",
+  lightGreen: "#ECFDF3",
 };
 
 const theme = createTheme({

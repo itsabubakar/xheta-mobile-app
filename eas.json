@@ -9,7 +9,7 @@
         "distribution": "internal",
         "buildType": "apk",
         "env": {
-          "EXPO_PUBLIC_API_URL": "https://xheta-api.eknoxbit.com/api/"
+          "EXPO_PUBLIC_API_URL": "https://api.xheta.com/api"
         }
       }
     }

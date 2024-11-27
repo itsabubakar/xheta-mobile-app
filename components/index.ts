@@ -39,3 +39,6 @@ export { default as InstructorClass } from "./instructor/class";
 // Lessons request
 
 export { default as Lesson } from "./lessons-request/lesson";
+
+// Course creation
+export { default as CreatedCourses } from "./course-creation/created-courses";

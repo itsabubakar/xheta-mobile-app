@@ -12,3 +12,6 @@ export { default as ScreenHeaderWithTabs } from "./screen-header-with-tabs";
 
 // courses and tutors
 export { default as ScreenHeaderWithSearchBarAndBack } from "./screen-header-with-search-bar-back-btn";
+
+// course creation screens
+export { default as ScreenHeaderWithButton } from "./screen-header-with-button";
