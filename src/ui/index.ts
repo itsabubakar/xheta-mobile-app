@@ -15,3 +15,5 @@ export { default as ScreenHeaderWithSearchBarAndBack } from "./screen-header-wit
 
 // course creation screens
 export { default as ScreenHeaderWithButton } from "./screen-header-with-button";
+
+export { default as ScreenHeaderWithCustomIcon } from "./screen-header-with-custom-icon";

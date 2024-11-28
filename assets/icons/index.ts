@@ -41,6 +41,7 @@ export {
   Preferences,
   Support,
   Logout,
+  SwitchIcon,
 } from "./moreIcons";
 export { default as DownloadIcon } from "./download";
 export { default as EditIcon } from "./edit";
@@ -64,3 +65,6 @@ export { default as SimplePencilIcon } from "./simple-pencil";
 export { default as ExclamationIcon } from "./exclamation";
 export { default as PlusIcon } from "./plus";
 export { default as FileIcon } from "./file";
+
+export { default as OptionsIcon } from "./options";
+export { RedIconUp, GreenIconDown } from "./payment-icons";

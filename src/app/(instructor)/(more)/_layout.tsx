@@ -7,8 +7,8 @@ const MoreLayout = () => {
       <Stack.Screen name="more" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="accomplishment" />
+      <Stack.Screen name="payment-history" />
       <Stack.Screen name="(community)" />
-      {/* <Stack.Screen name="(bootcamp)" /> */}
     </Stack>
   );
 };

@@ -26,7 +26,7 @@ const Course = (props: any) => {
     <Link
       asChild
       href={{
-        pathname: `/(courses)/add-courses` as any,
+        pathname: `/course-detail` as any,
       }}
       style={styles.container}
     >
