@@ -38,15 +38,21 @@ type FormData = {
 const Profile = () => {
   const authState = useAuthStore((state) => state.authData);
   const [disabled, setDisabled] = useState(true);
-  const {
-    name,
-    email,
-    id,
-    gender,
-    profile_image,
-    level_of_education,
-    access_token,
-  } = authState as AuthData;
+  // const {
+  //   name ,
+  //   email,
+  //   id,
+  //   gender,
+  //   profile_image,
+  //   level_of_education,
+  //   access_token,
+  // } = authState as AuthData;
+
+  const name = "Sadiq B";
+  const email = "ssad@gmail.com";
+  const gender = "male";
+  const level_of_education = "high";
+  const access_token = "1234";
 
   // const updateAuthState = useAuthStore((state) => state.setAuthData);
   const [profileImage, setProfileImage] = useState(authState?.profile_image);
@@ -244,7 +250,7 @@ const Profile = () => {
         editButtonFunction={handleEdit}
         editIcon={disabled}
         bg
-        title="Tutors Profile"
+        title=" Profile"
         showEditText
       />
       <ScrollView
@@ -355,34 +361,45 @@ const Profile = () => {
               </Text>
             )}
           </View>
-          <View>
-            <ControlledDropdown
-              disabled={disabled}
-              name="gender"
-              control={control}
-              rules={{ required: "Please select a type" }}
-              label="Gender"
-              options={[
-                { label: "Male", value: "male" },
-                { label: "Female", value: "female" },
-                { label: "Prefer not to say", value: "prefer not to say" },
-              ]}
-            />
+          <View
+            style={{
+              marginTop: 16,
+              flexDirection: "row",
+              columnGap: 16,
+              flex: 1,
+            }}
+          >
+            <View style={{ width: "100%", flex: 1 }}>
+              <ControlledDropdown
+                disabled={disabled}
+                name="education"
+                control={control}
+                rules={{ required: "Please select a type" }}
+                label="Gender"
+                options={[
+                  { label: "Bachelors", value: "bachelors" },
+                  { label: "Beginner", value: "Beginner" },
+                  { label: "Prefer not to say", value: "prefer not to say" },
+                ]}
+              />
+            </View>
+            <View style={{ width: "100%", flex: 1 }}>
+              <ControlledDropdown
+                disabled={disabled}
+                name="education"
+                control={control}
+                rules={{ required: "Please select a type" }}
+                label="Certification"
+                options={[
+                  { label: "Bachelors", value: "bachelors" },
+                  { label: "Beginner", value: "Beginner" },
+                  { label: "Prefer not to say", value: "prefer not to say" },
+                ]}
+              />
+            </View>
           </View>
-          <View>
-            <ControlledDropdown
-              disabled={disabled}
-              name="education"
-              control={control}
-              rules={{ required: "Please select a type" }}
-              label="Level of education"
-              options={[
-                { label: "Bachelors", value: "bachelors" },
-                { label: "Beginner", value: "Beginner" },
-                { label: "Prefer not to say", value: "prefer not to say" },
-              ]}
-            />
-          </View>
+
+          <View />
           <View>
             <ControlledDropdown
               disabled={disabled}
@@ -390,7 +407,7 @@ const Profile = () => {
               control={control}
               multiSelect
               rules={{ required: "Please select a type" }}
-              label="Area of Interest"
+              label="Expertise"
               options={[
                 { label: "UI/UX Design", value: "ui/ux design" },
                 { label: "Female", value: "female" },

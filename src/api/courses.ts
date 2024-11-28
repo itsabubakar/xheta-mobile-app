@@ -4,7 +4,7 @@ import { client } from "./client";
 export const fetchCourses = async (accessToken: string) => {
   console.log(accessToken, "access token");
 
-  const response = await client.get("v1/learner/courses", {
+  const response = await client.get("/v1/learner/courses", {
     headers: {
       Authorization: `Bearer ${accessToken}`, // Include the bearer token
     },
@@ -15,7 +15,7 @@ export const fetchCourses = async (accessToken: string) => {
 
 // Fetch categories function
 export const fetchCategories = async (accessToken: string) => {
-  const response = await client.get("v1/course-categories", {
+  const response = await client.get("/v1/course-categories", {
     headers: {
       Authorization: `Bearer ${accessToken}`, // Include the bearer token
     },
@@ -31,7 +31,7 @@ export const searchForCourse = async (
 ) => {
   console.log(courseName, "starting search");
   try {
-    const response = await client.get(`v1/learner/search-for-course`, {
+    const response = await client.get(`/v1/learner/search-for-course`, {
       params: { course_name: courseName }, // Attach query parameters
       headers: {
         Authorization: `Bearer ${accessToken}`, // Use dynamic token

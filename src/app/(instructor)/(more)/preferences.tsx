@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 
 import { fetchPreference } from "~/src/api";
 import { updatePreference } from "~/src/api/profile";
@@ -15,23 +15,23 @@ const Preferences = () => {
     sms_notifications: false,
     in_app_notifications: false,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const getPreferences = async () => {
-      if (!accessToken) return; // If no token, do nothing
-      try {
-        const fetchedPreferences = await fetchPreference(accessToken); // Fetch preferences
-        setPreferences(fetchedPreferences.data); // Set initial state
-      } catch (error) {
-        console.error("Error fetching preferences:", error);
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
+  // useEffect(() => {
+  //   const getPreferences = async () => {
+  //     if (!accessToken) return; // If no token, do nothing
+  //     try {
+  //       const fetchedPreferences = await fetchPreference(accessToken); // Fetch preferences
+  //       setPreferences(fetchedPreferences.data); // Set initial state
+  //     } catch (error) {
+  //       console.error("Error fetching preferences:", error);
+  //     } finally {
+  //       setLoading(false); // Stop loading
+  //     }
+  //   };
 
-    getPreferences();
-  }, [accessToken]);
+  //   getPreferences();
+  // }, [accessToken]);
 
   const handleToggle = async (key: string, value: boolean) => {
     try {
@@ -62,7 +62,7 @@ const Preferences = () => {
       <ScreenHeader bg title="Preferences" />
       <View style={styles.preferencesContainer}>
         <Preference
-          text="Desktop notifications"
+          text="Push notifications"
           value={preferences.desktop_notifications}
           onToggle={(value) => handleToggle("desktop_notifications", value)}
         />
@@ -105,7 +105,7 @@ const Preference = ({
 
 export default Preferences;
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -134,4 +134,4 @@ const styles = {
     color: "#1D1D1D",
     fontSize: 16,
   },
-};
+});

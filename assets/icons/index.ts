@@ -68,3 +68,6 @@ export { default as FileIcon } from "./file";
 
 export { default as OptionsIcon } from "./options";
 export { RedIconUp, GreenIconDown } from "./payment-icons";
+
+export { Mastercard, Visacard } from "./card-icons";
+export { default as CircularPlus } from "./circular-plus";

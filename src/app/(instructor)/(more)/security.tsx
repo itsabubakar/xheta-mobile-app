@@ -19,8 +19,8 @@ type FormData = {
 };
 
 const Security = () => {
-  const authData = useAuthStore((state) => state.authData);
-  const accessToken = authData?.access_token;
+  // const authData = useAuthStore((state) => state.authData);
+  const accessToken = "uthData?.access_token";
 
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
