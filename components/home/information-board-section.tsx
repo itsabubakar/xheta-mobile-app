@@ -12,7 +12,6 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const InformationBoardSection = ({ upcomingClasses }: any) => {
-  console.log(upcomingClasses);
   const router = useRouter();
 
   return (
@@ -22,7 +21,7 @@ const InformationBoardSection = ({ upcomingClasses }: any) => {
         subheading="Upcoming activities"
         link="/"
       />
-      {upcomingClasses.length > 0 ? (
+      {Array.isArray(upcomingClasses) && upcomingClasses.length > 0 ? (
         upcomingClasses.map((item: any) => <Information key={item.id} />)
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -37,7 +36,6 @@ const InformationBoardSection = ({ upcomingClasses }: any) => {
           </Text>
           <Pressable onPress={() => router.push("/(courses)/courses")}>
             <Text
-              variant="md"
               style={{
                 color: theme.colors.primary,
               }}

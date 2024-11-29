@@ -24,6 +24,7 @@ const SignUp = () => {
     setModalVisible(!isModalVisible);
     router.replace("/(learner)/home");
   };
+  console.log(role);
 
   return (
     <View style={styles.container}>

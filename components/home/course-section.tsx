@@ -12,13 +12,12 @@ type Props = object;
 
 const CourseSection = ({ courses }: any) => {
   const router = useRouter();
-  const { enrolled_courses } = courses;
+  const { enrolled_courses } = courses || {}; // Safeguard if courses is null or undefined
 
-  if (!enrolled_courses) return;
   return (
     <View style={styles.sectionContainer}>
       <SectionHeader title="Course progress" link="/" />
-      {enrolled_courses.length > 0 ? (
+      {Array.isArray(enrolled_courses) && enrolled_courses.length > 0 ? (
         enrolled_courses.map((course: any) => (
           <Course key={course.course_name} course={course} />
         ))
@@ -35,7 +34,6 @@ const CourseSection = ({ courses }: any) => {
           </Text>
           <Pressable onPress={() => router.push("/(courses)/courses")}>
             <Text
-              variant="md"
               style={{
                 color: theme.colors.primary,
               }}

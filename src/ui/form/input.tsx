@@ -292,7 +292,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         </Box>
       )}
       {error && (
-        <Text variant="body" color="gray" mt="s_8">
+        <Text style={{ color: "red" }} variant="body" mt="s_8">
           {error}
         </Text>
       )}

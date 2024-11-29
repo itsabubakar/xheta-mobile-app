@@ -78,6 +78,7 @@ const Profile = () => {
   });
 
   const onSubmit = async (formData: FormData) => {
+    console.log("hiiit");
     const { firstName, lastName, email, gender, education, interest } =
       formData;
 
@@ -244,7 +245,7 @@ const Profile = () => {
         editButtonFunction={handleEdit}
         editIcon={disabled}
         bg
-        title="Profile"
+        title="Profile!!!"
         showEditText
       />
       <ScrollView
@@ -360,7 +361,7 @@ const Profile = () => {
               disabled={disabled}
               name="gender"
               control={control}
-              rules={{ required: "Please select a type" }}
+              rules={{ required: "Please select a gender" }}
               label="Gender"
               options={[
                 { label: "Male", value: "male" },
@@ -368,13 +369,18 @@ const Profile = () => {
                 { label: "Prefer not to say", value: "prefer not to say" },
               ]}
             />
+            {/* {errors.gender && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                {errors.gender.message}
+              </Text>
+            )} */}
           </View>
           <View>
             <ControlledDropdown
               disabled={disabled}
               name="education"
               control={control}
-              rules={{ required: "Please select a type" }}
+              rules={{ required: "Please select a level of education" }}
               label="Level of education"
               options={[
                 { label: "Bachelors", value: "bachelors" },

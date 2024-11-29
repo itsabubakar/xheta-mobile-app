@@ -7,8 +7,10 @@ import React, {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
+import { verifyEmail, verifyEmailOtp } from "~/src/api/auth";
+import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledInput, OTPInput } from "~/src/ui/form";
 import { Text, useTheme } from "~/theme";
@@ -16,7 +18,7 @@ import { Text, useTheme } from "~/theme";
 type Props = {
   onSetBottomSheet: Dispatch<
     SetStateAction<
-      "welcome" | "email-verification" | "profile-update" | "update-succesfull"
+      "welcome" | "email-verification" | "profile-update" | "update-successful"
     >
   >;
 };
@@ -27,9 +29,12 @@ type FormData = {
 };
 
 const EmailVerification = ({ onSetBottomSheet }: Props) => {
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
   const theme = useTheme();
   const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
   const [step, setStep] = useState(1); // Step state to track the current screen
+  const [loading, setLoading] = useState(false);
   const {
     control,
     handleSubmit,
@@ -77,19 +82,50 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
     }
   };
 
-  const onOtpSubmit = (data: FormData) => {
-    console.log("Form submitted:", data.otp);
-    setStep(3); // Move to the congratulations screen
-  };
+  const onOtpSubmit = async (data: FormData) => {
+    console.log("clicked");
+    console.log("Form submitted:", codes?.join(""));
+    setLoading(true);
+    if (!codes) return;
 
-  const onSubmit = (data: FormData) => {
-    // Handle the email submission, e.g., send verification email
-    console.log("Email submitted:", data.email);
-    setStep(2); // Move to the OTP screen
+    try {
+      const res = await verifyEmailOtp({
+        token: accessToken,
+        code: codes?.join(""),
+      });
+
+      console.log(res);
+      setLoading(false);
+      setStep(3); // Move to the OTP screen
+    } catch (err: any) {
+      setLoading(false);
+
+      console.error(err.response, "status error here");
+    }
   };
 
   const handleProfileUpdate = () => {
-    onSetBottomSheet("profile-update"); // Move to the congratulations screen
+    onSetBottomSheet("profile-update"); // Move to the profile update screen
+  };
+
+  const handleEmailVerification = async (data: FormData) => {
+    if (!data.email) return;
+    setLoading(true);
+    try {
+      const res = await verifyEmail({
+        token: accessToken,
+        email: data?.email.toLowerCase(),
+      });
+
+      console.log(res);
+      setLoading(false);
+      setStep(2); // Move to the OTP screen
+    } catch (err: any) {
+      setLoading(false);
+
+      console.error(err, "status error");
+      console.error(err.response.data, "status error");
+    }
   };
 
   // Render the appropriate screen based on the step state
@@ -123,7 +159,12 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
               </Text>
             )}
           </View>
-          <Button label="Proceed" onPress={handleSubmit(onSubmit)} />
+          <Button
+            loading={loading}
+            disabled={loading}
+            label="Proceed"
+            onPress={handleSubmit(handleEmailVerification)}
+          />
         </>
       )}
       {step === 2 && (
@@ -140,12 +181,24 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
             refs={refs}
             config={config}
           />
-          <Text style={{ marginTop: 16, marginBottom: 24 }}>
-            Didn’t receive code? Resend
-          </Text>
+          <Pressable onPress={handleSubmit(handleEmailVerification)}>
+            <Text style={{ marginTop: 16, marginBottom: 24 }}>
+              Didn’t receive code? Resend
+            </Text>
+          </Pressable>
 
           <View>
-            <Button label="Verify" onPress={handleSubmit(onOtpSubmit)} />
+            <Button
+              loading={loading}
+              label="Verify"
+              onPress={handleSubmit(onOtpSubmit)}
+              disabled={
+                loading ||
+                !codes ||
+                codes.length < 6 ||
+                codes.some((code) => code.trim() === "")
+              }
+            />
           </View>
         </>
       )}

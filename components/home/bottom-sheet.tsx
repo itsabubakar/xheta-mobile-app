@@ -4,7 +4,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import LottieView from "lottie-react-native";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dimensions, Image, Pressable, StyleSheet, View } from "react-native";
 
@@ -12,6 +12,8 @@ import EmailVerification from "./email-verification";
 
 import { CircleX } from "~/assets/icons";
 import { xhetaBanner } from "~/assets/images";
+import { updateProfile } from "~/src/api";
+import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledDropdown } from "~/src/ui/form/input";
 import { Text } from "~/theme";
@@ -22,12 +24,38 @@ const { width: screenWidth } = Dimensions.get("window");
 const imageWidth = screenWidth * 0.9; // 90% of screen width
 const imageHeight = (imageWidth * 156) / 343; // Maintain aspect ratio
 
-const HomeBottomSheet = () => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+type FormData = {
+  gender: string;
+  education: string;
+  interest: string[];
+};
+
+const HomeBottomSheet = ({
+  accountActivated,
+  bottomSheetRef,
+}: {
+  accountActivated: boolean | undefined;
+  bottomSheetRef: React.RefObject<BottomSheet>;
+}) => {
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
   const [step, setStep] = useState<
-    "welcome" | "email-verification" | "profile-update" | "update-succesfull"
+    "welcome" | "email-verification" | "profile-update" | "update-successful"
   >("welcome"); // State for managing steps
-  const { control } = useForm({});
+  const [loading, setLoading] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch, // allows us to "watch" the value of a field
+  } = useForm<FormData>({
+    defaultValues: {
+      gender: "",
+      education: "",
+      interest: ["ui/ux design", "female"],
+    },
+  });
 
   const closeBottomSheet = () => {
     bottomSheetRef.current?.close();
@@ -49,6 +77,34 @@ const HomeBottomSheet = () => {
       <View style={styles.bottomSheetIndicator} />
     </View>
   );
+
+  const handleProfileUpdate = async (data: FormData) => {
+    console.log(data, "profile update function");
+
+    //   {
+    //     "area_of_interest": 1,
+    //     "email": "sadiq@maildrop.cc",
+    //     "gender": "female",
+    //     "level_of_education": "Beginner",
+    //     "name": "Learner Group"
+    // }
+    setLoading(true);
+    try {
+      const res = await updateProfile(accessToken, {
+        name: authData?.name,
+        gender: data.gender,
+        level_of_education: data.education,
+        area_of_interest: 1,
+        email: authData?.email,
+      });
+      setLoading(false);
+      setStep("update-successful");
+    } catch (error: any) {
+      setLoading(false);
+
+      console.error(error.response.data);
+    }
+  };
 
   return (
     <BottomSheet
@@ -90,7 +146,7 @@ const HomeBottomSheet = () => {
               style={{ flexDirection: "row", gap: 12, paddingHorizontal: 16 }}
             >
               <Button
-                onPress={() => setStep("email-verification")}
+                onPress={closeBottomSheet}
                 variant="outline"
                 label="Skip"
                 width="48%"
@@ -144,7 +200,7 @@ const HomeBottomSheet = () => {
                 label="Level of education"
                 options={[
                   { label: "Nil", value: "nil" },
-                  { label: "Hign school", value: "hign school" },
+                  { label: "High school", value: "high school" },
                   { label: "Diploma", value: "diploma" },
                   { label: "Bachelors", value: "bachelors" },
                   { label: "Masters", value: "masters" },
@@ -153,7 +209,7 @@ const HomeBottomSheet = () => {
               />
               <ControlledDropdown
                 multiSelect
-                name="interests"
+                name="interest"
                 control={control}
                 rules={{ required: "Please select a type" }}
                 label="Area of interest"
@@ -174,8 +230,10 @@ const HomeBottomSheet = () => {
               />
 
               <Button
+                loading={loading}
+                disabled={loading}
                 label="Proceed"
-                onPress={() => setStep("update-succesfull")}
+                onPress={handleSubmit(handleProfileUpdate)}
               />
             </View>
           </View>
@@ -204,7 +262,7 @@ const HomeBottomSheet = () => {
             >
               Your profile update is successful
             </Text>
-            <Button onPress={() => setStep("welcome")} label="Proceed" />
+            <Button onPress={closeBottomSheet} label="Proceed" />
           </View>
         )}
       </BottomSheetScrollView>

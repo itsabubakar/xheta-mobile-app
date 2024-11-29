@@ -7,9 +7,11 @@ import Modal from "react-native-modal";
 
 import { CircleX, GoogleIcon } from "~/assets/icons";
 import { signUp } from "~/src/api";
+import { useSignUp } from "~/src/api/auth";
 import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
+import Toast from "~/src/ui/toast/custom-toast";
 import { Text, useTheme } from "~/theme";
 
 type Props = {
@@ -29,6 +31,14 @@ const SignUp = ({ role }: Props) => {
   const router = useRouter();
   const theme = useTheme();
   const [isModalVisible, setModalVisible] = useState(false);
+  const { signUp, error } = useSignUp();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
 
   // Manage loading state
   const [loading, setLoading] = useState(false);
@@ -61,7 +71,7 @@ const SignUp = ({ role }: Props) => {
         email: cleanedEmail,
         password: data.password,
         password_confirmation: data.password_confirmation,
-        role: "tutor",
+        role,
         time_zone: "America/New_York",
       });
 
@@ -76,12 +86,14 @@ const SignUp = ({ role }: Props) => {
         id: userData.id,
         name: userData.name,
         role: userData.role,
+        is_first_time: true,
       });
 
       setLoading(false); // Stop loading once the request is complete
       setModalVisible(true); // Show the modal after successful account creation
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      showToast(error || "An unexpected error occurred");
+      console.error(err, "status error");
       setLoading(false); // Stop loading if the request fails
     }
   };
@@ -92,6 +104,13 @@ const SignUp = ({ role }: Props) => {
   return (
     <>
       <View style={styles.formView}>
+        {toastVisible && (
+          <Toast
+            type="error"
+            message={toastMessage}
+            onDismiss={() => setToastVisible(false)}
+          />
+        )}
         {/* Name Field */}
         <ControlledInput
           name="name"

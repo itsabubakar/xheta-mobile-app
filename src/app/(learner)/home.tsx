@@ -1,5 +1,6 @@
+import BottomSheet from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 import {
@@ -22,6 +23,7 @@ const Home = (props: Props) => {
   const [courses, setCourses] = useState(null);
   const [upcomingClasses, setUpcomingClasses] = useState(null);
   const [loading, setLoading] = useState(true);
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -37,6 +39,9 @@ const Home = (props: Props) => {
         // Store the results in state
         setCourses(fetchedCourses);
         setUpcomingClasses(fetchedClasses);
+        if (!authData?.account_activated) {
+          bottomSheetRef.current?.expand();
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -47,33 +52,27 @@ const Home = (props: Props) => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <>
-        <HeaderWithUsername
-          profileImage={authData?.profile_image}
-          name={authData?.name}
-        />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
-        <StatusBar style="light" backgroundColor={theme.colors.primary} />
-      </>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <HeaderWithUsername
         profileImage={authData?.profile_image}
         name={authData?.name}
       />
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <CourseSection courses={courses} />
-        <AssignmentSection />
-        <InformationBoardSection upcomingClasses={upcomingClasses} />
-      </ScrollView>
-      <HomeBottomSheet />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={{ padding: 16 }}>
+          <CourseSection courses={courses} />
+          <AssignmentSection />
+          <InformationBoardSection upcomingClasses={upcomingClasses} />
+        </ScrollView>
+      )}
+      <HomeBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        accountActivated={authData?.account_activated}
+      />
 
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>
