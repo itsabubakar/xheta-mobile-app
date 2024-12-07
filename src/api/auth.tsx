@@ -57,8 +57,16 @@ export const useSignUp = (): UseSignUpResult => {
 };
 
 export const signIn = async (data: { email: string; password: string }) => {
-  const response = await client.post("/login", data);
-  return response.data; // Adjust according to your response structure
+  // const response = await client.post("/login", );
+  // return response.data; // Adjust according to your response structure
+
+  try {
+    const response = await client.post("login", data);
+    return response.data; // Adjust according to your response structure
+  } catch (error: any) {
+    // console.error("Error logging in:", error?.response.data);
+    throw error;
+  }
 };
 
 export const sendResetPasswordCode = async (email: string) => {

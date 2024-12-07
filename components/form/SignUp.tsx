@@ -43,6 +43,8 @@ const SignUp = ({ role }: Props) => {
   // Manage loading state
   const [loading, setLoading] = useState(false);
 
+  console.log(role);
+
   // Form hooks
   const {
     control,
@@ -93,7 +95,7 @@ const SignUp = ({ role }: Props) => {
       setModalVisible(true); // Show the modal after successful account creation
     } catch (err) {
       showToast(error || "An unexpected error occurred");
-      console.error(err, "status error");
+      console.error(error, "status error");
       setLoading(false); // Stop loading if the request fails
     }
   };
