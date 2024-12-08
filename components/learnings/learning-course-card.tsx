@@ -9,26 +9,38 @@ import { Text, theme } from "~/theme";
 type Props = {
   progressPercent: number; // Pass in a percentage value for the course progress
   route?: Href<string>;
+  type: string;
+  course_description: string;
+  course_image: string;
+  course_name: string;
+  tutor: string;
 };
 
-const LearningsCourseCard = ({ progressPercent, route }: Props) => {
+const LearningsCourseCard = ({
+  progressPercent,
+  route,
+  course_description,
+  course_image,
+  course_name,
+  tutor,
+}: Props) => {
   return (
     <Link asChild href={route ? route : "/(learnings)/module"}>
       <Pressable style={styles.container}>
         {/* Image Section */}
-        <Image style={styles.courseImage} source={course} />
+        <Image style={styles.courseImage} source={{ uri: course_image }} />
 
         {/* Text Content Section */}
         <View style={styles.textContent}>
           <Text style={styles.courseTitle} variant="md">
-            UI/UX Design
+            {course_name}
           </Text>
-          <Text style={styles.courseDescription}>
-            Master the art of creating intuitive user interfaces (UI)...
+          <Text style={styles.courseDescription} numberOfLines={3}>
+            {course_description}
           </Text>
 
           <View style={{ paddingTop: 4 }}>
-            <Text style={styles.price}>By Joe Zaza</Text>
+            <Text style={styles.price}>{tutor}</Text>
 
             {/* Progress Bar */}
             <Progress.Bar

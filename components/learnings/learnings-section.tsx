@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View, Pressable } from "react-native";
 
 import LearningsCourseCard from "./learning-course-card";
@@ -11,6 +11,10 @@ type Props = {
 
 const LearningSection = ({ activeTab }: Props) => {
   const [courseTab, setCourseTab] = useState("Courses"); // New state for the top tabs
+
+  useEffect(() => {
+    console.log("hello");
+  }, [courseTab]);
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
