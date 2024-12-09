@@ -59,6 +59,8 @@ const OnBoarding = (props: Props) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Access auth state
   const hydrateAuthData = useAuthStore((state) => state.hydrateAuthData); // Hydrate auth data
 
+  console.log(selectedRole, "role selected");
+
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -76,15 +78,19 @@ const OnBoarding = (props: Props) => {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // Redirect to 'learner/home' if authenticated
       const redirectToHome = async () => {
         setLoading(true); // Set loading state to true before routing
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Optional: Add a small delay
-        router.replace("/(learner)/home");
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Optional: Small delay
+
+        if (selectedRole === "tutor") {
+          router.replace("/(instructor)/(home)/home"); // Redirect to instructor home
+        } else {
+          router.replace("/(learner)/home"); // Redirect to learner home
+        }
       };
       redirectToHome();
     }
-  }, [loading, isAuthenticated, router]);
+  }, [loading, isAuthenticated, router, selectedRole]);
 
   // Show spinner while loading
   if (loading) {

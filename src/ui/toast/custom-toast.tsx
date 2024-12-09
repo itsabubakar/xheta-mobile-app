@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderWidth: 1,
     borderRadius: 8,
+    margin: 16,
   },
   iconAndMessage: {
     flexDirection: "row",

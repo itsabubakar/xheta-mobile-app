@@ -44,3 +44,27 @@ export const searchForCourse = async (
     throw error; // Ensure errors are handled properly
   }
 };
+
+export const fetchPersonalizedCourses = async (accessToken: string) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get("/v1/learner/personalized-learning", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+    },
+  });
+
+  return response.data; // Assuming "courses" is the correct field
+};
+
+export const fetchEnrolledCourses = async (accessToken: string) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get("/v1/learner/enrolled-courses", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+    },
+  });
+
+  return response.data; // Assuming "courses" is the correct field
+};

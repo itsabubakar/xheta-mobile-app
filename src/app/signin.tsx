@@ -12,6 +12,7 @@ import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
 import { CircleX, GoogleIcon } from "~/assets/icons";
+import Toast from "~/src/ui/toast/custom-toast";
 import { Text, useTheme } from "~/theme";
 
 type FormData = {
@@ -26,6 +27,14 @@ const SignIn = () => {
 
   // Manage loading state
   const [loading, setLoading] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -80,14 +89,22 @@ const SignIn = () => {
 
       setLoading(false); // Stop loading once the request is complete
       setModalVisible(true); // Show the modal after successful account creation
-    } catch (error) {
-      console.error(error);
+    } catch (err: any) {
+      console.error(err.response.data.message);
+      showToast(err.response.data.message || "An unexpected error occurred");
       setLoading(false); // Stop loading if the request fails
     }
   };
 
   return (
     <View style={styles.container}>
+      {toastVisible && (
+        <Toast
+          type="error"
+          message={toastMessage}
+          onDismiss={() => setToastVisible(false)}
+        />
+      )}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <Text variant="title" style={styles.header}>
