@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ThemeProvider } from "@shopify/restyle";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
