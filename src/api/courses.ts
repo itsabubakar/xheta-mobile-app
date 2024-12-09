@@ -59,6 +59,10 @@ export const fetchPersonalizedCourses = async (accessToken: string) => {
 
 export const fetchEnrolledCourses = async (accessToken: string) => {
   console.log(accessToken, "access token");
+  console.log(accessToken, "access token");
+  console.log(accessToken, "access token");
+  console.log(accessToken, "access token");
+  console.log(accessToken, "access token");
 
   const response = await client.get("/v1/learner/enrolled-courses", {
     headers: {
