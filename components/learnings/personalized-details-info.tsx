@@ -6,7 +6,7 @@ import { Text, theme } from "~/theme";
 
 type Props = object;
 
-export const UpcomingClass = (props: Props) => {
+export const UpcomingClass = ({ courseInfo }: any) => {
   return (
     <View style={styles.detailsConc}>
       <View style={styles.container}>
@@ -24,7 +24,7 @@ export const UpcomingClass = (props: Props) => {
         </View>
 
         <Text style={{ fontFamily: "AeonikMedium", flex: 1 }}>
-          You have a class with Rick Desmond
+          {courseInfo.message}
         </Text>
         <View
           style={{
@@ -34,14 +34,14 @@ export const UpcomingClass = (props: Props) => {
         >
           <View style={{ marginLeft: "auto" }}>
             <Text style={styles.timer}>Hr.</Text>
-            <Text style={styles.time}>04</Text>
+            <Text style={styles.time}>{courseInfo.hour}</Text>
           </View>
           <View style={{ alignSelf: "center" }}>
             <Text style={{ marginTop: 20, marginHorizontal: 4 }}>:</Text>
           </View>
           <View>
             <Text style={styles.timer}>Min.</Text>
-            <Text style={styles.time}>00</Text>
+            <Text style={styles.time}>{courseInfo.minute}</Text>
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text
@@ -51,7 +51,7 @@ export const UpcomingClass = (props: Props) => {
                 marginLeft: 6,
               }}
             >
-              PM
+              {courseInfo.AM_PM}
             </Text>
           </View>
         </View>
@@ -68,6 +68,7 @@ export const UpcomingClass = (props: Props) => {
             fontFamily: "AeonikBold",
 
             paddingVertical: 8,
+            paddingHorizontal: 8,
           }}
         >
           Join class
@@ -77,7 +78,7 @@ export const UpcomingClass = (props: Props) => {
   );
 };
 
-export const ScheduledClassTime = (props: Props) => {
+export const ScheduledClassTime = ({ courseInfo }: any) => {
   return (
     <View style={styles.detailsConc}>
       <View style={styles.container}>
@@ -114,7 +115,7 @@ export const ScheduledClassTime = (props: Props) => {
               borderRadius: 8,
             }}
           >
-            20th April 2024
+            {courseInfo.class_date}
           </Text>
         </View>
         <View style={styles.infoContainer}>
@@ -133,7 +134,7 @@ export const ScheduledClassTime = (props: Props) => {
               borderRadius: 8,
             }}
           >
-            7:00 AM
+            {courseInfo.formatted_start_time}
           </Text>
         </View>
       </View>

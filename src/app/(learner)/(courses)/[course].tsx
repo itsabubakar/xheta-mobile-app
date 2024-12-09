@@ -56,15 +56,8 @@ const CourseDetails = (props: Props) => {
   );
 
   const handlePaymentClick = () => {
-    // Simulate payment logic
     console.log("Payment option clicked!");
-    // Update state to reflect purchase completion
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * Simulates a payment process by logging a success message and
-     * updating the component's state to reflect a successful purchase.
-     */
-    /******  2b38a536-7b17-4cdf-868f-a386d2b2ae07  *******/ setPurchased(true);
+    setPurchased(true);
   };
 
   return (

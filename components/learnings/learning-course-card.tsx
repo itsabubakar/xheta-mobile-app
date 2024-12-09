@@ -8,7 +8,7 @@ import { Text, theme } from "~/theme";
 
 type Props = {
   progressPercent: number; // Pass in a percentage value for the course progress
-  route?: Href<string>;
+  route?: any;
   type: string;
   course_description: string;
   course_image: string;
@@ -25,10 +25,19 @@ const LearningsCourseCard = ({
   tutor,
 }: Props) => {
   return (
-    <Link asChild href={route ? route : "/(learnings)/module"}>
+    <Link
+      asChild
+      href={{
+        pathname: route.pathname as any,
+        params: route.params,
+      }}
+    >
       <Pressable style={styles.container}>
         {/* Image Section */}
-        <Image style={styles.courseImage} source={{ uri: course_image }} />
+        <Image
+          style={styles.courseImage}
+          source={course_image ? { uri: course_image } : course}
+        />
 
         {/* Text Content Section */}
         <View style={styles.textContent}>

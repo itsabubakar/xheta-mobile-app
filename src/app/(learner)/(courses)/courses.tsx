@@ -62,15 +62,6 @@ const Courses = (props: Props) => {
       console.log(`Searching for course: ${query}`);
       router.push("/(learner)/search-course");
       router.setParams({ query });
-      // setSearchQuery(query);
-      // const data = await searchForCourse(query, accessToken); // Perform search
-      // const searchResult = data[0]?.data || []; // Extract result from response
-
-      // setCourses(searchResult); // Update courses with search result
-
-      // if (searchResult.length === 0) {
-      //   console.log("No courses found");
-      // }
     } catch (err) {
       console.error("Error during search:", err);
       setError("Error during search");

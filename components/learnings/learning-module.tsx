@@ -7,22 +7,29 @@ import { Text, theme } from "~/theme";
 
 type Props = {
   completed?: boolean;
+  module: any;
+  enrolledCourseId: string;
 };
 
-const LearningModule = ({ completed }: Props) => {
+const LearningModule = ({ completed, module, enrolledCourseId }: Props) => {
+  console.log(enrolledCourseId, module);
+  console.log(enrolledCourseId, module);
   const router = useRouter();
   return (
     <Pressable
-      onPress={() => router.push("/(learner)/(learnings)/module-details")}
+      onPress={() =>
+        router.push({
+          pathname: "/(learner)/(learnings)/module-details",
+          params: { id: module.id, courseId: enrolledCourseId },
+        })
+      }
       style={styles.module}
     >
       <View style={styles.info}>
         {/* subtitle */}
-        <Text style={styles.moduleTitle}>
-          Understanding UI/UX Design Principles
-        </Text>
+        <Text style={styles.moduleTitle}>{module.module_title}</Text>
         {/* lesson number */}
-        <Text style={styles.lesson}>Lesson 01</Text>
+        <Text style={styles.lesson}>{module.module_sub_title}</Text>
       </View>
       {/* Time */}
       <View style={styles.time}>

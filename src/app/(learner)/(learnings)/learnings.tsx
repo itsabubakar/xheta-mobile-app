@@ -1,12 +1,15 @@
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 
+import { noContent } from "~/assets/images";
 import { LearningsCourseCard, LearningsSection } from "~/components";
 import {
   fetchEnrolledCourses,
@@ -19,6 +22,7 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const Learnings = (props: Props) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Ongoing");
 
   // Separate states for enrolled and personalized courses
@@ -82,7 +86,7 @@ const Learnings = (props: Props) => {
       }
     };
 
-    // fetchData();
+    fetchData();
   }, [accessToken]);
 
   // Get the correct data to render based on the active tab and course tab
@@ -150,21 +154,67 @@ const Learnings = (props: Props) => {
                   rowGap: 16,
                 }}
               >
-                {dataToRender.map((course: any, i: any) => (
-                  <LearningsCourseCard
-                    key={i}
-                    course_name={course.course_name}
-                    type={courseTab}
-                    tutor={course.tutor}
-                    progressPercent={course.course_progress}
-                    course_description={course.course_description}
-                    course_image={course.course_image}
-                  />
-                ))}
+                {courseTab == "Courses" &&
+                  dataToRender.map((course: any, i: any) => (
+                    <LearningsCourseCard
+                      route={{
+                        pathname: `/(learnings)/module` as any,
+                        params: { id: course.id },
+                      }}
+                      key={i}
+                      course_name={course.course_name}
+                      type={courseTab}
+                      tutor={course.tutor}
+                      progressPercent={course.course_progress}
+                      course_description={course.course_description}
+                      course_image={course.course_image}
+                    />
+                  ))}
+                {courseTab == "Personalized" &&
+                  dataToRender.map((course: any, i: any) => (
+                    <LearningsCourseCard
+                      route={{
+                        pathname: `/personalized-details` as any,
+                        params: { id: course.id },
+                      }}
+                      key={i}
+                      course_name={course.class_name}
+                      type={courseTab}
+                      tutor={course.tutor.name}
+                      progressPercent={course.course_progress || 0}
+                      course_description={course.class_name}
+                      course_image={course.course_image}
+                    />
+                  ))}
               </ScrollView>
             ))
           ) : (
-            <Text style={styles.noDataText}>No completed courses</Text>
+            <View
+              style={{
+                marginTop: 100,
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Image source={noContent} />
+              <Text
+                style={{
+                  paddingTop: 16,
+                  textAlign: "center",
+                }}
+              >
+                No courses to show yet. Browse Courses...
+              </Text>
+              <Pressable onPress={() => router.push("/(courses)/courses")}>
+                <Text
+                  style={{
+                    color: theme.colors.primary,
+                  }}
+                >
+                  Browse Courses
+                </Text>
+              </Pressable>
+            </View>
           )}
         </>
       )}

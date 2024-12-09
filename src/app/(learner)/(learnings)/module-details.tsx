@@ -1,9 +1,18 @@
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { PlayIcon } from "~/assets/icons";
 import { course } from "~/assets/images";
+import { fetchSingleCourseModule } from "~/src/api/courses";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -20,6 +29,50 @@ const ModuleDetails = (props: Props) => {
       setIsCompleted(true);
     }
   };
+
+  const { id, courseId }: { id: string; courseId: string } =
+    useLocalSearchParams(); // Pulling the 'params' from the dynamic route
+
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token;
+  const [loading, setLoading] = useState(false);
+  const [courseInfo, setCourseInfo] = useState<any>(null);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    if (!id) return;
+
+    const fetchCourseInfo = async () => {
+      console.log("fetching", id);
+      try {
+        setLoading(true);
+
+        const response = await fetchSingleCourseModule(
+          accessToken,
+          courseId,
+          id,
+        );
+        setCourseInfo(response.data); // Save info to state
+
+        console.log(response.data, "single module info");
+      } catch (error) {
+        console.error("Error fetching module:", error);
+      } finally {
+        setLoading(false); // Stop loading after request completes
+      }
+    };
+
+    fetchCourseInfo();
+  }, [accessToken]);
+
+  // Show spinner while loading
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="green" />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScreenHeader bg title="Course module" />
@@ -30,21 +83,23 @@ const ModuleDetails = (props: Props) => {
           <View style={styles.content}>
             {/* Breadcrumb Section */}
             <Text style={styles.breadcrumb} variant="md">
-              Module 1 {">"} Introduction to UI/UX design {">"} Understanding
-              UI/UX design principles
+              Module 1 {"> "} {courseInfo?.module_title} {"> "}
+              {courseInfo?.module_sub_title}
             </Text>
 
             {/* Image with Play Button */}
-            <View style={styles.imageContainer}>
-              <View style={styles.overlay} />
-              <Pressable
-                onPress={() => console.log("play button clicked")}
-                style={styles.playIconWrapper}
-              >
-                <PlayIcon />
-              </Pressable>
-              <Image style={styles.image} source={course} />
-            </View>
+            {courseInfo?.lesson_material_video && (
+              <View style={styles.imageContainer}>
+                <View style={styles.overlay} />
+                <Pressable
+                  onPress={() => console.log("play button clicked")}
+                  style={styles.playIconWrapper}
+                >
+                  <PlayIcon />
+                </Pressable>
+                <Image style={styles.image} source={course} />
+              </View>
+            )}
 
             {/* Notes Section */}
             <View style={styles.notesContainer}>
@@ -150,5 +205,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
 });

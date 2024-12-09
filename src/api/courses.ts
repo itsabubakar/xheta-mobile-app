@@ -68,3 +68,67 @@ export const fetchEnrolledCourses = async (accessToken: string) => {
 
   return response.data; // Assuming "courses" is the correct field
 };
+
+export const fetchSinglePersonalizedCourse = async (
+  accessToken: string,
+  id: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get(`/v1/learner/personalized-learning/${id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+    },
+  });
+
+  return response.data; // Assuming "courses" is the correct field
+};
+
+export const fetchSingleEnrolledCourse = async (
+  accessToken: string,
+  id: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get(
+    `/v1/learner/enrolled-courses/${id}/lessons`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      },
+    },
+  );
+
+  return response.data; // Assuming "courses" is the correct field
+};
+
+export const fetchSingleCourseModule = async (
+  accessToken: string,
+  courseId: string,
+  id: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get(
+    `/v1/learner/enrolled-courses/${courseId}/lessons/${id}/modules/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      },
+    },
+  );
+
+  return response.data; // Assuming "courses" is the correct field
+};
+
+export const enrollForACourse = async (accessToken: string, id: string) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.post(`/v1//learner/course/enroll/10`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+    },
+  });
+
+  return response.data; // Assuming "courses" is the correct field
+};

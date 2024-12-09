@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: theme.colors.borderColor,
     maxWidth: 163.5,
+    marginBottom: 16,
   },
   price: {
     fontFamily: "AeonikBold",

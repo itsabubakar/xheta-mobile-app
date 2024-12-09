@@ -1,72 +1,116 @@
-import React from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { tutor } from "~/assets/images";
 import { UpcomingClass } from "~/components";
 import { ScheduledClassTime } from "~/components/learnings/personalized-details-info";
+import { fetchSinglePersonalizedCourse } from "~/src/api/courses";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 const PersonalizedDetails = () => {
+  const router = useRouter();
+  const { id }: { id: string } = useLocalSearchParams(); // Pulling the 'params' from the dynamic route
+
+  console.log(id, "id");
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token;
+  const [loading, setLoading] = useState(false);
+  const [courseInfo, setCourseInfo] = useState<any>(null);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    if (!id) return;
+    const fetchCourseInfo = async () => {
+      setLoading(true);
+      console.log("fetching", id);
+      try {
+        const response = await fetchSinglePersonalizedCourse(accessToken, id);
+        setCourseInfo(response.data); // Save info to state
+        console.log(response.data, "single personalized info");
+      } catch (error) {
+        console.error("Error fetching personalized:", error);
+      } finally {
+        setLoading(false); // Stop loading after request completes
+      }
+    };
+
+    fetchCourseInfo();
+  }, [accessToken]);
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.white,
-      }}
-    >
-      <ScreenHeader bg title="Course module" />
-      <View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.container}
+    <>
+      {loading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: theme.colors.white,
+          }}
         >
-          <View style={styles.headerContainer}>
-            <View style={styles.textContainer}>
-              <Text variant="sm" style={styles.verifiedText}>
-                Verified
-              </Text>
-              <Text variant="subtitle">Shanon Wills</Text>
-            </View>
-            <Image style={styles.tutorImage} source={tutor} />
-          </View>
-          <Text style={styles.descriptionText}>
-            Lorem ipsum dolor sit amet consectetur. Aliquet curabitur eget
-            viverra sed imperdiet. Quam dui volutpat eu hendrerit. Tortor
-            elementum integer nisi varius facilisi gravida elementum. Magna urna
-            dolor imperdiet congue commodo et arcu. Lorem ipsum dolor sit amet
-            consectetur. Aliquet curabitur eget viverra sed imperdiet. Quam dui
-            volutpat eu hendrerit. Tortor elementum integer nisi varius facilisi
-            gravida elementum. Magna urna dolor imperdiet congue commodo et
-            arcu.
-          </Text>
+          <ScreenHeader bg title="Course module" />
           <View>
-            <Text variant="md" style={styles.expertiseText}>
-              Area of expertise
-            </Text>
-            <View style={styles.tagContainer}>
-              <Tag>Web Dev</Tag>
-              <Tag>Web Design</Tag>
-              <Tag>Web Design</Tag>
-              <Tag>Web Design</Tag>
-              <Tag>Web Design</Tag>
-              <Tag>Web Work</Tag>
-            </View>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}
+            >
+              <View style={styles.headerContainer}>
+                <View style={styles.textContainer}>
+                  <Text variant="sm" style={styles.verifiedText}>
+                    {courseInfo?.tutor?.account_activated}
+                  </Text>
+                  <Text variant="subtitle">{courseInfo?.tutor?.name}</Text>
+                </View>
+                <Image
+                  style={styles.tutorImage}
+                  source={
+                    courseInfo?.tutor?.profile_image
+                      ? { uri: courseInfo?.tutor?.profile_image }
+                      : tutor
+                  }
+                />
+              </View>
+              <Text style={styles.descriptionText}>
+                {courseInfo?.tutor?.bio}
+              </Text>
+              <View>
+                <Text variant="md" style={styles.expertiseText}>
+                  Area of expertise
+                </Text>
+                <View style={styles.tagContainer}>
+                  {courseInfo?.tutor?.areas_of_expertise.map(
+                    (expertise: string) => (
+                      <Tag key={expertise}>{expertise}</Tag>
+                    ),
+                  )}
+                </View>
+              </View>
+              <View
+                style={{
+                  paddingTop: 24,
+                }}
+              >
+                <Text style={{ marginBottom: 8 }} variant="md">
+                  Upcoming classes
+                </Text>
+                <UpcomingClass courseInfo={courseInfo} />
+                <ScheduledClassTime courseInfo={courseInfo} />
+              </View>
+            </ScrollView>
           </View>
-          <View
-            style={{
-              paddingTop: 24,
-            }}
-          >
-            <Text style={{ marginBottom: 8 }} variant="md">
-              Upcoming classes
-            </Text>
-            <UpcomingClass />
-            <ScheduledClassTime />
-          </View>
-        </ScrollView>
-      </View>
-    </View>
+        </View>
+      )}
+    </>
   );
 };
 
@@ -126,5 +170,10 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 12,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
