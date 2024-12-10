@@ -121,14 +121,24 @@ export const fetchSingleCourseModule = async (
   return response.data; // Assuming "courses" is the correct field
 };
 
-export const enrollForACourse = async (accessToken: string, id: string) => {
+export const enrollForACourse = async (
+  accessToken: string,
+  id: string,
+  payment_gateway: string,
+) => {
   console.log(accessToken, "access token");
 
-  const response = await client.post(`/v1//learner/course/enroll/10`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+  const response = await client.post(
+    `/v1/learner/course/enroll/${id}`,
+    {
+      payment_gateway,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      },
+    },
+  );
 
-  return response.data; // Assuming "courses" is the correct field
+  return response.data;
 };

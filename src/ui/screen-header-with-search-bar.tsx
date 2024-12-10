@@ -8,6 +8,7 @@ import { Text, theme } from "~/theme";
 type Props = {
   title: string;
   onSearch: (query: string) => void;
+  placeholder?: string;
 };
 
 const ScreenHeaderWithSearchBar = (props: Props) => {
@@ -32,7 +33,7 @@ const ScreenHeaderWithSearchBar = (props: Props) => {
         }}
       >
         <SearchInput
-          placeholder="Search for course name..."
+          placeholder={props.placeholder || "Search for course name..."}
           onSearch={props.onSearch}
         />
       </View>

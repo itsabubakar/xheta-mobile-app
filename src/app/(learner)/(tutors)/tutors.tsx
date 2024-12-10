@@ -56,7 +56,7 @@ const Tutors = (props: Props) => {
     setError(null);
 
     try {
-      console.log(`Searching for course: ${query}`);
+      console.log(`Searching for tutor: ${query}`);
       router.push("/search-tutor");
       router.setParams({ query });
     } catch (err) {
@@ -70,7 +70,11 @@ const Tutors = (props: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.container}>
-        <HeaderWithSearchBar title="Tutors" onSearch={handleSearch} />
+        <HeaderWithSearchBar
+          placeholder="Search for tutors..."
+          title="Tutors"
+          onSearch={handleSearch}
+        />
 
         {loading || searchLoading ? ( // Show loader for initial load or search
           <View style={styles.loaderContainer}>

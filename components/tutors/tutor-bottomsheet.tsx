@@ -177,12 +177,7 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
                 option="Paystack"
                 icon={<PayStackIcon />}
               />
-              <PaymentOption
-                onPress={() => console.log("Stripe selected")}
-                text="Choose Stripe to pay in USD"
-                option="Stripe"
-                icon={<Stripecon />}
-              />
+
               <PaymentOption
                 onPress={() => console.log("Flutterwave selected")}
                 option="Flutterwave"

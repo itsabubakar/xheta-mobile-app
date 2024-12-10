@@ -3,33 +3,35 @@ import BottomSheet, {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useCallback, useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { greenTick } from "~/assets/animations";
-import {
-  Chevron,
-  CircleX,
-  FlutterWaveIcon,
-  PayStackIcon,
-  RoundBack,
-  Stripecon,
-  Xback,
-} from "~/assets/icons";
-import Paystack from "~/assets/icons/paystack";
+import { CircleX, FlutterWaveIcon, PayStackIcon } from "~/assets/icons";
 import { CourseDetailHeader, CourseInfo, PaymentOption } from "~/components";
+import { enrollForACourse } from "~/src/api/courses";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 type Props = object;
 
 const CourseDetails = (props: Props) => {
-  const courseDetails = useLocalSearchParams(); // Pulling the 'id' from the dynamic route
+  const router = useRouter();
+  const courseDetails: any = useLocalSearchParams(); // Pulling the 'id' from the dynamic route
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
 
-  console.log(courseDetails.id, "param");
   const [purchased, setPurchased] = useState(false);
+  const [loading, setLoading] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const closeBottomSheet = () => {
@@ -55,10 +57,31 @@ const CourseDetails = (props: Props) => {
     </View>
   );
 
-  const handlePaymentClick = () => {
-    console.log("Payment option clicked!");
-    setPurchased(true);
+  const handlePaymentClick = async (option: string) => {
+    setLoading(true);
+    try {
+      const res = await enrollForACourse(accessToken, courseDetails.id, option);
+
+      // Route to WebView screen with the payment URL
+      router.push({
+        pathname: "/webview" as any,
+        params: { url: res.authorization_url_for_making_payment },
+      });
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      console.log(error.response?.data || error.message);
+    }
   };
+
+  // Show spinner while loading
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -142,19 +165,14 @@ const CourseDetails = (props: Props) => {
                 <Text>Select payment gateway</Text>
 
                 <PaymentOption
-                  onPress={handlePaymentClick}
+                  onPress={() => handlePaymentClick("PAYSTACK")}
                   text="Choose Paystack to pay in NGN"
                   option="Paystack"
                   icon={<PayStackIcon />}
                 />
+
                 <PaymentOption
-                  onPress={() => console.log("boo")}
-                  text="Choose Stripe to pay in USD"
-                  option="Stripe"
-                  icon={<Stripecon />}
-                />
-                <PaymentOption
-                  onPress={() => console.log("boo")}
+                  onPress={() => handlePaymentClick("FLUTTERWAVE")}
                   option="Flutterwave"
                   text="Choose Flutterwave to pay in NGN & USD"
                   icon={<FlutterWaveIcon />}
@@ -214,5 +232,11 @@ const styles = StyleSheet.create({
   lottie: {
     width: 120,
     height: 120,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
 });
