@@ -16,26 +16,43 @@ import Modal from "react-native-modal";
 import { greenTick } from "~/assets/animations";
 import { CircleX, FileIcon } from "~/assets/icons";
 import { info } from "~/assets/images";
+import { client } from "~/src/api/client";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
 import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
+import Toast from "~/src/ui/toast/custom-toast";
 import { Text, theme } from "~/theme";
+import { convertBase64 } from "~/utils/helper";
 
 type Props = object;
 
 type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  role: string;
-  time_zone: string;
+  title: string;
+  description: string;
+  price: string;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  cover_image: string;
+  number_of_participants: string;
 };
 
 const AddBootCamp = (props: Props) => {
   const router = useRouter();
   const [showModuleCreationModal, setCourseModuleModal] = useState(false);
   const [showBootCampCreated, setShowBootCampCreated] = useState(false);
+  const [image, setImage] = useState<string>();
+  // Manage loading state
+  const [loading, setLoading] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
 
   const {
     control,
@@ -44,11 +61,15 @@ const AddBootCamp = (props: Props) => {
     watch,
   } = useForm<FormData>({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      time_zone: "America/New_York",
+      cover_image: "",
+      description: "",
+      end_date: "",
+      end_time: "",
+      number_of_participants: "",
+      price: "",
+      start_date: "",
+      start_time: "",
+      title: "",
     },
   });
   const pickImage = async () => {
@@ -57,7 +78,7 @@ const AddBootCamp = (props: Props) => {
     if (!permissionResult.granted) {
       Alert.alert(
         "Permission required",
-        "You need to grant camera roll permission to upload a picture.",
+        "You need to grant camera roll permission to upload a picture."
       );
       return;
     }
@@ -74,15 +95,45 @@ const AddBootCamp = (props: Props) => {
       console.log(uri);
     }
   };
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    if (!image) return;
+    const coverImage = await convertBase64(image);
+
+    data = { ...data, cover_image: coverImage };
+
+    try {
+      const response = await client.post("tutor/bootcamps/create", data);
+
+      const res = response.data;
+
+      console.log(res);
+
+      setLoading(false); // Stop loading once the request is complete
+      setShowBootCampCreated(true);
+    } catch (err: any) {
+      console.error(err.response.data.message);
+      showToast(err.response.data.message || "An unexpected error occurred");
+      setLoading(false); // Stop loading if the request fails
+    }
+  };
   return (
     <View style={styles.container}>
+      {toastVisible && (
+        <Toast
+          type="error"
+          message={toastMessage}
+          onDismiss={() => setToastVisible(false)}
+        />
+      )}
       <ScreenHeader bg title="Add bootcamp" />
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
       >
         <View style={{ marginTop: 16 }}>
           <ControlledInput
-            name="name"
+            name="title"
             control={control}
             label="Title"
             rules={{
@@ -102,7 +153,7 @@ const AddBootCamp = (props: Props) => {
         >
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="start_date"
               control={control}
               label="Start date"
               rules={{
@@ -113,7 +164,7 @@ const AddBootCamp = (props: Props) => {
           </View>
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="end_date"
               control={control}
               label="End date"
               rules={{
@@ -133,7 +184,7 @@ const AddBootCamp = (props: Props) => {
         >
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="start_time"
               control={control}
               label="Start time"
               rules={{
@@ -144,7 +195,7 @@ const AddBootCamp = (props: Props) => {
           </View>
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="end_time"
               control={control}
               label="End time"
               rules={{
@@ -159,7 +210,7 @@ const AddBootCamp = (props: Props) => {
           <View style={{ marginBottom: 16 }}>
             <ControlledTextArea
               placeholder="Enter description"
-              name="name"
+              name="description"
               control={control}
               label="Course description"
             />
@@ -186,7 +237,12 @@ const AddBootCamp = (props: Props) => {
             </Text>
           </Pressable>
         </View>
-        <Button onPress={() => setShowBootCampCreated(true)} label="Create" />
+        <Button
+          onPress={() => handleSubmit(onSubmit)}
+          loading={loading}
+          disabled={loading}
+          label="Create"
+        />
       </ScrollView>
 
       <Modal isVisible={showModuleCreationModal}>
