@@ -131,7 +131,7 @@ const OnBoarding = (props: Props) => {
 
   return (
     <>
-      <Image source={onboardingBg} style={{ width: "auto", height: 509 }} />
+      <Image source={onboardingBg} style={{ width: "auto", height: "63%" }} />
 
       <View style={styles.buttonsContainer}>
         <View>
@@ -162,11 +162,6 @@ const OnBoarding = (props: Props) => {
           />
 
           <View style={{ marginTop: 24 }}>
-            {/* <Button
-              disabled={!isButtonEnabled}
-              onPress={() => router.push(`/(instructor)/home`)} // Pass the selected role to the next screen
-              label="Proceed"
-            /> */}
             <Button
               disabled={!isButtonEnabled}
               onPress={() => router.push(`/signup?role=${selectedRole}`)} // Pass the selected role to the next screen
@@ -184,7 +179,8 @@ export default OnBoarding;
 
 const styles = StyleSheet.create({
   buttonsContainer: {
-    borderRadius: 32,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     marginTop: -90,
     backgroundColor: "white",
     flex: 1,

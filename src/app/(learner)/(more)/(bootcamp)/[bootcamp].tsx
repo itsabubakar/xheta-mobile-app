@@ -26,6 +26,7 @@ import {
 import { course } from "~/assets/images";
 import { PaymentOption } from "~/components";
 import { fetchOneBootcamp } from "~/src/api";
+import { registerInterestForBootCamp } from "~/src/api/bootcamp";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
@@ -33,7 +34,7 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const BootCampDetails = (props: Props) => {
-  const { bootcamp: id } = useLocalSearchParams();
+  const { bootcamp: id }: any = useLocalSearchParams();
 
   const [purchased, setPurchased] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -92,8 +93,28 @@ const BootCampDetails = (props: Props) => {
   const router = useRouter();
   // Handle button click
 
-  const handleClick = () => {
-    console.log("clicked");
+  const handlePayment = async (option: string) => {
+    setLoading(true);
+
+    try {
+      const res = await registerInterestForBootCamp(
+        accessToken || "",
+        id,
+        option,
+      );
+      // Route to WebView screen with the payment URL
+      router.push({
+        pathname: "/webview" as any,
+        params: { url: res.authorization_url_for_making_payment },
+      });
+      console.log(res);
+      setLoading(false);
+      closeBottomSheet();
+    } catch (error: any) {
+      console.error(error.response.data);
+      setLoading(false);
+      closeBottomSheet();
+    }
   };
 
   return (
@@ -209,19 +230,14 @@ const BootCampDetails = (props: Props) => {
                     <Text>Select payment gateway</Text>
 
                     <PaymentOption
-                      onPress={handlePaymentClick}
+                      onPress={() => handlePayment("PAYSTACK")}
                       text="Choose Paystack to pay in NGN"
                       option="Paystack"
                       icon={<PayStackIcon />}
                     />
+
                     <PaymentOption
-                      onPress={() => console.log("boo")}
-                      text="Choose Stripe to pay in USD"
-                      option="Stripe"
-                      icon={<Stripecon />}
-                    />
-                    <PaymentOption
-                      onPress={() => console.log("boo")}
+                      onPress={() => handlePayment("FLUTTERWAVE")}
                       option="Flutterwave"
                       text="Choose Flutterwave to pay in NGN & USD"
                       icon={<FlutterWaveIcon />}

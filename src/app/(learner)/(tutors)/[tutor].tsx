@@ -106,7 +106,10 @@ const Tutor = () => {
               <Button onPress={openBottomSheet} label="Book tutor" />
             </View>
           </View>
-          <TutorsBottomSheet bottomSheetRef={bottomSheetRef} />
+          <TutorsBottomSheet
+            tutorId={tutorInfo?.id}
+            bottomSheetRef={bottomSheetRef}
+          />
         </>
       )}
     </View>

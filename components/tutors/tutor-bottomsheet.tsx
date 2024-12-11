@@ -3,10 +3,12 @@ import BottomSheet, {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { format } from "date-fns";
+import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
 import { CustomCalendar } from "../calendar";
 import { PaymentOption } from "../payment";
@@ -17,26 +19,41 @@ import {
   CircleX,
   FlutterWaveIcon,
   PayStackIcon,
-  Stripecon,
 } from "~/assets/icons";
+import { bookTutor, makePaymentToBookTutor } from "~/src/api/tutors";
+import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 
 type PaymentBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet>;
+  tutorId: string;
 };
 
-const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
-  const { control } = useForm({});
+const PaymentBottomSheet = ({
+  bottomSheetRef,
+  tutorId,
+}: PaymentBottomSheetProps) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const { control, handleSubmit, reset } = useForm({
+    defaultValues: {
+      name: "",
+      from: "",
+      to: "",
+      message: "",
+    },
+  });
 
   const [currentSection, setCurrentSection] = useState(0); // Track the current section
   const [pickedDate, setPickedDate] = useState<Date | null>(null);
-
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const [bookingIdentifier, setBookingIdentifier] = useState<string>("");
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const handleProceedToPayment = () => setCurrentSection(1);
-  const handlePurchaseConfirmation = () => setCurrentSection(2);
   const closeBottomSheet = () => {
     bottomSheetRef.current?.close();
     setCurrentSection(0);
@@ -49,11 +66,77 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
     [],
   );
 
+  const bookTutorTime = async (data: any) => {
+    setLoading(true);
+    reset();
+    setPickedDate(null);
+    const { from, message, to } = data;
+
+    // Assuming pickedDate is available in the scope
+    const pickedDate = new Date(); // Replace this with your actual pickedDate
+    // Dynamically detect the user's time zone
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Convert pickedDate to "YYYY-MM-DD" format
+    const formattedDate = format(pickedDate, "yyyy-MM-dd");
+
+    const dataToSubmit = {
+      start_time: from,
+      end_time: to,
+      message_from_learner: message,
+      date: formattedDate, // formatted date
+      time_zone: userTimeZone,
+      tutor_id: tutorId,
+    };
+
+    try {
+      const res = await bookTutor(accessToken, dataToSubmit);
+      console.log(res);
+      setBookingIdentifier(res.booking_identifier);
+      setLoading(false);
+      setCurrentSection(1);
+    } catch (error: any) {
+      console.error(error.response.data.message);
+      setLoading(false);
+    }
+  };
+
+  const handlePayment = async (option: string) => {
+    console.log(bookingIdentifier);
+    setLoading(true);
+
+    try {
+      const res = await makePaymentToBookTutor(
+        accessToken,
+        bookingIdentifier,
+        option,
+      );
+      // Route to WebView screen with the payment URL
+      router.push({
+        pathname: "/webview" as any,
+        params: { url: res.authorization_url_for_making_payment },
+      });
+      console.log(res);
+      setLoading(false);
+      closeBottomSheet();
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      closeBottomSheet();
+    }
+  };
+
   const renderHandle = () => (
     <View style={styles.handleContainer}>
       <View style={styles.bottomSheetIndicator} />
     </View>
   );
+
+  // if (loading) {
+  //   return (
+
+  //   );
+  // }
 
   return (
     <BottomSheet
@@ -65,9 +148,14 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
       backdropComponent={renderBackdrop}
       handleComponent={renderHandle}
     >
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      )}
       <BottomSheetScrollView>
         {/* Section 1: Introduction Section */}
-        {currentSection === 0 && (
+        {!loading && currentSection === 0 && (
           <View style={{ paddingHorizontal: 16 }}>
             {showCalendar ? (
               <CustomCalendar
@@ -88,27 +176,27 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
                 >
                   <View style={{ width: "50%", flex: 1 }}>
                     <ControlledDropdown
-                      name="to"
-                      control={control}
-                      rules={{ required: "Please select a time" }}
-                      label="To"
-                      options={[
-                        { label: "7am", value: "7am" },
-                        { label: "8am", value: "8am" },
-                        { label: "9am", value: "9am" },
-                      ]}
-                    />
-                  </View>
-                  <View style={{ width: "50%", flex: 1 }}>
-                    <ControlledDropdown
                       name="from"
                       control={control}
                       rules={{ required: "Please select a time" }}
                       label="From"
                       options={[
-                        { label: "8am", value: "8am" },
-                        { label: "9am", value: "9am" },
-                        { label: "10am", value: "10am" },
+                        { label: "7am", value: "07:00" },
+                        { label: "8am", value: "08:00" },
+                        { label: "9am", value: "09:00" },
+                      ]}
+                    />
+                  </View>
+                  <View style={{ width: "50%", flex: 1 }}>
+                    <ControlledDropdown
+                      name="to"
+                      control={control}
+                      rules={{ required: "Please select a time" }}
+                      label="To"
+                      options={[
+                        { label: "8am", value: "08:00m" },
+                        { label: "9am", value: "09:00" },
+                        { label: "10am", value: "10:00" },
                       ]}
                     />
                   </View>
@@ -150,7 +238,7 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
                 >
                   <Button
                     label="Proceed"
-                    onPress={() => setCurrentSection(1)}
+                    onPress={handleSubmit(bookTutorTime)}
                   />
                 </View>
               </>
@@ -159,7 +247,7 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
         )}
 
         {/* Section 2: Payment Options Section */}
-        {currentSection === 1 && (
+        {!loading && currentSection === 1 && (
           <>
             <Pressable
               onPress={closeBottomSheet}
@@ -172,14 +260,14 @@ const PaymentBottomSheet = ({ bottomSheetRef }: PaymentBottomSheetProps) => {
               <Text>Select payment gateway</Text>
 
               <PaymentOption
-                onPress={handlePurchaseConfirmation}
+                onPress={() => handlePayment("PAYSTACK")}
                 text="Choose Paystack to pay in NGN"
                 option="Paystack"
                 icon={<PayStackIcon />}
               />
 
               <PaymentOption
-                onPress={() => console.log("Flutterwave selected")}
+                onPress={() => handlePayment("FLUTTERWAVE")}
                 option="Flutterwave"
                 text="Choose Flutterwave to pay in NGN & USD"
                 icon={<FlutterWaveIcon />}
@@ -296,5 +384,16 @@ const styles = StyleSheet.create({
   lottie: {
     width: 120,
     height: 120,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

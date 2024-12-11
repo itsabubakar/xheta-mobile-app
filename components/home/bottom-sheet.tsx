@@ -81,13 +81,6 @@ const HomeBottomSheet = ({
   const handleProfileUpdate = async (data: FormData) => {
     console.log(data, "profile update function");
 
-    //   {
-    //     "area_of_interest": 1,
-    //     "email": "sadiq@maildrop.cc",
-    //     "gender": "female",
-    //     "level_of_education": "Beginner",
-    //     "name": "Learner Group"
-    // }
     setLoading(true);
     try {
       const res = await updateProfile(accessToken, {

@@ -43,3 +43,56 @@ export const fetchOneTutor = async (accessToken: string, id: string) => {
 
   return response.data;
 };
+
+// bookTutor function
+export const bookTutor = async (
+  accessToken: string,
+  data: {
+    date: string;
+    start_time: string;
+    end_time: string;
+    time_zone: string;
+    tutor_id: string;
+    message_from_learner: string;
+  },
+) => {
+  console.log(data, "data");
+  try {
+    const response = await client.post(
+      "/v1/learner/bookings",
+      [data], // Data passed here as the second argument
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the bearer token in the third argument (config)
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error :", error);
+    throw error;
+  }
+};
+
+export const makePaymentToBookTutor = async (
+  accessToken: string,
+  id: string,
+  payment_gateway: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.post(
+    `/v1/learner/bookings/make-payment/${id}`,
+    {
+      payment_gateway,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      },
+    },
+  );
+
+  return response.data;
+};

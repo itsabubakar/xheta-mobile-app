@@ -23,3 +23,27 @@ export const fetchOneBootcamp = async (accessToken: string, id: string) => {
 
   return response.data; // Assuming "courses" is the correct field
 };
+
+// enroll to a bootcamp
+
+export const registerInterestForBootCamp = async (
+  accessToken: string,
+  id: string,
+  payment_gateway: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.post(
+    `/v1/learner/bootcamp/enroll/${id}`,
+    {
+      payment_gateway,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Include the bearer token
+      },
+    },
+  );
+
+  return response.data;
+};
