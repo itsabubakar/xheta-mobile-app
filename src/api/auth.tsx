@@ -1,8 +1,11 @@
 // src/api/authApi.ts;
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import { client } from "./client";
+
+import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type SignUpData = {
   name: string;
@@ -29,7 +32,7 @@ export const useSignUp = (): UseSignUpResult => {
     async (
       data: SignUpData,
       onSuccess?: () => void,
-      onError?: (message: string) => void,
+      onError?: (message: string) => void
     ) => {
       setLoading(true);
       setError(null);
@@ -50,7 +53,7 @@ export const useSignUp = (): UseSignUpResult => {
         setLoading(false);
       }
     },
-    [],
+    []
   );
 
   return { signUp, loading, error, success };
@@ -113,7 +116,7 @@ export const verifyEmail = async (data: { token: string; email: string }) => {
         headers: {
           Authorization: `Bearer ${data.token}`, // Include the bearer token
         },
-      },
+      }
     );
     return response.data; // Adjust according to your response structure
   } catch (error) {
@@ -131,11 +134,74 @@ export const verifyEmailOtp = async (data: { token: string; code: string }) => {
         headers: {
           Authorization: `Bearer ${data.token}`, // Include the bearer token
         },
-      },
+      }
     );
     return response.data; // Adjust according to your response structure
   } catch (error) {
     console.error("Error verifying account:", error);
     throw error; //  throw the error for further handling
   }
+};
+
+export const useGoogleSignIn = () => {
+  const [state, setState] = useState({
+    loading: false,
+    error: "",
+    success: false,
+  });
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: "YOUR_ANDROID_CLIENT_ID",
+    iosClientId: "YOUR_IOS_CLIENT_ID",
+  });
+
+  useEffect(() => {
+    signInWithGoogle();
+  }, [response]);
+
+  const fetchUserInfo = async (token: string) => {
+    try {
+      const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch user info");
+
+      const user = await res.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+      setState({ loading: false, success: true, error: "" });
+    } catch (error: any) {
+      setState({ loading: false, error: error.message, success: false });
+    }
+  };
+
+  const signInWithGoogle = useCallback(async () => {
+    setState({ loading: true, error: "", success: false });
+
+    try {
+      const storedUser = await AsyncStorage.getItem("@user");
+      if (storedUser) {
+        setUserInfo(JSON.parse(storedUser));
+        setState({ loading: false, success: true, error: "" });
+        return JSON.parse(storedUser);
+      }
+
+      if (
+        response?.type === "success" &&
+        response.authentication?.accessToken
+      ) {
+        await fetchUserInfo(response.authentication.accessToken);
+      }
+    } catch (error: any) {
+      setState({ loading: false, error: "Sign-in failed", success: false });
+    }
+  }, [response]);
+
+  return {
+    promptAsync,
+    userInfo,
+    loading: state.loading,
+    error: state.error,
+    success: state.success,
+  };
 };

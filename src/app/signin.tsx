@@ -14,6 +14,7 @@ import { ControlledInput } from "../ui/form"; // Your existing ControlledInput c
 import { CircleX, GoogleIcon } from "~/assets/icons";
 import Toast from "~/src/ui/toast/custom-toast";
 import { Text, useTheme } from "~/theme";
+import { useGoogleSignIn } from "../api/auth";
 
 type FormData = {
   email: string;
@@ -21,6 +22,7 @@ type FormData = {
 };
 
 const SignIn = () => {
+  const { error, promptAsync, success, userInfo } = useGoogleSignIn();
   const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
   const router = useRouter();
@@ -194,7 +196,9 @@ const SignIn = () => {
             variant="outline"
             icon={<GoogleIcon />}
             label="Sign in with Google"
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => {
+              promptAsync;
+            }}
           />
         </View>
         <View>
