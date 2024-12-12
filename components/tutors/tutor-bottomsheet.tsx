@@ -132,12 +132,6 @@ const PaymentBottomSheet = ({
     </View>
   );
 
-  // if (loading) {
-  //   return (
-
-  //   );
-  // }
-
   return (
     <BottomSheet
       ref={bottomSheetRef}

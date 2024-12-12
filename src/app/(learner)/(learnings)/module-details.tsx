@@ -68,7 +68,14 @@ const ModuleDetails = (props: Props) => {
   // Show spinner while loading
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
         <ActivityIndicator size="large" color="green" />
       </View>
     );
@@ -205,11 +212,5 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
   },
 });

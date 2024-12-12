@@ -85,6 +85,7 @@ const OnBoarding = (props: Props) => {
         if (selectedRole === "tutor") {
           router.replace("/(instructor)/(home)/home"); // Redirect to instructor home
         } else {
+          console.log("problem");
           router.replace("/(learner)/home"); // Redirect to learner home
         }
       };

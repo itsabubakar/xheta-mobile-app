@@ -1,9 +1,18 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
-import { course } from "~/assets/images";
+import { course, noContent } from "~/assets/images";
 import { CreatedCourses } from "~/components";
+import { getTutorBootCamps } from "~/src/api/tutor-courses";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeaderWithButton } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -13,7 +22,48 @@ const BootCamp = (props: Props) => {
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "draft">(
     "all",
   );
+  const [loading, setLoading] = useState(false);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const [bootCamps, setBootCamps] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        console.log("fetching", activeTab);
+        const res = await getTutorBootCamps(accessToken);
+        if (res.data) {
+          console.log(res.data);
+          setLoading(false);
+          setBootCamps(res.data);
+        } else {
+          console.log(res.message);
+          setLoading(false);
+          setBootCamps([]);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // fetchData();
+  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScreenHeaderWithButton
@@ -22,45 +72,67 @@ const BootCamp = (props: Props) => {
         bg
         title="Bootcamps"
       />
-
       <View style={styles.tabRow}>
         <TabButton
           label="All"
           isActive={activeTab === "all"}
           onPress={() => setActiveTab("all")}
-          badgeCount={20}
+          badgeCount="0"
         />
         <TabButton
           label="Pending"
           isActive={activeTab === "pending"}
           onPress={() => setActiveTab("pending")}
-          badgeCount={2}
+          badgeCount="0"
         />
         <TabButton
+          badgeCount="0"
           label="Draft"
           isActive={activeTab === "draft"}
           onPress={() => setActiveTab("draft")}
         />
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          padding: 16,
-          flexWrap: "wrap",
-        }}
-      >
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-        <Camp />
-      </ScrollView>
+
+      {bootCamps.length < 0 ? (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              style={{
+                marginBottom: 16,
+              }}
+              source={noContent}
+            />
+            <Text>You have not created any bootcamp yet.</Text>
+          </View>
+        </View>
+      ) : (
+        <>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            {bootCamps.map((info: any) => (
+              <Camp info={info} key={info.id} />
+            ))}
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 };
@@ -71,7 +143,7 @@ type TabButtonProps = {
   label: string;
   isActive: boolean;
   onPress: () => void;
-  badgeCount?: number;
+  badgeCount?: number | string;
 };
 
 const TabButton = ({
@@ -123,7 +195,7 @@ const Camp = (props: any) => {
             height: 106,
             borderRadius: 8,
           }}
-          source={course}
+          source={{ uri: props.info.cover_image }}
         />
       </View>
       <Text
@@ -134,7 +206,7 @@ const Camp = (props: any) => {
         }}
         variant="md"
       >
-        UI/UX Design
+        {props.info.title}
       </Text>
       <Text
         numberOfLines={3}
@@ -143,7 +215,7 @@ const Camp = (props: any) => {
           color: theme.colors.lightBlack,
         }}
       >
-        Master the art of creating intuitive user interfaces (UI)...
+        {props.info.description}
       </Text>
       <View
         style={{
@@ -153,7 +225,7 @@ const Camp = (props: any) => {
           paddingTop: 8,
         }}
       >
-        <Text style={styles.price}>#5000</Text>
+        <Text style={styles.price}>#{props.info.price}</Text>
       </View>
     </Pressable>
   );
