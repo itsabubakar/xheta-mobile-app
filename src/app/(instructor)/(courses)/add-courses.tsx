@@ -16,6 +16,7 @@ import Modal from "react-native-modal";
 import { greenTick } from "~/assets/animations";
 import { CircleX, FileIcon } from "~/assets/icons";
 import { info } from "~/assets/images";
+import { client } from "~/src/api/client";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
 import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
@@ -24,18 +25,36 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  role: string;
-  time_zone: string;
+  course_name: string;
+  category_id: string;
+  course_price: string;
+  course_level: string;
+  course_description: string;
+  course_image: string;
+  course_intro_video: string;
+  course_duration: string;
+  prerequisite: string;
+  course_goals: string;
+  certificate: string
 };
 
 const AddCourses = (props: Props) => {
   const router = useRouter();
   const [showModuleCreationModal, setCourseModuleModal] = useState(false);
   const [showCourseCreated, setShowCourseCreated] = useState(false);
+  const [image, setImage] = useState<string>();
+  // Manage loading state
+  const [loading, setLoading] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
+
+  
 
   const {
     control,
@@ -44,11 +63,7 @@ const AddCourses = (props: Props) => {
     watch,
   } = useForm<FormData>({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      time_zone: "America/New_York",
+      category_id:"", certificate: "", course_description: "", course_duration: "", course_goals :"",  course_image: "", course_intro_video: "", course_level: "", course_name:"",  course_price: "", prerequisite: ""
     },
   });
   const pickImage = async () => {
@@ -72,8 +87,31 @@ const AddCourses = (props: Props) => {
     if (!result.canceled) {
       const { uri, mimeType } = result.assets[0];
       console.log(uri);
+      setImage(uri)
     }
   };
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    if (!image) return;
+
+
+    try {
+      const response = await client.post("tutor/course/create", data);
+
+      const res = response.data;
+
+      console.log(res);
+
+      setLoading(false); // Stop loading once the request is complete
+ setCourseModuleModal(true)
+    } catch (err: any) {
+      console.error(err.response.data.message);
+      showToast(err.response.data.message || "An unexpected error occurred");
+      setLoading(false); // Stop loading if the request fails
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <ScreenHeader bg title="Add Courses" />
@@ -106,7 +144,7 @@ const AddCourses = (props: Props) => {
 
         <View style={{ marginTop: 16 }}>
           <ControlledInput
-            name="name"
+            name="course_name"
             control={control}
             label="Course name"
             rules={{
@@ -117,11 +155,11 @@ const AddCourses = (props: Props) => {
         </View>
         <View style={{ marginTop: 16 }}>
           <ControlledDropdown
-            name="name"
+            name="category_id"
             control={control}
             label="Course category"
             rules={{
-              required: "Name is required",
+              required: "category is required",
             }}
             options={[
               { label: "UI/UX Design", value: "uI/UX Design" },
@@ -148,9 +186,9 @@ const AddCourses = (props: Props) => {
             flex: 1,
           }}
         >
-          <View style={{ width: "100%", flex: 1 }}>
+          {/* <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="course_price"
               control={control}
               label="Course price"
               rules={{
@@ -158,14 +196,14 @@ const AddCourses = (props: Props) => {
               }}
               placeholder="Nil"
             />
-          </View>
+          </View> */}
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="course_price"
               control={control}
               label="Course price"
               rules={{
-                required: "Name is required",
+                required: "Course price is required",
               }}
               placeholder="Nil"
             />
@@ -181,22 +219,22 @@ const AddCourses = (props: Props) => {
         >
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="certificate"
               control={control}
               label="Certificate"
               rules={{
-                required: "Name is required",
+                required: "certificate is required",
               }}
               placeholder="Nil"
             />
           </View>
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
-              name="name"
+              name="course_level"
               control={control}
               label="Level"
               rules={{
-                required: "Name is required",
+                required: "Level is required",
               }}
               placeholder="Nil"
             />
@@ -227,7 +265,7 @@ const AddCourses = (props: Props) => {
           <View style={{ marginVertical: 16 }}>
             <ControlledTextArea
               placeholder="Enter description"
-              name="name"
+              name="course_description"
               control={control}
               label="Course description"
             />

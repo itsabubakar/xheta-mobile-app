@@ -1,13 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { getAllCardsDetails } from "~/src/api/tutors-profile";
 
 import { CircularPlus, Mastercard, TrashIcon } from "~/assets/icons";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeaderWithCustomIcon } from "~/src/ui";
 import { Text } from "~/theme";
 
 type Props = object;
 
 const PaymentBilling = (props: Props) => {
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token;
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false)
+  const [cards, setCards ] = useState<any[]>([]); //store cards
+
+  useEffect(() => {
+      const getCards = async () => {
+        if (!accessToken) return; // No token, no request
+        setLoading(true);
+        setError(null);
+  
+        try {
+          console.log("Fetching all card details...");
+          // Fetch cards
+          const [fetchedCards,] = await Promise.all([
+            getAllCardsDetails(accessToken),
+          ]);
+  
+          setCards(fetchedCards.data || []); // Set fetched data
+        } catch (err) {
+          console.error("Error fetching data:", err);
+          setError("Error fetching data");
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      getCards()
+    }, [accessToken]);
+
+    console.log(cards);
+    
+
   return (
     <View style={styles.container}>
       <ScreenHeaderWithCustomIcon
