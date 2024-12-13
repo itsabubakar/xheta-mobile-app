@@ -48,7 +48,7 @@ const BootCamp = (props: Props) => {
       }
     };
 
-    // fetchData();
+    fetchData();
   }, []);
   if (loading) {
     return (

@@ -75,23 +75,27 @@ const OnBoarding = (props: Props) => {
 
     checkAuthentication();
   }, [hydrateAuthData]);
-
   useEffect(() => {
     if (!loading && isAuthenticated) {
       const redirectToHome = async () => {
         setLoading(true); // Set loading state to true before routing
         await new Promise((resolve) => setTimeout(resolve, 100)); // Optional: Small delay
 
-        if (selectedRole === "tutor") {
+        const authData = useAuthStore.getState().authData; // Get authData from the store
+        const role = authData?.role;
+
+        if (role === "tutor") {
           router.replace("/(instructor)/(home)/home"); // Redirect to instructor home
-        } else {
-          console.log("problem");
+        } else if (role === "learner") {
           router.replace("/(learner)/home"); // Redirect to learner home
+        } else {
+          console.log("No role found, redirecting to onboarding...");
+          router.replace("/onboarding"); // Handle edge case: no role found
         }
       };
       redirectToHome();
     }
-  }, [loading, isAuthenticated, router, selectedRole]);
+  }, [loading, isAuthenticated, router]);
 
   // Show spinner while loading
   if (loading) {
