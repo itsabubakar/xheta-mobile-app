@@ -72,8 +72,7 @@ const PaymentBottomSheet = ({
     setPickedDate(null);
     const { from, message, to } = data;
 
-    // Assuming pickedDate is available in the scope
-    const pickedDate = new Date(); // Replace this with your actual pickedDate
+    const pickedDate = new Date();
     // Dynamically detect the user's time zone
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

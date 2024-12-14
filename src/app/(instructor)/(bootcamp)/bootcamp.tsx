@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -11,7 +11,7 @@ import {
 
 import { course, noContent } from "~/assets/images";
 import { CreatedCourses } from "~/components";
-import { getTutorBootCamps } from "~/src/api/tutor-courses";
+import { getTutorBootCamps } from "~/src/api/tutor-bootcamps";
 import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeaderWithButton } from "~/src/ui";
 import { Text, theme } from "~/theme";
@@ -26,30 +26,36 @@ const BootCamp = (props: Props) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
   const [bootCamps, setBootCamps] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        console.log("fetching", activeTab);
-        const res = await getTutorBootCamps(accessToken);
-        if (res.data) {
-          console.log(res.data);
-          setLoading(false);
-          setBootCamps(res.data);
-        } else {
-          console.log(res.message);
-          setLoading(false);
-          setBootCamps([]);
-        }
-      } catch (error) {
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      console.log("fetching", activeTab);
+      const res = await getTutorBootCamps(accessToken);
+      if (res.data) {
         setLoading(false);
-        console.error("Error fetching data:", error);
+        setBootCamps(res.data);
+      } else {
+        setLoading(false);
+        setBootCamps([]);
       }
-    };
-
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // Refetch only if refetch param is true
+    if (params.refetch === "true") {
+      fetchData();
+      router.setParams({ refetch: undefined }); // Clear the param after refetching
+    }
+  }, [params.refetch]);
   if (loading) {
     return (
       <View

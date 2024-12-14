@@ -123,8 +123,8 @@ export const updateProfile = async (accessToken: string, data: any) => {
 
 export const updateProfilePicture = async (accessToken: string, data: any) => {
   try {
-    const response = await axios.post(
-      "https://xheta-api.eknoxbit.com/api/v1/learner/profile/image/update",
+    const response = await client.post(
+      "/v1/learner/profile/image/update",
       data,
       {
         headers: {

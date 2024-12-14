@@ -27,7 +27,7 @@ export const getDashboardAssignments = async (accessToken: string) => {
 
     return response.data; // Adjust according to your response structure
   } catch (error) {
-    console.error("Error fetching dashboard courses:", error);
+    console.error("Error fetching dashboard assignments:", error);
     throw error; // Optionally throw the error for further handling
   }
 };
@@ -46,7 +46,7 @@ export const getUpcomingClasses = async (accessToken: string) => {
 
     return response.data; // Adjust according to your response structure
   } catch (error) {
-    console.error("Error fetching dashboard courses:", error);
+    console.error("Error fetching dashboard activities:", error);
     throw error; // Optionally throw the error for further handling
   }
 };
