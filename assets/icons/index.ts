@@ -71,3 +71,4 @@ export { RedIconUp, GreenIconDown } from "./payment-icons";
 
 export { Mastercard, Visacard } from "./card-icons";
 export { default as CircularPlus } from "./circular-plus";
+export { default as GreenCamera } from "./green-camera";

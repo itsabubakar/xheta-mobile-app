@@ -189,9 +189,16 @@ const TabButton = ({
 const Camp = (props: any) => {
   const router = useRouter();
 
+  console.log(props.info.id);
+
   return (
     <Pressable
-      onPress={() => router.push("/bootcamp-details")}
+      onPress={() =>
+        router.push({
+          pathname: "/bootcamp-details",
+          params: { id: props.info.id },
+        })
+      }
       style={styles.campContainer}
     >
       <View>

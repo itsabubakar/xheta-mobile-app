@@ -1,6 +1,13 @@
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import Modal from "react-native-modal";
 
 import {
@@ -11,6 +18,8 @@ import {
   TrashIcon,
 } from "~/assets/icons";
 import { course } from "~/assets/images";
+import { getTutorSingeBootCamp } from "~/src/api/tutor-bootcamps";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -19,7 +28,51 @@ type Props = object;
 const BootcampDetails = (props: Props) => {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [deleteModuleModal, setDeleteModuleModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const [bootCampInfo, setBootcampInfo] = useState<any>();
+
+  let { id } = useLocalSearchParams();
+  if (Array.isArray(id)) {
+    id = id[0]; // Ensure it's a string
+  }
+
+  if (!id || typeof id !== "string") {
+    console.error("Invalid id parameter");
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchBootCamp = async () => {
+      try {
+        const res = await getTutorSingeBootCamp(accessToken, id);
+        setLoading(false);
+        setBootcampInfo(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+    fetchBootCamp();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScreenHeaderWithCustomIcon
@@ -33,31 +86,32 @@ const BootcampDetails = (props: Props) => {
         contentContainerStyle={{ padding: 16 }}
       >
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={course} />
+          <Image
+            style={styles.image}
+            source={{ uri: bootCampInfo?.cover_image }}
+          />
         </View>
         <View style={{ marginTop: 16, gap: 4 }}>
-          <Text variant="subtitle">UI/UX Design Course</Text>
-          <Text>
-            Welcome to our UI/UX Design course! This comprehensive program will
-            equip you with the knowledge and skills to create exceptional user
-            interfaces (UI) and enhance user experiences (UX). Dive into the
-            world of design thinking, wireframing, prototyping, and usability
-            testing. Below is an overview of the curriculum
-          </Text>
+          <Text variant="subtitle">{bootCampInfo?.title}</Text>
+          <Text>{bootCampInfo?.description}</Text>
         </View>
         <View style={{ marginTop: 8, gap: 6 }}>
           <Text style={{ fontSize: 16 }}>
-            Date: <Text style={{ color: "#1D1D1D" }}>26 - 29 April</Text>
+            Date:{" "}
+            <Text style={{ color: "#1D1D1D" }}>
+              {bootCampInfo?.start_and_end_date}
+            </Text>
           </Text>
           <Text style={{ fontSize: 16 }}>
             Time:{" "}
             <Text variant="subtitle" style={{ color: "#1D1D1D" }}>
-              8:00 am - 9:00 am
+              {bootCampInfo?.formatted_start_time} to{" "}
+              {bootCampInfo?.formatted_end_time}
             </Text>
           </Text>
 
           <Text variant="normal_bold" style={{ fontSize: 20 }}>
-            #8000000
+            #{bootCampInfo?.price}
           </Text>
         </View>
 
@@ -210,7 +264,19 @@ const BootcampDetails = (props: Props) => {
           <Pressable
             onPress={() => {
               setShowMenuModal(false);
-              router.push("/edit-bootcamp");
+              router.push({
+                pathname: "/edit-bootcamp",
+                params: {
+                  start_date: bootCampInfo.start_date,
+                  end_date: bootCampInfo.end_date,
+                  title: bootCampInfo.title,
+                  start_time: bootCampInfo.start_time,
+                  end_time: bootCampInfo.end_time,
+                  price: bootCampInfo.price,
+                  description: bootCampInfo.description,
+                  cover_image: bootCampInfo.cover_image,
+                },
+              });
             }}
           >
             <Text

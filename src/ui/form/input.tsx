@@ -503,6 +503,7 @@ interface ControlledTextAreaProps<T extends FieldValues> {
   rules?: any;
   label: string; // Add label prop to ControlledTextAreaProps
   placeholder: string;
+  disabled?: boolean;
 }
 
 export function ControlledTextArea<T extends FieldValues>({

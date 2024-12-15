@@ -29,3 +29,19 @@ export const createBootCamp = async (accessToken: string, data: any) => {
     throw error; // Optionally throw the error for further handling
   }
 };
+
+// Fetch all tutors function
+export const getTutorSingeBootCamp = async (
+  accessToken: string,
+  id: string,
+) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get(`v1/tutor/bootcamps/${id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
