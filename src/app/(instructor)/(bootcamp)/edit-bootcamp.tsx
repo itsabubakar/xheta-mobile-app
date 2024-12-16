@@ -1,9 +1,11 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import LottieView from "lottie-react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -11,9 +13,13 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import Modal from "react-native-modal";
 
-import { FileIcon, GreenCamera } from "~/assets/icons";
+import { greenTick } from "~/assets/animations";
+import { CircleX, FileIcon, GreenCamera } from "~/assets/icons";
 import { course } from "~/assets/images";
+import { editBootCamp } from "~/src/api/tutor-bootcamps";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import {
   ControlledDropdown,
@@ -21,37 +27,43 @@ import {
   ControlledTextArea,
 } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
+import { convertTo24HourFormat } from "~/utils/convertTo24HourFormat";
 
 type Props = object;
 
 const EditBootcamp = (props: Props) => {
   const {
+    id,
     start_date,
     end_date,
     title,
-    start_time,
-    end_time,
     price,
     description,
     cover_image,
+    formatted_start_time,
+    formatted_end_time,
   } = useLocalSearchParams();
 
   const [edit, setEdit] = useState(false);
+  const authData = useAuthStore((state) => state.authData);
+  const [loading, setLoading] = useState(false);
+  const accessToken = authData?.access_token || "";
+  const [currentImage, setCurrentImage] = useState<string | any>(cover_image); // Default image
+  const [bootCampEdited, setShowBootCampEdited] = useState(false);
+  const router = useRouter();
 
   const { control, setValue, watch, handleSubmit, reset } = useForm<any>({
     defaultValues: {
       startDate: start_date,
       endDate: end_date,
       title,
-      startTime: start_time,
-      endTime: end_time,
+      startTime: formatted_start_time,
+      endTime: formatted_end_time,
       price,
       description,
-      cover_image,
+      coverImage: cover_image,
     },
   });
-
-  console.log(cover_image);
 
   const [datePicker, setDatePicker] = useState<{
     show: boolean;
@@ -114,10 +126,97 @@ const EditBootcamp = (props: Props) => {
 
     if (!result.canceled) {
       const { uri, mimeType } = result.assets[0];
-      console.log(uri);
+
+      // Build an image file-like object
+      const imageType = mimeType || "image/jpeg";
+      const imageFile = {
+        uri,
+        type: imageType,
+        name: `cover.${imageType.split("/")[1]}`, // Extract extension
+      };
+
+      setValue("coverImage", imageFile); // Update form state
+      setCurrentImage(uri); // Update state to show new image immediately
+      console.log("New Image Selected:", imageFile);
     }
   };
 
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+
+    // Combine new data with fallback to existing values
+
+    console.log(data.price);
+    const finalData = {
+      title: data.title || title,
+      description: data.description || description,
+      price: data.price
+        ? Number(data.price.toString().replace(/[^0-9.]/g, "")) // Remove commas and keep valid numbers
+        : Number(price), // Fallback to existing price
+      start_date: data.startDate || start_date,
+      end_date: data.endDate || end_date,
+      start_time: data.startTime
+        ? convertTo24HourFormat(data.startTime)
+        : formatted_start_time,
+      end_time: data.endTime
+        ? convertTo24HourFormat(data.endTime)
+        : formatted_end_time,
+      number_of_participants: "UNLIMITED", // Fixed default value
+    };
+
+    // Append fields to FormData
+    Object.entries(finalData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    // Handle the image: Append only if a new file is selected
+    if (data.coverImage && data.coverImage.uri) {
+      formData.append("cover_image", {
+        uri: data.coverImage.uri,
+        name: "cover.jpeg",
+        type: "image/jpeg",
+      });
+    }
+
+    console.log("Submitting FormData:", formData);
+
+    setLoading(true);
+    try {
+      const res = await editBootCamp(accessToken, id as any, formData);
+      console.log("Bootcamp edited successfully!", res);
+      reset(); // Reset the form
+      setShowBootCampEdited(true);
+    } catch (error: any) {
+      console.error("Error editing bootcamp:", error.response?.data || error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleRoutingBack = () => {
+    setShowBootCampEdited(false);
+    setEdit(false);
+    router.replace({
+      pathname: "/bootcamp",
+      params: { refetch: "true" }, // Add a refetch query param
+    });
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScreenHeader
@@ -133,17 +232,16 @@ const EditBootcamp = (props: Props) => {
         <View style={styles.imageContainer}>
           {edit && <View style={styles.overlay} />}
           {edit && (
-            <Pressable
-              style={styles.changeImageButton}
-              onPress={() => {
-                console.log("Change image pressed");
-              }}
-            >
+            <Pressable style={styles.changeImageButton} onPress={pickImage}>
               <GreenCamera />
               <Text style={styles.changeImageText}>Change image</Text>
             </Pressable>
           )}
-          <Image style={styles.image} source={{ uri: cover_image }} />
+          {/* Use currentImage as the source */}
+          <Image
+            style={styles.image}
+            source={{ uri: currentImage || cover_image }}
+          />
         </View>
 
         <View style={{ marginTop: 16 }}>
@@ -242,7 +340,7 @@ const EditBootcamp = (props: Props) => {
         </View>
         <View>
           <View style={{ paddingTop: 24 }}>
-            <Button label="Save" />
+            <Button onPress={handleSubmit(onSubmit)} label="Save" />
           </View>
         </View>
       </ScrollView>
@@ -256,6 +354,49 @@ const EditBootcamp = (props: Props) => {
           onChange={handleDateChange}
         />
       )}
+
+      <Modal isVisible={bootCampEdited}>
+        <View
+          style={{
+            padding: 16,
+            borderRadius: 16,
+            backgroundColor: "white",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={handleRoutingBack}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <View style={{ alignSelf: "center" }}>
+              <LottieView
+                style={styles.lottie}
+                source={greenTick}
+                autoPlay
+                loop={false}
+              />
+            </View>
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingBottom: 16 }}
+          >
+            Your bootcamp training has been edited successfully
+          </Text>
+
+          <Button
+            onPress={handleRoutingBack}
+            label="Dismiss"
+            fontFamily="AeonikMedium"
+          />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -267,7 +408,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
-
+  lottie: {
+    width: 120,
+    height: 120,
+  },
   image: {
     width: "100%",
     height: "100%",

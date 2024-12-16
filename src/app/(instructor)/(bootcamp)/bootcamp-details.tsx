@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import LottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 
+import { greenTick } from "~/assets/animations";
 import {
   CircleX,
   ExclamationIcon,
@@ -18,7 +20,10 @@ import {
   TrashIcon,
 } from "~/assets/icons";
 import { course } from "~/assets/images";
-import { getTutorSingeBootCamp } from "~/src/api/tutor-bootcamps";
+import {
+  deleteBootCamp,
+  getTutorSingeBootCamp,
+} from "~/src/api/tutor-bootcamps";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";
 import { Text, theme } from "~/theme";
@@ -33,6 +38,7 @@ const BootcampDetails = (props: Props) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
   const [bootCampInfo, setBootcampInfo] = useState<any>();
+  const [bootCampDeleted, setShowBootCampDeleted] = useState(false);
 
   let { id } = useLocalSearchParams();
   if (Array.isArray(id)) {
@@ -58,6 +64,28 @@ const BootcampDetails = (props: Props) => {
     };
     fetchBootCamp();
   }, [id]);
+
+  const handleDelete = async () => {
+    setDeleteModuleModal(false);
+    try {
+      setLoading(true);
+      const res = await deleteBootCamp(accessToken, id);
+      setLoading(false);
+      console.log(res.data);
+      setShowBootCampDeleted(true);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const handleRoutingBack = () => {
+    setShowBootCampDeleted(false);
+    router.replace({
+      pathname: "/bootcamp",
+      params: { refetch: "true" }, // Add a refetch query param
+    });
+  };
 
   if (loading) {
     return (
@@ -267,6 +295,7 @@ const BootcampDetails = (props: Props) => {
               router.push({
                 pathname: "/edit-bootcamp",
                 params: {
+                  id: bootCampInfo.id,
                   start_date: bootCampInfo.start_date,
                   end_date: bootCampInfo.end_date,
                   title: bootCampInfo.title,
@@ -275,6 +304,8 @@ const BootcampDetails = (props: Props) => {
                   price: bootCampInfo.price,
                   description: bootCampInfo.description,
                   cover_image: bootCampInfo.cover_image,
+                  formatted_start_time: bootCampInfo.formatted_start_time,
+                  formatted_end_time: bootCampInfo.formatted_end_time,
                 },
               });
             }}
@@ -293,7 +324,7 @@ const BootcampDetails = (props: Props) => {
           <Pressable
             onPress={() => {
               setShowMenuModal(false);
-              router.push("/edit-course");
+              setDeleteModuleModal(true);
             }}
           >
             <Text
@@ -312,7 +343,6 @@ const BootcampDetails = (props: Props) => {
       <Modal isVisible={deleteModuleModal}>
         <View
           style={{
-            marginTop: "25%",
             padding: 16,
             borderRadius: 16,
             backgroundColor: "white",
@@ -343,9 +373,63 @@ const BootcampDetails = (props: Props) => {
           </Text>
 
           <View style={{ flexDirection: "row", gap: 12 }}>
-            <Button variant="lightPrimary" label="Cancel" width="48%" />
-            <Button width="48%" label="Delete" fontFamily="AeonikMedium" />
+            <Button
+              onPress={() => setDeleteModuleModal(false)}
+              variant="lightPrimary"
+              label="Cancel"
+              width="48%"
+            />
+            <Button
+              onPress={handleDelete}
+              width="48%"
+              label="Delete"
+              fontFamily="AeonikMedium"
+            />
           </View>
+        </View>
+      </Modal>
+
+      {/* Bootcamp deleted */}
+      <Modal isVisible={bootCampDeleted}>
+        <View
+          style={{
+            padding: 16,
+            borderRadius: 16,
+            backgroundColor: "white",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={handleRoutingBack}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <View style={{ alignSelf: "center" }}>
+              <LottieView
+                style={styles.lottie}
+                source={greenTick}
+                autoPlay
+                loop={false}
+              />
+            </View>
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingBottom: 16 }}
+          >
+            Your bootcamp training has been deleted successfully
+          </Text>
+
+          <Button
+            onPress={handleRoutingBack}
+            label="Dismiss"
+            fontFamily="AeonikMedium"
+          />
         </View>
       </Modal>
     </View>
@@ -370,5 +454,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 8,
+  },
+  lottie: {
+    width: 120,
+    height: 120,
   },
 });

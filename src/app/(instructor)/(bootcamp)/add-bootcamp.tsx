@@ -162,7 +162,7 @@ const AddBootCamp = (props: Props) => {
       formData.append("cover_image", coverImage);
     }
 
-    console.log("Submitting FormData...");
+    console.log("Submitting FormData...", formData);
     setLoading(true);
     try {
       const res = await createBootCamp(accessToken, formData);

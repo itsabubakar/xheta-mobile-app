@@ -31,27 +31,32 @@ const BootCamp = (props: Props) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      console.log("fetching", activeTab);
-      const res = await getTutorBootCamps(accessToken);
-      if (res.data) {
-        setLoading(false);
+      console.log("Fetching new data for:", activeTab);
+      const res = await getTutorBootCamps(accessToken); // Add timestamp
+      console.log("Fetched data:", res.data?.length);
+      if (res.data?.length > 0) {
         setBootCamps(res.data);
       } else {
-        setLoading(false);
         setBootCamps([]);
       }
     } catch (error) {
-      setLoading(false);
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
 
+  console.log(bootCamps);
+
   useEffect(() => {
     // Refetch only if refetch param is true
     if (params.refetch === "true") {
+      console.log(params);
+      console.log("refetching the data");
       fetchData();
       router.setParams({ refetch: undefined }); // Clear the param after refetching
     }
@@ -99,7 +104,7 @@ const BootCamp = (props: Props) => {
         />
       </View>
 
-      {bootCamps.length < 0 ? (
+      {bootCamps.length === 0 ? (
         <View
           style={{
             justifyContent: "center",
@@ -188,8 +193,6 @@ const TabButton = ({
 
 const Camp = (props: any) => {
   const router = useRouter();
-
-  console.log(props.info.id);
 
   return (
     <Pressable
