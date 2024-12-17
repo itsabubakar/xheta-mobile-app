@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -26,6 +27,7 @@ const BootCamp = (props: Props) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
   const [bootCamps, setBootCamps] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const params = useLocalSearchParams();
   const router = useRouter();
   const fetchData = async () => {
@@ -46,11 +48,25 @@ const BootCamp = (props: Props) => {
     }
   };
 
+  // Load drafts from SecureStore
+  const loadDrafts = async () => {
+    try {
+      console.log("Loading drafts...");
+      const draftsData = await SecureStore.getItemAsync("bootcamp_drafts");
+      if (draftsData) {
+        setDrafts(JSON.parse(draftsData));
+      } else {
+        setDrafts([]);
+      }
+    } catch (error) {
+      console.error("Failed to load drafts:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    loadDrafts();
   }, []);
-
-  console.log(bootCamps);
 
   useEffect(() => {
     // Refetch only if refetch param is true
@@ -58,9 +74,28 @@ const BootCamp = (props: Props) => {
       console.log(params);
       console.log("refetching the data");
       fetchData();
+      loadDrafts();
+
       router.setParams({ refetch: undefined }); // Clear the param after refetching
     }
   }, [params.refetch]);
+
+  const renderData = () => {
+    switch (activeTab) {
+      case "all":
+        // Combine API and draft data
+        return [...bootCamps, ...drafts];
+      case "pending":
+        // Show only API data
+        return bootCamps.filter((item: any) => !item.isDraft); // Exclude drafts
+      case "draft":
+        // Show only drafts
+        return drafts.filter((item: any) => item.isDraft);
+      default:
+        return [];
+    }
+  };
+
   if (loading) {
     return (
       <View
@@ -88,61 +123,41 @@ const BootCamp = (props: Props) => {
           label="All"
           isActive={activeTab === "all"}
           onPress={() => setActiveTab("all")}
-          badgeCount="0"
+          badgeCount={bootCamps.length + drafts.length}
         />
         <TabButton
           label="Pending"
           isActive={activeTab === "pending"}
           onPress={() => setActiveTab("pending")}
-          badgeCount="0"
+          badgeCount={bootCamps.length}
         />
         <TabButton
-          badgeCount="0"
+          badgeCount={drafts.length}
           label="Draft"
           isActive={activeTab === "draft"}
           onPress={() => setActiveTab("draft")}
         />
       </View>
 
-      {bootCamps.length === 0 ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-          }}
-        >
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Image
-              style={{
-                marginBottom: 16,
-              }}
-              source={noContent}
-            />
-            <Text>You have not created any bootcamp yet.</Text>
-          </View>
+      {/* Content */}
+      {renderData().length === 0 ? (
+        <View style={styles.noContentContainer}>
+          <Image style={{ marginBottom: 16 }} source={noContent} />
+          <Text>You have no content available in this tab.</Text>
         </View>
       ) : (
-        <>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 16,
-              flexWrap: "wrap",
-            }}
-          >
-            {bootCamps.map((info: any) => (
-              <Camp info={info} key={info.id} />
-            ))}
-          </ScrollView>
-        </>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.campListContainer}
+        >
+          {renderData().map((info: any) => (
+            <Camp
+              info={info}
+              key={info.id || info.title}
+              isDraft={info.isDraft || false}
+            />
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -191,7 +206,7 @@ const TabButton = ({
   </Pressable>
 );
 
-const Camp = (props: any) => {
+const Camp = ({ info, isDraft }: { info: any; isDraft?: boolean }) => {
   const router = useRouter();
 
   return (
@@ -199,20 +214,29 @@ const Camp = (props: any) => {
       onPress={() =>
         router.push({
           pathname: "/bootcamp-details",
-          params: { id: props.info.id },
+          params: {
+            id: info.id || null,
+            isDraft: isDraft ? "true" : "false",
+            draftData: isDraft ? JSON.stringify(info) : undefined,
+          },
         })
       }
       style={styles.campContainer}
     >
       <View>
-        <Image
-          style={{
-            width: "100%",
-            height: 106,
-            borderRadius: 8,
-          }}
-          source={{ uri: props.info.cover_image }}
-        />
+        {isDraft ? (
+          // Use a local image for drafts
+          <Image
+            style={{ width: "100%", height: 106, borderRadius: 8 }}
+            source={info?.coverImage}
+          />
+        ) : (
+          // Use a URI for non-drafts
+          <Image
+            style={{ width: "100%", height: 106, borderRadius: 8 }}
+            source={{ uri: info.cover_image }}
+          />
+        )}
       </View>
       <Text
         style={{
@@ -222,7 +246,7 @@ const Camp = (props: any) => {
         }}
         variant="md"
       >
-        {props.info.title}
+        {info.title}
       </Text>
       <Text
         numberOfLines={3}
@@ -231,7 +255,7 @@ const Camp = (props: any) => {
           color: theme.colors.lightBlack,
         }}
       >
-        {props.info.description}
+        {info.description}
       </Text>
       <View
         style={{
@@ -241,7 +265,10 @@ const Camp = (props: any) => {
           paddingTop: 8,
         }}
       >
-        <Text style={styles.price}>#{props.info.price}</Text>
+        <Text style={styles.price}>
+          #{info.price}{" "}
+          {isDraft && <Text style={{ color: "red" }}> (Draft)</Text>}
+        </Text>
       </View>
     </Pressable>
   );
@@ -263,7 +290,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1D1D1D",
   },
-
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -290,18 +316,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderBottomWidth: 2,
     borderBottomColor: theme.colors.primary,
-
-    // Box Shadow for iOS
     shadowColor: "#101828",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1, // Equivalent to #1018280F
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-
-    // Box Shadow for Android
-    elevation: 4, // Adjust the elevation to mimic the shadow's spread
+    elevation: 4,
   },
   tabText: {
     fontSize: 16,
@@ -332,5 +351,24 @@ const styles = StyleSheet.create({
   },
   activeBadgeText: {
     color: theme.colors.primary,
+  },
+  // Additional Styles
+  noContentContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    padding: 16,
+  },
+  campListContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    padding: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
 });

@@ -1,6 +1,7 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import LottieView from "lottie-react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -54,6 +55,7 @@ const AddBootCamp = (props: Props) => {
   });
   const router = useRouter();
   const [showBootCampCreated, setShowBootCampCreated] = useState(false);
+  const [showDraftCreated, setShowDraftCreated] = useState(false);
 
   const [datePicker, setDatePicker] = useState<{
     show: boolean;
@@ -179,10 +181,32 @@ const AddBootCamp = (props: Props) => {
 
   const handleRoutingBack = () => {
     setShowBootCampCreated(false);
+    setShowDraftCreated(false);
     router.replace({
       pathname: "/bootcamp",
       params: { refetch: "true" }, // Add a refetch query param
     });
+  };
+
+  const saveDraft = async (data: any) => {
+    try {
+      // Get the existing drafts from SecureStore
+      const existingDrafts = await SecureStore.getItemAsync("bootcamp_drafts");
+      const drafts = existingDrafts ? JSON.parse(existingDrafts) : [];
+
+      // Add the new draft with a unique ID and a "draft" property
+      const newDraft = { id: Date.now(), isDraft: true, ...data };
+      drafts.push(newDraft);
+
+      // Save the updated drafts back to SecureStore
+      await SecureStore.setItemAsync("bootcamp_drafts", JSON.stringify(drafts));
+
+      setShowDraftCreated(true);
+      console.log("Draft saved:", newDraft);
+    } catch (error) {
+      console.error("Failed to save draft:", error);
+      Alert.alert("Error", "Failed to save draft. Please try again.");
+    }
   };
 
   if (loading) {
@@ -306,6 +330,13 @@ const AddBootCamp = (props: Props) => {
           </View>
         </View>
         <Button onPress={handleSubmit(onSubmit)} label="Create" />
+        <View style={{ marginTop: 16 }}>
+          <Button
+            variant="lightPrimary"
+            onPress={handleSubmit(saveDraft)} // Call saveDraft function
+            label="Save as draft"
+          />
+        </View>
       </ScrollView>
 
       <Modal isVisible={showBootCampCreated}>
@@ -341,6 +372,48 @@ const AddBootCamp = (props: Props) => {
             style={{ textAlign: "center", paddingBottom: 16 }}
           >
             Your bootcamp training has been created successfully
+          </Text>
+
+          <Button
+            onPress={handleRoutingBack}
+            label="Dismiss"
+            fontFamily="AeonikMedium"
+          />
+        </View>
+      </Modal>
+      <Modal isVisible={showDraftCreated}>
+        <View
+          style={{
+            padding: 16,
+            borderRadius: 16,
+            backgroundColor: "white",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={handleRoutingBack}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <View style={{ alignSelf: "center" }}>
+              <LottieView
+                style={styles.lottie}
+                source={greenTick}
+                autoPlay
+                loop={false}
+              />
+            </View>
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingBottom: 16 }}
+          >
+            Your bootcamp training draft has been created successfully
           </Text>
 
           <Button
