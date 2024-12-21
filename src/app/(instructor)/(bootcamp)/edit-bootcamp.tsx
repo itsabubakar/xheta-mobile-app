@@ -142,7 +142,7 @@ const EditBootcamp = (props: Props) => {
   };
 
   const onSubmit = async (data: any) => {
-    const formData = new FormData();
+    const formData: any = new FormData();
 
     // Combine new data with fallback to existing values
 

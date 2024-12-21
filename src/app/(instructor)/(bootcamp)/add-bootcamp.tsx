@@ -28,15 +28,6 @@ import { convertTo24HourFormat } from "~/utils/convertTo24HourFormat";
 
 type Props = object;
 
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  role: string;
-  time_zone: string;
-};
-
 const AddBootCamp = (props: Props) => {
   const authData = useAuthStore((state) => state.authData);
   const [loading, setLoading] = useState(false);

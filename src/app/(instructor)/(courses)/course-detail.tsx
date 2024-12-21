@@ -1,6 +1,13 @@
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import Modal from "react-native-modal";
 
 import {
@@ -11,6 +18,8 @@ import {
   TrashIcon,
 } from "~/assets/icons";
 import { course } from "~/assets/images";
+import { singleCourseDetail } from "~/src/api/tutors-courses";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -20,6 +29,46 @@ const CourseDetails = (props: Props) => {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [deleteModuleModal, setDeleteModuleModal] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const { id } = useLocalSearchParams();
+  const [courseData, setCourseData] = useState<any>();
+
+  console.log(id);
+  const fetchCourseData = async () => {
+    setLoading(true);
+    try {
+      const res = await singleCourseDetail(accessToken, id as string);
+      setCourseData(res.data);
+      console.log(res);
+    } catch (error: any) {
+      console.error("Failed to fetch course:", error.response);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourseData();
+  }, []);
+
+  console.log(authData?.name);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScreenHeaderWithCustomIcon
@@ -33,22 +82,21 @@ const CourseDetails = (props: Props) => {
         contentContainerStyle={{ padding: 16 }}
       >
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={course} />
+          <Image
+            style={styles.image}
+            source={{ uri: courseData?.course_image }}
+          />
         </View>
         <View style={{ marginTop: 16, gap: 4 }}>
-          <Text variant="subtitle">UI/UX Design Course</Text>
-          <Text>
-            Welcome to our UI/UX Design course! This comprehensive program will
-            equip you with the knowledge and skills to create exceptional user
-            interfaces (UI) and enhance user experiences (UX). Dive into the
-            world of design thinking, wireframing, prototyping, and usability
-            testing. Below is an overview of the curriculum
-          </Text>
+          <Text variant="subtitle">{courseData?.course_name}</Text>
+          <Text>{courseData?.course_description}</Text>
         </View>
         <View style={{ marginTop: 8, gap: 6 }}>
           <Text style={{ fontSize: 16 }}>
             Language of instruction:{" "}
-            <Text style={{ color: "#1D1D1D" }}>English</Text>
+            <Text style={{ color: "#1D1D1D" }}>
+              {courseData?.language_of_instruction}
+            </Text>
           </Text>
           <Text style={{ fontSize: 16 }}>
             Certificate:{" "}
@@ -59,153 +107,79 @@ const CourseDetails = (props: Props) => {
           <Text style={{ fontSize: 16 }}>
             Instructor:{" "}
             <Text variant="subtitle" style={{ color: "#1D1D1D" }}>
-              Joe Zaza
+              {authData?.name}
             </Text>
           </Text>
           <Text style={{ fontSize: 16 }}>
             Course duration:{" "}
             <Text variant="subtitle" style={{ color: "#1D1D1D" }}>
-              6 weeks
+              {courseData?.course_duration}
             </Text>
           </Text>
           <Text variant="normal_bold" style={{ fontSize: 20 }}>
-            #5000
+            #{courseData?.course_price}
           </Text>
         </View>
 
-        <View
-          style={{
-            marginTop: 24,
-          }}
-        >
-          <Text
-            variant="subtitle"
-            style={{ color: "#1D1D1D", marginBottom: 8 }}
-          >
-            Lesson 01
-          </Text>
-          <View
-            style={{
-              marginTop: 8,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderBottomColor: "#D2D2D266",
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-            }}
-          >
-            <View>
-              <Text variant="md">Introduction to UI/UX Design</Text>
-              <Text>Understanding UI/UX design principles</Text>
-            </View>
+        {courseData?.course_lessons
+          ?.sort(
+            (a, b) =>
+              parseInt(a.lesson_number.replace("Lesson ", "")) -
+              parseInt(b.lesson_number.replace("Lesson ", "")),
+          )
+          .map((lesson: any) => (
             <View
+              key={lesson.id}
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 24,
+                marginTop: 24,
               }}
             >
-              <Pressable
-                onPress={() => {
-                  setShowMenuModal(false);
-                  router.push("/add-modules");
-                }}
+              <Text
+                variant="subtitle"
+                style={{ color: "#1D1D1D", marginBottom: 8 }}
               >
-                <PencilIcon />
-              </Pressable>
-              <Pressable onPress={() => setDeleteModuleModal(true)}>
-                <TrashIcon color="#000000" />
-              </Pressable>
+                {lesson.lesson_number}
+              </Text>
+              {lesson.course_modules.map((module: any) => (
+                <View
+                  key={module.id}
+                  style={{
+                    marginTop: 8,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    borderBottomColor: "#D2D2D266",
+                    borderBottomWidth: 1,
+                    paddingBottom: 8,
+                    alignItems: "center",
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text variant="md">{module.module_title}</Text>
+                    <Text style={{ flex: 1 }}>{module.module_sub_title}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 24,
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => {
+                        setShowMenuModal(false);
+                        router.push(`/edit-module/${module.id}`);
+                      }}
+                    >
+                      <PencilIcon />
+                    </Pressable>
+                    <Pressable onPress={() => setDeleteModuleModal(true)}>
+                      <TrashIcon color="#000000" />
+                    </Pressable>
+                  </View>
+                </View>
+              ))}
             </View>
-          </View>
-          <View
-            style={{
-              marginTop: 8,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderBottomColor: "#D2D2D266",
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-            }}
-          >
-            <View>
-              <Text variant="md">Introduction to UI/UX Design</Text>
-              <Text>Understanding UI/UX design principles</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 24,
-              }}
-            >
-              <PencilIcon />
-              <TrashIcon color="#000000" />
-            </View>
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: 24,
-          }}
-        >
-          <Text
-            variant="subtitle"
-            style={{ color: "#1D1D1D", marginBottom: 8 }}
-          >
-            Lesson 02
-          </Text>
-          <View
-            style={{
-              marginTop: 8,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderBottomColor: "#D2D2D266",
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-            }}
-          >
-            <View>
-              <Text variant="md">Introduction to UI/UX Design</Text>
-              <Text>Understanding UI/UX design principles</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 24,
-              }}
-            >
-              <PencilIcon />
-              <TrashIcon color="#000000" />
-            </View>
-          </View>
-          <View
-            style={{
-              marginTop: 8,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderBottomColor: "#D2D2D266",
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-            }}
-          >
-            <View>
-              <Text variant="md">Introduction to UI/UX Design</Text>
-              <Text>Understanding UI/UX design principles</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 24,
-              }}
-            >
-              <PencilIcon />
-              <TrashIcon color="#000000" />
-            </View>
-          </View>
-        </View>
+          ))}
       </ScrollView>
 
       {/* menu modal */}
