@@ -19,60 +19,64 @@ import { Text, theme } from "~/theme";
 //   };
 // };
 
-const Course = (props: any) => {
+const Course = ({ course }: any) => {
   const router = useRouter();
 
+  console.log(course);
+
   return (
-    <Link
-      asChild
-      href={{
-        pathname: `/course-detail` as any,
-      }}
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/course-detail",
+          params: {
+            id: course.id,
+          },
+        })
+      }
       style={styles.container}
     >
-      <Pressable>
-        <View>
-          <Image
-            style={{
-              width: "100%",
-              height: 106,
-              borderRadius: 8,
-            }}
-            source={course}
-          />
-        </View>
-        <Text
+      <View>
+        <Image
           style={{
-            paddingTop: 8,
-            paddingBottom: 4,
-            color: "#1D1D1D",
+            width: "100%",
+            height: 106,
+            borderRadius: 8,
           }}
-          variant="md"
-        >
-          UI/UX Design
-        </Text>
-        <Text
-          numberOfLines={3}
-          ellipsizeMode="tail"
-          style={{
-            color: theme.colors.lightBlack,
-          }}
-        >
-          Master the art of creating intuitive user interfaces (UI)...
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingTop: 8,
-          }}
-        >
-          <Text style={styles.timeline}>6 weeks</Text>
-          <Text style={styles.price}>#5000</Text>
-        </View>
-      </Pressable>
-    </Link>
+          source={{ uri: course.course_image }}
+        />
+      </View>
+      <Text
+        style={{
+          paddingTop: 8,
+          paddingBottom: 4,
+          color: "#1D1D1D",
+        }}
+        variant="md"
+      >
+        {course.course_name}
+      </Text>
+      <Text
+        numberOfLines={3}
+        ellipsizeMode="tail"
+        style={{
+          color: theme.colors.lightBlack,
+        }}
+      >
+        {course.course_description}
+      </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingTop: 8,
+        }}
+      >
+        <Text style={styles.timeline}>{course.course_duration}</Text>
+        <Text style={styles.price}>#{course.course_price}</Text>
+      </View>
+    </Pressable>
   );
 };
 

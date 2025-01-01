@@ -1,7 +1,17 @@
-import React, { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { CreatedCourses } from "~/components";
+import { getTutorCourses } from "~/src/api/tutors-courses";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeaderWithButton } from "~/src/ui";
 import { theme } from "~/theme";
 
@@ -11,6 +21,62 @@ const Courses = (props: Props) => {
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "draft">(
     "all",
   );
+  const [loading, setLoading] = useState(false);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+
+  console.log("Access token:", accessToken);
+  const [courses, setCourses] = useState([]);
+  const params = useLocalSearchParams();
+  const router = useRouter();
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      console.log("Fetching new data for:", activeTab);
+      const res = await getTutorCourses(accessToken);
+      console.log("Fetched data:", res.data?.length);
+      if (res.data?.length > 0) {
+        setCourses(res.data);
+      } else {
+        setCourses([]);
+      }
+    } catch (error: any) {
+      console.error("Error fetching data:", error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [accessToken]);
+
+  useEffect(() => {
+    // Refetch only if refetch param is true
+    if (params.refetch === "true") {
+      console.log(params);
+      console.log("refetching the data");
+      fetchData();
+
+      router.setParams({ refetch: undefined }); // Clear the param after refetching
+    }
+  }, [params.refetch]);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -21,7 +87,7 @@ const Courses = (props: Props) => {
         title="My courses"
       />
 
-      <View style={styles.tabRow}>
+      {/* <View style={styles.tabRow}>
         <TabButton
           label="All"
           isActive={activeTab === "all"}
@@ -39,7 +105,8 @@ const Courses = (props: Props) => {
           isActive={activeTab === "draft"}
           onPress={() => setActiveTab("draft")}
         />
-      </View>
+      </View> */}
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -49,15 +116,9 @@ const Courses = (props: Props) => {
           flexWrap: "wrap",
         }}
       >
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
-        <CreatedCourses />
+        {courses.map((course: any) => (
+          <CreatedCourses key={course.id} course={course} />
+        ))}
       </ScrollView>
     </View>
   );
