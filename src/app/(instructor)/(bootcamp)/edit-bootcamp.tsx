@@ -16,16 +16,11 @@ import {
 import Modal from "react-native-modal";
 
 import { greenTick } from "~/assets/animations";
-import { CircleX, FileIcon, GreenCamera } from "~/assets/icons";
-import { course } from "~/assets/images";
+import { CircleX, GreenCamera } from "~/assets/icons";
 import { editBootCamp } from "~/src/api/tutor-bootcamps";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
-import {
-  ControlledDropdown,
-  ControlledInput,
-  ControlledTextArea,
-} from "~/src/ui/form/input";
+import { ControlledInput, ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 import { convertTo24HourFormat } from "~/utils/convertTo24HourFormat";
 

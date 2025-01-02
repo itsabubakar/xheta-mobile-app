@@ -1,8 +1,7 @@
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
-import { course } from "~/assets/images";
 import { Text, theme } from "~/theme";
 
 // type Props = {

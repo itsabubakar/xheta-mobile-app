@@ -17,7 +17,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "~/assets/icons";
-import { course } from "~/assets/images";
+import { certificate } from "~/assets/images";
 import { singleCourseDetail } from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";
@@ -53,7 +53,7 @@ const CourseDetails = (props: Props) => {
     fetchCourseData();
   }, []);
 
-  console.log(authData?.name);
+  console.log(courseData);
 
   if (loading) {
     return (
@@ -123,7 +123,7 @@ const CourseDetails = (props: Props) => {
 
         {courseData?.course_lessons
           ?.sort(
-            (a, b) =>
+            (a: { lesson_number: string }, b: { lesson_number: string }) =>
               parseInt(a.lesson_number.replace("Lesson ", "")) -
               parseInt(b.lesson_number.replace("Lesson ", "")),
           )
@@ -167,7 +167,18 @@ const CourseDetails = (props: Props) => {
                     <Pressable
                       onPress={() => {
                         setShowMenuModal(false);
-                        router.push(`/edit-module/${module.id}`);
+
+                        const params = {
+                          id: courseData.id,
+                          courseName: courseData.course_name,
+                          coursePrice: courseData.course_price,
+                          courseImage: courseData.course_image,
+                          courseDescription: courseData.course_description,
+                          courseDuration: courseData.course_duration,
+                          courseIntroVideo: courseData.course_intro_video,
+                        };
+                        console.log(params);
+                        router.push({ pathname: "/edit-course", params });
                       }}
                     >
                       <PencilIcon />
@@ -216,7 +227,19 @@ const CourseDetails = (props: Props) => {
           <Pressable
             onPress={() => {
               setShowMenuModal(false);
-              router.push("/edit-course");
+
+              const params = {
+                id: courseData.id,
+                courseName: courseData.course_name,
+                coursePrice: courseData.course_price,
+                courseImage: courseData.course_image,
+                courseDescription: courseData.course_description,
+                courseDuration: courseData.course_duration,
+                courseIntroVideo: courseData.course_intro_video,
+                certificate: courseData.course_certificate,
+                courseLevel: courseData.course_level,
+              };
+              router.push({ pathname: "/edit-course", params });
             }}
           >
             <Text

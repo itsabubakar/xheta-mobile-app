@@ -14,14 +14,7 @@ import {
 import Modal from "react-native-modal";
 
 import { greenTick } from "~/assets/animations";
-import {
-  CircleX,
-  ExclamationIcon,
-  OptionsIcon,
-  PencilIcon,
-  TrashIcon,
-} from "~/assets/icons";
-import { course } from "~/assets/images";
+import { CircleX, ExclamationIcon, OptionsIcon } from "~/assets/icons";
 import {
   deleteBootCamp,
   getTutorSingeBootCamp,
