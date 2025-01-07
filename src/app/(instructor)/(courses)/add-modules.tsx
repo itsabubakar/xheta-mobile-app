@@ -21,7 +21,6 @@ import { addModule } from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
-import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 
 type Props = object;

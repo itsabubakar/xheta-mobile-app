@@ -1,8 +1,10 @@
 import * as ImagePicker from "expo-image-picker";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import LottieView from "lottie-react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -10,9 +12,13 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import Modal from "react-native-modal";
 
-import { FileIcon, GreenCamera } from "~/assets/icons";
+import { greenTick } from "~/assets/animations";
+import { CircleX, FileIcon, GreenCamera } from "~/assets/icons";
 import { course } from "~/assets/images";
+import { editCourse } from "~/src/api/tutors-courses";
+import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import {
   ControlledDropdown,
@@ -33,7 +39,11 @@ type FormData = {
 
 const EditCourse = (props: Props) => {
   const [loading, setLoading] = useState(false);
-  const [edit, setEdit] = useState(true);
+  const [edit, setEdit] = useState(false);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const [courseEdited, setCourseEdited] = useState<any>(false);
+  const router = useRouter();
 
   const {
     id,
@@ -46,6 +56,9 @@ const EditCourse = (props: Props) => {
     certificate,
     courseLevel,
   } = useLocalSearchParams<any>();
+  const [currentVideo, setCurrentVideo] = useState<string | any>(
+    courseIntroVideo,
+  );
   const [currentImage, setCurrentImage] = useState<string | any>(courseImage); // Default image
   const { control, setValue, watch, handleSubmit, reset } = useForm<any>({
     defaultValues: {
@@ -60,8 +73,6 @@ const EditCourse = (props: Props) => {
       course_intro_video: courseIntroVideo,
     },
   });
-
-  console.log(certificate);
 
   const pickMedia = async (mediaType = "Images") => {
     const permissionResult =
@@ -99,10 +110,9 @@ const EditCourse = (props: Props) => {
       if (mediaType === "Images") {
         setValue("course_image", file); // Set image file to the form
         setCurrentImage(uri); // Update state to show new image immediately
-        console.log("Selected Image:", file);
       } else {
         setValue("course_intro_video", file); // Set video file to the form
-        console.log("Selected Video:", file);
+        setCurrentVideo(file); // Update state for display
       }
     }
   };
@@ -120,41 +130,36 @@ const EditCourse = (props: Props) => {
       course_intro_video,
     } = data;
 
-    // Create FormData for proper image upload
-    const formData = new FormData();
+    // Parse the course price to a numeric value
+    const numericPrice = parseFloat(course_price.replace(/,/g, ""));
 
-    formData.append("course_name", course_name);
-    formData.append("category_id", "1");
-    formData.append("course_price", course_price);
-    formData.append("course_level", course_level);
-    formData.append("certificate", certificate);
-    formData.append("course_description", course_description);
-    formData.append("course_duration", course_duration);
+    // Prepare the JSON payload
+    const payload = {
+      course_name,
+      category_id: 1, // Ensure it's a number if the server expects it
+      course_price: numericPrice,
+      course_level,
+      certificate,
+      course_description,
+      course_duration,
+      course_image,
+      course_intro_video,
+    };
 
-    // Append the image file if available
-    if (course_image) {
-      formData.append("course_image", course_image);
-    }
-    // Append the image file if available
-    if (course_intro_video) {
-      formData.append("course_intro_video", course_intro_video);
-    }
-
-    console.log("Submitting FormData...", formData);
     setLoading(true);
-    // try {
-    //   const res = await createCourse(accessToken, formData);
-    //   // reset();
-    //   console.log("Course created:", res);
-    //   setCreatedCourseId(res?.data?.id);
-    //   setShowCourseCreated(true);
-    //   setLoading(false);
-    //   console.log(createdCourseId, "created course id");
-    // } catch (error: any) {
-    //   setLoading(false);
+    try {
+      const res = await editCourse(accessToken, id, payload);
+      setCourseEdited(true);
+      setLoading(false);
+      console.log(res, " course edited");
+    } catch (error: any) {
+      setLoading(false);
 
-    //   console.error("Error creating course:", error.response?.data || error);
-    // }
+      console.error(
+        "Error creating course:",
+        error.response.data?.message || error,
+      );
+    }
   };
 
   const getFileNameFromUrl = (url: string) => {
@@ -174,10 +179,39 @@ const EditCourse = (props: Props) => {
       return null;
     }
   };
-  console.log(getFileNameFromUrl(courseIntroVideo));
+
+  const handleRoutingBack = () => {
+    setCourseEdited(false);
+    setEdit(false);
+    router.replace({
+      pathname: "/courses",
+      params: { refetch: "true" }, // Add a refetch query param
+    });
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <ScreenHeader editIcon bg title="Edit Course" />
+      <ScreenHeader
+        editButtonFunction={() => setEdit(true)}
+        editIcon={!edit}
+        bg
+        title="Edit Course"
+      />
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
       >
@@ -205,6 +239,7 @@ const EditCourse = (props: Props) => {
 
         <View style={{ marginTop: 16 }}>
           <ControlledInput
+            disabled={!edit}
             name="course_name"
             control={control}
             label="Course name"
@@ -217,6 +252,7 @@ const EditCourse = (props: Props) => {
         <View style={{ marginTop: 16 }}>
           <ControlledDropdown
             name="category_id"
+            disabled={!edit}
             control={control}
             label="Course category"
             rules={{
@@ -249,6 +285,7 @@ const EditCourse = (props: Props) => {
         >
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
+              disabled={!edit}
               name="course_price"
               control={control}
               label="Course price"
@@ -260,6 +297,7 @@ const EditCourse = (props: Props) => {
           </View>
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
+              disabled={!edit}
               name="course_duration"
               control={control}
               label="Course duration"
@@ -280,6 +318,7 @@ const EditCourse = (props: Props) => {
         >
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
+              disabled={!edit}
               name="certificate"
               control={control}
               label="Certificate"
@@ -291,6 +330,7 @@ const EditCourse = (props: Props) => {
           </View>
           <View style={{ width: "100%", flex: 1 }}>
             <ControlledInput
+              disabled={!edit}
               name="course_level"
               control={control}
               label="Level"
@@ -301,6 +341,7 @@ const EditCourse = (props: Props) => {
             />
           </View>
         </View>
+
         <View style={{ marginTop: 16 }}>
           <Text>Course intro video</Text>
           <Pressable
@@ -318,8 +359,13 @@ const EditCourse = (props: Props) => {
               rowGap: 8,
             }}
           >
-            {watch("course_intro_video") ? (
-              <Text>Video selected: {watch("course_intro_video").name}</Text>
+            {currentVideo ? (
+              <Text>
+                Video selected:{" "}
+                {typeof currentVideo === "string"
+                  ? getFileNameFromUrl(currentVideo)
+                  : currentVideo.name}
+              </Text>
             ) : (
               <>
                 <FileIcon />
@@ -331,6 +377,7 @@ const EditCourse = (props: Props) => {
           </Pressable>
           <View style={{ marginVertical: 16 }}>
             <ControlledTextArea
+              disabled={!edit}
               placeholder="Enter description"
               name="course_description"
               control={control}
@@ -338,8 +385,54 @@ const EditCourse = (props: Props) => {
             />
           </View>
         </View>
-        <Button onPress={handleSubmit(onSubmit)} label="Publish" />
+
+        {edit && (
+          <Button onPress={handleSubmit(onSubmit)} label="Save changes" />
+        )}
       </ScrollView>
+
+      <Modal isVisible={courseEdited}>
+        <View
+          style={{
+            padding: 16,
+            borderRadius: 16,
+            backgroundColor: "white",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={handleRoutingBack}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <View style={{ alignSelf: "center" }}>
+              <LottieView
+                style={styles.lottie}
+                source={greenTick}
+                autoPlay
+                loop={false}
+              />
+            </View>
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingBottom: 16 }}
+          >
+            Your course changes has been effected successfully
+          </Text>
+
+          <Button
+            onPress={handleRoutingBack}
+            label="Dismiss"
+            fontFamily="AeonikMedium"
+          />
+        </View>
+      </Modal>
     </View>
   );
 };

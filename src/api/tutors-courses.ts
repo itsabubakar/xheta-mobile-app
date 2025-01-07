@@ -103,7 +103,7 @@ export const editCourse = async (
   data: any,
 ) => {
   try {
-    const response = await client.put(
+    const response = await client.post(
       `/v1/tutor/course/update/${courseId}`,
       data,
       {

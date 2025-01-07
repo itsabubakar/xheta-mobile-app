@@ -1,24 +1,16 @@
+import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, View, Alert, ScrollView } from "react-native";
 
 import { FileIcon } from "~/assets/icons";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
-import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
+import { ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 
 type Props = object;
-
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  role: string;
-  time_zone: string;
-};
 
 const AddAssignments = (props: Props) => {
   const {
@@ -26,15 +18,16 @@ const AddAssignments = (props: Props) => {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<FormData>({
+    setValue,
+  } = useForm<any>({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      time_zone: "America/New_York",
+      lesson_id: "",
+      title: "",
+      description: "",
+      note: "",
     },
   });
+  const [assignmentDocument, setAssignmentDocument] = useState<any>({});
   const pickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -58,6 +51,55 @@ const AddAssignments = (props: Props) => {
       console.log(uri);
     }
   };
+
+  const openDocumentPicker = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // Allow all file types
+        copyToCacheDirectory: true, // Cache the document temporarily
+      });
+
+      console.log(result);
+
+      // Check if the operation was canceled
+      if (result.canceled) {
+        console.log("Document picking cancelled.");
+        return;
+      }
+
+      // Get the first asset (if multiple selections are enabled in the future, handle accordingly)
+      const document = result.assets[0];
+
+      if (document) {
+        const file = {
+          name: document.name, // File name
+          uri: document.uri, // File URI
+          size: document.size || 0, // File size in bytes
+          type: document.mimeType || "Unknown", // MIME type or fallback
+        };
+        // Assuming you have a state setter function for storing the document
+        setAssignmentDocument({
+          name: document.name, // File name
+          uri: document.uri, // File URI
+          size: document.size || 0, // File size in bytes
+          type: document.mimeType || "Unknown", // MIME type or fallback
+        });
+
+        setValue("note", file);
+
+        console.log("Picked document:", document);
+      } else {
+        console.error("No document was selected.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to pick document.");
+      console.error("Error picking document:", error);
+    }
+  };
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
   return (
     <View style={styles.container}>
       <ScreenHeader bg title="Add assignment" />
@@ -71,37 +113,37 @@ const AddAssignments = (props: Props) => {
         <View style={{ flex: 1 }}>
           <View>
             <ControlledInput
-              name="name"
+              name="lesson_id"
               control={control}
               label="Lesson"
               rules={{
-                required: "Name is required",
+                required: "Lesson ID is required",
               }}
               placeholder="Nil"
             />
           </View>
           <View>
             <ControlledInput
-              name="name"
+              name="title"
               control={control}
               label="Assignment title"
               rules={{
-                required: "Name is required",
+                required: "Title is required",
               }}
               placeholder="Nil"
             />
           </View>
           <ControlledTextArea
             control={control}
-            name="name"
+            name="description"
             label="Description"
             placeholder="Enter a short description..."
           />
 
           <View>
-            <Text>Assignment material </Text>
+            <Text>Course material note</Text>
             <Pressable
-              onPress={pickImage}
+              onPress={openDocumentPicker}
               style={{
                 backgroundColor: theme.colors.lightGray,
                 borderColor: theme.colors.borderColor,
@@ -115,10 +157,16 @@ const AddAssignments = (props: Props) => {
                 rowGap: 8,
               }}
             >
-              <FileIcon />
-              <Text style={{ textAlign: "center" }}>
-                Click to upload an image
-              </Text>
+              {watch("note") ? (
+                <Text>{watch("note").name}</Text>
+              ) : (
+                <>
+                  <FileIcon />
+                  <Text style={{ textAlign: "center" }}>
+                    Click to upload a document
+                  </Text>
+                </>
+              )}
             </Pressable>
           </View>
         </View>
@@ -128,7 +176,7 @@ const AddAssignments = (props: Props) => {
             marginTop: 16,
           }}
         >
-          <Button label="Add assignment" />
+          <Button onPress={handleSubmit(onSubmit)} label="Add assignment" />
         </View>
       </ScrollView>
     </View>
