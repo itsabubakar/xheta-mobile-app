@@ -120,3 +120,49 @@ export const editCourse = async (
     throw error;
   }
 };
+
+export const addCourseAssignment = async (
+  accessToken: string,
+  courseId: string,
+  data: any,
+) => {
+  try {
+    const response = await client.post(
+      `/v1/tutor/lesson/${courseId}/assignment/create`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating assignment:", error);
+    throw error;
+  }
+};
+
+export const deleteCourseModule = async (
+  accessToken: string,
+  courseId: string,
+) => {
+  try {
+    const response = await client.delete(
+      `/v1/tutor/course/module/delete/${courseId}`,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating assignment:", error);
+    throw error;
+  }
+};

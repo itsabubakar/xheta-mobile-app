@@ -29,7 +29,7 @@ const AddModules = (props: Props) => {
   const { id }: { id: any } = useLocalSearchParams();
   const router = useRouter();
 
-  console.log(id);
+  console.log(id, "id value");
 
   const authData = useAuthStore((state) => state.authData);
   const [loading, setLoading] = useState(false);
@@ -105,6 +105,8 @@ const AddModules = (props: Props) => {
       lesson_material_video,
     } = data;
 
+    console.log(lesson_material_note);
+
     // Create FormData for proper image upload
     const formData = new FormData();
 
@@ -126,10 +128,7 @@ const AddModules = (props: Props) => {
     } catch (error: any) {
       setLoading(false);
       Alert.alert(error.response?.data?.message);
-      console.log(
-        "Error creating course:",
-        error.response?.data.message || error,
-      );
+      console.log("Error creating course:", error.response || error);
     }
   };
 
@@ -158,7 +157,7 @@ const AddModules = (props: Props) => {
           size: document.size || 0, // File size in bytes
           type: document.mimeType || "Unknown", // MIME type or fallback
         };
-        // Assuming you have a state setter function for storing the document
+
         setDocument({
           name: document.name, // File name
           uri: document.uri, // File URI

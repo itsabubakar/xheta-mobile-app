@@ -18,7 +18,10 @@ import {
   TrashIcon,
 } from "~/assets/icons";
 import { certificate } from "~/assets/images";
-import { singleCourseDetail } from "~/src/api/tutors-courses";
+import {
+  deleteCourseModule,
+  singleCourseDetail,
+} from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";
 import { Text, theme } from "~/theme";
@@ -34,8 +37,8 @@ const CourseDetails = (props: Props) => {
   const accessToken = authData?.access_token || "";
   const { id } = useLocalSearchParams();
   const [courseData, setCourseData] = useState<any>();
+  const [deleteModuleId, setDeleteModuleId] = useState("");
 
-  console.log(id);
   const fetchCourseData = async () => {
     setLoading(true);
     try {
@@ -49,11 +52,26 @@ const CourseDetails = (props: Props) => {
     }
   };
 
+  const lessonOptions = courseData?.course_lessons?.map((lesson) => ({
+    id: lesson.id,
+    lesson_number: lesson.lesson_number,
+  }));
+
   useEffect(() => {
     fetchCourseData();
   }, []);
 
-  console.log(courseData);
+  const handleModuleDelete = async () => {
+    try {
+      const res = await deleteCourseModule(accessToken, deleteModuleId);
+      console.log(res);
+      setDeleteModuleModal(false);
+      fetchCourseData();
+    } catch (error: any) {
+      console.error("Failed to delete module:", error.response?.data);
+      setDeleteModuleModal(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -183,7 +201,12 @@ const CourseDetails = (props: Props) => {
                     >
                       <PencilIcon />
                     </Pressable>
-                    <Pressable onPress={() => setDeleteModuleModal(true)}>
+                    <Pressable
+                      onPress={() => {
+                        setDeleteModuleModal(true);
+                        setDeleteModuleId(module.id);
+                      }}
+                    >
                       <TrashIcon color="#000000" />
                     </Pressable>
                   </View>
@@ -255,8 +278,11 @@ const CourseDetails = (props: Props) => {
           </Pressable>
           <Pressable
             onPress={() => {
+              const params = {
+                id: courseData.id,
+              };
               setShowMenuModal(false);
-              router.push("/add-modules");
+              router.push({ pathname: "/add-modules", params });
             }}
           >
             <Text
@@ -273,7 +299,10 @@ const CourseDetails = (props: Props) => {
           <Pressable
             onPress={() => {
               setShowMenuModal(false);
-              router.push("/add-assignment");
+              router.push({
+                pathname: "/add-assignment",
+                params: { lessonOptions: JSON.stringify(lessonOptions) },
+              });
             }}
           >
             <Text
@@ -297,14 +326,28 @@ const CourseDetails = (props: Props) => {
           >
             Un-publish
           </Text>
-          <Text
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
+          <Pressable
+            onPress={async () => {
+              try {
+                const res = await deleteCourseModule(
+                  accessToken,
+                  courseData.id,
+                );
+                console.log(res);
+              } catch (error: any) {
+                console.error("Failed to delete module:", error.response);
+              }
             }}
           >
-            Delete
-          </Text>
+            <Text
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+              }}
+            >
+              Delete
+            </Text>
+          </Pressable>
         </View>
       </Modal>
 
@@ -344,7 +387,12 @@ const CourseDetails = (props: Props) => {
 
           <View style={{ flexDirection: "row", gap: 12 }}>
             <Button variant="lightPrimary" label="Cancel" width="48%" />
-            <Button width="48%" label="Delete" fontFamily="AeonikMedium" />
+            <Button
+              onPress={handleModuleDelete}
+              width="48%"
+              label="Delete"
+              fontFamily="AeonikMedium"
+            />
           </View>
         </View>
       </Modal>

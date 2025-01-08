@@ -16,7 +16,6 @@ import Modal from "react-native-modal";
 
 import { greenTick } from "~/assets/animations";
 import { CircleX, FileIcon, GreenCamera } from "~/assets/icons";
-import { course } from "~/assets/images";
 import { editCourse } from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
@@ -28,14 +27,6 @@ import {
 import { Text, theme } from "~/theme";
 
 type Props = object;
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  role: string;
-  time_zone: string;
-};
 
 const EditCourse = (props: Props) => {
   const [loading, setLoading] = useState(false);
