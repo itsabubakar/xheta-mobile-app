@@ -52,7 +52,7 @@ const CourseDetails = (props: Props) => {
     }
   };
 
-  const lessonOptions = courseData?.course_lessons?.map((lesson) => ({
+  const lessonOptions = courseData?.course_lessons?.map((lesson: any) => ({
     id: lesson.id,
     lesson_number: lesson.lesson_number,
   }));
@@ -184,19 +184,10 @@ const CourseDetails = (props: Props) => {
                   >
                     <Pressable
                       onPress={() => {
-                        setShowMenuModal(false);
-
                         const params = {
-                          id: courseData.id,
-                          courseName: courseData.course_name,
-                          coursePrice: courseData.course_price,
-                          courseImage: courseData.course_image,
-                          courseDescription: courseData.course_description,
-                          courseDuration: courseData.course_duration,
-                          courseIntroVideo: courseData.course_intro_video,
+                          id: module.id,
                         };
-                        console.log(params);
-                        router.push({ pathname: "/edit-course", params });
+                        router.push({ pathname: "/edit-module", params });
                       }}
                     >
                       <PencilIcon />
