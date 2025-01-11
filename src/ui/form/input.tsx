@@ -22,7 +22,7 @@ interface NInputProps extends TextInputProps {
   disabled?: boolean;
   error?: string;
   shadow?: boolean;
-  type?: "text" | "password"; // New prop for input type
+  type?: "text" | "password" | "number"; // New prop for input type
 }
 
 type TRule<T extends FieldValues> = RegisterOptions<T>;

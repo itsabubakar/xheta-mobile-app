@@ -145,6 +145,50 @@ export const addCourseAssignment = async (
   }
 };
 
+export const singleModuleDetail = async (
+  accessToken: string,
+  moduleId: string,
+) => {
+  // tutor/course/47
+  try {
+    const response = await client.get(`/v1/tutor/course/module/${moduleId}`, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating course:", error);
+    throw error;
+  }
+};
+
+export const editModule = async (
+  accessToken: string,
+  moduleId: string,
+  data: any,
+) => {
+  try {
+    const response = await client.post(
+      `/v1/tutor/course/module/update/${moduleId}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating course:", error);
+    throw error;
+  }
+};
+
 export const deleteCourseModule = async (
   accessToken: string,
   courseId: string,
@@ -152,6 +196,25 @@ export const deleteCourseModule = async (
   try {
     const response = await client.delete(
       `/v1/tutor/course/module/delete/${courseId}`,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating assignment:", error);
+    throw error;
+  }
+};
+
+export const deleteCourse = async (accessToken: string, courseId: string) => {
+  try {
+    const response = await client.delete(
+      `/v1/tutor/course/delete/${courseId}`,
       {
         headers: {
           "Content-Type": "multipart/form-data",

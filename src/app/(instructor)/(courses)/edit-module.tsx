@@ -17,7 +17,12 @@ import Modal from "react-native-modal";
 
 import { greenTick } from "~/assets/animations";
 import { CircleX, FileIcon } from "~/assets/icons";
-import { addModule, singleCourseDetail } from "~/src/api/tutors-courses";
+import {
+  addModule,
+  editModule,
+  singleCourseDetail,
+  singleModuleDetail,
+} from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
@@ -26,10 +31,10 @@ import { Text, theme } from "~/theme";
 type Props = object;
 
 const EditModule = (props: Props) => {
-  const { id }: { id: any } = useLocalSearchParams();
+  const { id, courseId }: { id: any; courseId: any } = useLocalSearchParams();
   const router = useRouter();
 
-  console.log(id, "id value");
+  const [edit, setEdit] = useState(false);
 
   const authData = useAuthStore((state) => state.authData);
   const [loading, setLoading] = useState(false);
@@ -41,24 +46,25 @@ const EditModule = (props: Props) => {
     type: string;
   } | null>(null);
   const [showModulesEdited, setShowModulesEdited] = useState(false);
+  const [moduleData, setModuleData] = useState<any>(null);
 
   const { control, setValue, watch, handleSubmit, reset } = useForm<any>({
     defaultValues: {
       lesson_number: "",
       module_title: "",
       module_sub_title: "",
-      lesson_material_thumbnail: "",
-      lesson_material_note: "",
-      lesson_material_video: "",
+      lesson_material_thumbnail: null,
+      lesson_material_note: null,
+      lesson_material_video: null,
     },
   });
 
-  const fetchCourseData = async () => {
+  const fetchModuleData = async () => {
     setLoading(true);
     try {
-      const res = await singleCourseDetail(accessToken, id as string);
-      //   setCourseData("res.data");
-      console.log(res);
+      const res = await singleModuleDetail(accessToken, id as string);
+      console.log(res.data);
+      setModuleData(res.data);
     } catch (error: any) {
       console.error("Failed to fetch course:", error.response);
     } finally {
@@ -67,8 +73,23 @@ const EditModule = (props: Props) => {
   };
 
   useEffect(() => {
-    fetchCourseData();
+    fetchModuleData();
   }, []);
+
+  useEffect(() => {
+    if (moduleData) {
+      // Update form fields with fetched data
+      reset({
+        lesson_number: moduleData.lesson_number?.toString() || "",
+        module_title: moduleData.module_title || "",
+        module_sub_title: moduleData.module_sub_title || "",
+        lesson_material_thumbnail: moduleData.lesson_material_thumbnail || null,
+        lesson_material_note: moduleData.lesson_material_note || null,
+        lesson_material_video: moduleData.lesson_material_video || null,
+      });
+    }
+  }, [moduleData, reset]);
+
   const pickMedia = async (mediaType = "Images") => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -113,39 +134,64 @@ const EditModule = (props: Props) => {
   };
 
   const onSubmit = async (data: any) => {
-    const {
-      lesson_number,
-      module_title,
-      module_sub_title,
-      lesson_material_thumbnail,
-      lesson_material_note,
-      lesson_material_video,
-    } = data;
+    data.lesson_number = Number(data.lesson_number);
+    // Function to compare the current data with the original moduleData
+    const getModifiedFields = (newData: any, originalData: any) => {
+      const modifiedFields: any = {};
 
-    console.log(lesson_material_note);
+      for (const key in newData) {
+        if (newData[key] !== originalData[key]) {
+          modifiedFields[key] = newData[key];
+        }
+      }
 
-    // Create FormData for proper image upload
+      return modifiedFields;
+    };
+
+    // Get the modified fields
+    const modifiedFields = getModifiedFields(data, moduleData);
+
+    // Check if there are any changes
+    if (Object.keys(modifiedFields).length === 0) {
+      Alert.alert("No changes", "You haven't made any modifications.");
+      return;
+    }
+
+    // Create FormData and append only modified fields
     const formData = new FormData();
+    for (const key in modifiedFields) {
+      if (
+        key === "lesson_material_thumbnail" ||
+        key === "lesson_material_video" ||
+        key === "lesson_material_note"
+      ) {
+        // Handle file uploads
+        const file = modifiedFields[key];
+        if (file?.uri) {
+          // @ts-ignore
+          formData.append(key, {
+            uri: file.uri,
+            type: file.type || "application/octet-stream", // Default MIME type
+            name: file.name || "file", // Default file name
+          });
+        }
+      } else {
+        formData.append(key, modifiedFields[key]);
+      }
+    }
 
-    formData.append("lesson_number", lesson_number);
-    formData.append("module_title", module_title);
-    formData.append("module_sub_title", module_sub_title);
-    formData.append("lesson_material_thumbnail", lesson_material_thumbnail);
-    formData.append("lesson_material_note", lesson_material_note);
-    formData.append("lesson_material_video", lesson_material_video);
-
-    console.log("Submitting FormData...", formData);
+    console.log("Submitting modified fields:", formData);
     setLoading(true);
+
     try {
-      const res = await addModule(accessToken, id, formData);
-      // reset();
-      console.log("Course created:", res);
+      const res = await editModule(accessToken, id, formData);
+      console.log("module updated:", res);
       setShowModulesEdited(true);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
-      Alert.alert(error.response?.data?.message);
-      console.log("Error creating course:", error.response || error);
+      Alert.alert(error.response?.data?.message || "An error occurred.");
+      console.log("Error updating course:", error.response || error);
     }
   };
 
@@ -196,8 +242,8 @@ const EditModule = (props: Props) => {
 
   const handleRouting = () => {
     router.replace({
-      pathname: "/(courses)/course-detail",
-      params: { id },
+      pathname: "/course-detail",
+      params: { id: courseId },
     });
   };
 
@@ -217,15 +263,22 @@ const EditModule = (props: Props) => {
   }
   return (
     <View style={styles.container}>
-      <ScreenHeader bg title="Edit module" />
+      <ScreenHeader
+        editButtonFunction={() => setEdit(true)}
+        editIcon={!edit}
+        bg
+        title="Edit module"
+      />
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
       >
         <View>
           <ControlledInput
+            disabled={!edit}
             name="lesson_number"
             control={control}
             label="Lesson"
+            type="number"
             rules={{
               required: "Name is required",
             }}
@@ -234,6 +287,7 @@ const EditModule = (props: Props) => {
         </View>
         <View>
           <ControlledInput
+            disabled={!edit}
             name="module_title"
             control={control}
             label="Module title"
@@ -245,6 +299,7 @@ const EditModule = (props: Props) => {
         </View>
         <View>
           <ControlledInput
+            disabled={!edit}
             name="module_sub_title"
             control={control}
             label="Sub module title"
@@ -257,12 +312,14 @@ const EditModule = (props: Props) => {
         <View>
           <Text>Course material thumbnail</Text>
           <Pressable
-            onPress={() => pickMedia("Images")}
+            onPress={() => {
+              if (edit) pickMedia("Images");
+            }}
             style={styles.imagePicker}
           >
             {watch("lesson_material_thumbnail") ? (
               <Image
-                source={{ uri: watch("lesson_material_thumbnail").uri }} // Extract the `uri` field
+                source={{ uri: watch("lesson_material_thumbnail") }} // Extract the `uri` field
                 style={styles.imagePreview}
               />
             ) : (
@@ -278,7 +335,9 @@ const EditModule = (props: Props) => {
         <View style={{ marginTop: 8 }}>
           <Text>Course material video</Text>
           <Pressable
-            onPress={() => pickMedia("Videos")}
+            onPress={() => {
+              if (edit) pickMedia("Videos");
+            }}
             style={{
               backgroundColor: theme.colors.lightGray,
               borderColor: theme.colors.borderColor,
@@ -293,7 +352,7 @@ const EditModule = (props: Props) => {
             }}
           >
             {watch("lesson_material_video") ? (
-              <Text>Video selected: {watch("lesson_material_video").name}</Text>
+              <Text>Video selected: {watch("lesson_material_video")}</Text>
             ) : (
               <>
                 <FileIcon />
@@ -307,7 +366,9 @@ const EditModule = (props: Props) => {
         <View style={{ marginTop: 8, marginBottom: 24 }}>
           <Text>Course material note</Text>
           <Pressable
-            onPress={openDocumentPicker}
+            onPress={() => {
+              if (edit) openDocumentPicker();
+            }}
             style={{
               backgroundColor: theme.colors.lightGray,
               borderColor: theme.colors.borderColor,
@@ -322,7 +383,7 @@ const EditModule = (props: Props) => {
             }}
           >
             {watch("lesson_material_note") ? ( // Assuming `document` is the state where the picked document is stored
-              <Text>{watch("lesson_material_note").name}</Text>
+              <Text>{watch("lesson_material_note")}</Text>
             ) : (
               <>
                 <FileIcon />
@@ -334,7 +395,9 @@ const EditModule = (props: Props) => {
           </Pressable>
         </View>
 
-        <Button onPress={handleSubmit(onSubmit)} label="Publish" />
+        {edit && (
+          <Button onPress={handleSubmit(onSubmit)} label="Publish changes" />
+        )}
       </ScrollView>
       <Modal isVisible={showModulesEdited}>
         <View
@@ -368,25 +431,14 @@ const EditModule = (props: Props) => {
             variant="normal_bold"
             style={{ textAlign: "center", paddingBottom: 16 }}
           >
-            Your module has been created successfully
+            Your module changes has been added successfully
           </Text>
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <Button
-              onPress={() => {
-                reset();
-                setShowModulesEdited(false);
-              }}
-              variant="lightPrimary"
-              label="Add More modules"
-              // width="50%"
-            />
-            <Button
-              onPress={handleRouting}
-              label="Go to course"
-              fontFamily="AeonikMedium"
-              width="48%"
-            />
-          </View>
+
+          <Button
+            onPress={handleRouting}
+            label="Dismiss"
+            fontFamily="AeonikMedium"
+          />
         </View>
       </Modal>
     </View>

@@ -19,6 +19,7 @@ import {
 } from "~/assets/icons";
 import { certificate } from "~/assets/images";
 import {
+  deleteCourse,
   deleteCourseModule,
   singleCourseDetail,
 } from "~/src/api/tutors-courses";
@@ -31,11 +32,12 @@ type Props = object;
 const CourseDetails = (props: Props) => {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [deleteModuleModal, setDeleteModuleModal] = useState(false);
+  const [deleteCourseModal, setDeleteCourseModal] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
-  const { id } = useLocalSearchParams();
+  const { id }: any = useLocalSearchParams();
   const [courseData, setCourseData] = useState<any>();
   const [deleteModuleId, setDeleteModuleId] = useState("");
 
@@ -71,6 +73,25 @@ const CourseDetails = (props: Props) => {
       console.error("Failed to delete module:", error.response?.data);
       setDeleteModuleModal(false);
     }
+  };
+
+  const handleCourseDelete = async () => {
+    try {
+      const res = await deleteCourse(accessToken, id);
+      console.log(res);
+      setDeleteModuleModal(false);
+      handleRouting();
+    } catch (error: any) {
+      console.error("Failed to delete module:", error.response?.data?.message);
+      setDeleteModuleModal(false);
+    }
+  };
+
+  const handleRouting = () => {
+    router.replace({
+      pathname: "/courses",
+      params: { id },
+    });
   };
 
   if (loading) {
@@ -186,8 +207,9 @@ const CourseDetails = (props: Props) => {
                       onPress={() => {
                         const params = {
                           id: module.id,
+                          courseId: courseData?.id,
                         };
-                        router.push({ pathname: "/edit-module", params });
+                        router.replace({ pathname: "/edit-module", params });
                       }}
                     >
                       <PencilIcon />
@@ -319,15 +341,8 @@ const CourseDetails = (props: Props) => {
           </Text>
           <Pressable
             onPress={async () => {
-              try {
-                const res = await deleteCourseModule(
-                  accessToken,
-                  courseData.id,
-                );
-                console.log(res);
-              } catch (error: any) {
-                console.error("Failed to delete module:", error.response);
-              }
+              setShowMenuModal(false);
+              setDeleteCourseModal(true);
             }}
           >
             <Text
@@ -380,6 +395,57 @@ const CourseDetails = (props: Props) => {
             <Button variant="lightPrimary" label="Cancel" width="48%" />
             <Button
               onPress={handleModuleDelete}
+              width="48%"
+              label="Delete"
+              fontFamily="AeonikMedium"
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Delete module modal */}
+      <Modal isVisible={deleteCourseModal}>
+        <View
+          style={{
+            marginTop: "25%",
+            padding: 16,
+            borderRadius: 16,
+            backgroundColor: "white",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Pressable onPress={() => setDeleteCourseModal(false)}>
+              <CircleX />
+            </Pressable>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <ExclamationIcon />
+          </View>
+
+          <Text
+            variant="normal_bold"
+            style={{ textAlign: "center", paddingBottom: 4 }}
+          >
+            Delete module
+          </Text>
+          <Text style={{ textAlign: "center", paddingBottom: 24 }}>
+            You are about to delete a course, are you sure you want to continue
+            with this action?
+          </Text>
+
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <Button
+              onPress={() => setDeleteCourseModal(false)}
+              variant="lightPrimary"
+              label="Cancel"
+              width="48%"
+            />
+            <Button
+              onPress={handleCourseDelete}
               width="48%"
               label="Delete"
               fontFamily="AeonikMedium"
