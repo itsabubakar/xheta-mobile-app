@@ -38,18 +38,9 @@ type FormData = {
 const Profile = () => {
   const authState = useAuthStore((state) => state.authData);
   const [disabled, setDisabled] = useState(true);
-  // const {
-  //   name ,
-  //   email,
-  //   id,
-  //   gender,
-  //   profile_image,
-  //   level_of_education,
-  //   access_token,
-  // } = authState as AuthData;
 
   const name = "Sadiq B";
-  const email = "ssad@gmail.com";
+  const email = "sad@gmail.com";
   const gender = "male";
   const level_of_education = "high";
   const access_token = "1234";

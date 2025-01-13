@@ -5,9 +5,9 @@ import { View, Pressable, ScrollView, StyleSheet } from "react-native";
 
 import { Text, theme } from "~/theme";
 
-const HorizontalDatePicker = () => {
+const HorizontalDatePicker = ({ selectedDate, setSelectedDate }: any) => {
   const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
+
   const [currentWeek, setCurrentWeek] = useState(
     startOfWeek(today, { weekStartsOn: 0 }),
   );

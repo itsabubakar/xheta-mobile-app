@@ -15,33 +15,45 @@ import { Text, theme } from "~/theme";
 
 type Props = object;
 
-const Hero = (props: Props) => {
+const Hero = ({ dashboardData }: any) => {
   return (
     <View>
-      <Withdraw />
+      <Withdraw wallet={dashboardData?.wallet_balance} />
       <View style={{ paddingTop: 24, flexDirection: "row", gap: 16 }}>
-        <Cube icon={<SquircleDollar />} text="Hourly charges" number={500} />
-        <Cube icon={<SquircleCourses />} text="Created courses" number={5} />
+        <Cube
+          icon={<SquircleDollar />}
+          text="Hourly charges"
+          number={dashboardData?.tutor_hourly_charge}
+        />
+        <Cube
+          icon={<SquircleCourses />}
+          text="Created courses"
+          number={dashboardData?.created_courses}
+        />
       </View>
       <View style={{ paddingTop: 16, flexDirection: "row", gap: 16 }}>
         <Cube
           icon={<SquircleLearner />}
           text="Personalized learners"
-          number={5}
+          number={dashboardData?.personalized_learners}
         />
         <Cube
           icon={<SquircleCompletedClasses />}
           text="Completed classes"
-          number={5}
+          number={dashboardData?.completed_classes}
         />
       </View>
       <View style={{ paddingTop: 16, flexDirection: "row", gap: 16 }}>
         <Cube
           icon={<SquircleCancelledClasses />}
           text="Cancelled classes"
-          number={5}
+          number={dashboardData?.canceled_classes}
         />
-        <Cube icon={<SquircleStar />} text="Platform rating" number={5} />
+        <Cube
+          icon={<SquircleStar />}
+          text="Platform rating"
+          number={dashboardData?.platform_ratings}
+        />
       </View>
     </View>
   );
@@ -92,7 +104,7 @@ const Cube = ({
   );
 };
 
-const Withdraw = () => {
+const Withdraw = ({ wallet }: any) => {
   const router = useRouter();
   return (
     <View
@@ -123,7 +135,7 @@ const Withdraw = () => {
             fontFamily: "AeonikBold",
           }}
         >
-          #50,000
+          #{wallet || 0}
         </Text>
         <Pressable
           onPress={() => router.push("/wallet")}
