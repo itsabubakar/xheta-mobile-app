@@ -78,7 +78,7 @@ const Profile = () => {
   });
 
   const onSubmit = async (formData: FormData) => {
-    console.log("hiiit");
+    console.log("hit");
     const { firstName, lastName, email, gender, education, interest } =
       formData;
 

@@ -2,6 +2,9 @@ import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
+import Classes from "./classes";
+import Request from "./request";
+
 import { InstructorClass, Lesson, UpcomingClassSchedule } from "~/components";
 import { getTutorUpcomingClasses } from "~/src/api/tutors-dashboard";
 import { useAuthStore } from "~/src/core/storage";
@@ -23,41 +26,6 @@ const Lessons = (props: Props) => {
     setActiveTab(tab);
   };
 
-  const formattedDate = format(selectedDate, "yyyy-MM-dd");
-
-  console.log(formattedDate, "selected date");
-
-  const fetchClasses = async () => {
-    try {
-      setLoading(true);
-      const res = await getTutorUpcomingClasses(accessToken, formattedDate);
-      setUpcomingClasses(res);
-    } catch (error: any) {
-      console.error("Error fetching data:", error.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchClasses();
-  }, []);
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <ScreenHeaderWithTabs
@@ -70,25 +38,12 @@ const Lessons = (props: Props) => {
       >
         {activeTab === "Classes" ? (
           <>
-            <UpcomingClassSchedule
-              upcomingClasses={[]}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
+            <Classes />
           </>
         ) : (
-          <View>
-            <Text style={{ marginTop: 24, marginBottom: 8 }} variant="md">
-              Lesson request
-            </Text>
-            <Lesson />
-            <Lesson />
-            <Lesson />
-            <Lesson />
-            <Lesson />
-            <Lesson />
-            <Lesson />
-          </View>
+          <>
+            <Request />
+          </>
         )}
       </ScrollView>
     </View>
