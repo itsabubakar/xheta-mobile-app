@@ -7,6 +7,7 @@ import Modal from "react-native-modal";
 import { greenTick } from "~/assets/animations";
 import { CircleX } from "~/assets/icons";
 import { updatePassword } from "~/src/api";
+import { updateTutorsPassword } from "~/src/api/tutors-profile";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
@@ -19,8 +20,8 @@ type FormData = {
 };
 
 const Security = () => {
-  // const authData = useAuthStore((state) => state.authData);
-  const accessToken = "uthData?.access_token";
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
 
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -49,7 +50,7 @@ const Security = () => {
 
     try {
       setLoading(true); // Start loading
-      const response = await updatePassword(accessToken, data); // Send API request
+      const response = await updateTutorsPassword(accessToken, data); // Send API request
 
       console.log(response); // Debug: Check the API response
       setModalVisible(true);

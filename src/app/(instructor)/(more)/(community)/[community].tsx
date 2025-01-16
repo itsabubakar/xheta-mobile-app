@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   FlatList,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 
 import { ImageIcon, SendIcon } from "~/assets/icons";
+import { joinCommunity } from "~/src/api/community";
+import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -18,6 +22,27 @@ interface MessageItem {
 }
 
 const DynamicCommunity = () => {
+  const [loading, setLoading] = useState(true);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
+  const { community }: any = useLocalSearchParams();
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await joinCommunity(accessToken, community);
+      console.log(res);
+    } catch (error: any) {
+      console.error("Error fetching data:", error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const [messages, setMessages] = useState<MessageItem[]>([
     { id: "1", text: "Hey! How are you?", sender: "other" },
     { id: "2", text: "I'm good! How about you?", sender: "me" },
@@ -73,6 +98,24 @@ const DynamicCommunity = () => {
       </View>
     </View>
   );
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          backgroundColor: theme.colors.white,
+        }}
+      >
+        <View>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

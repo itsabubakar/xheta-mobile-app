@@ -8,7 +8,8 @@ import { CustomSwitch, ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 const Preferences = () => {
-  const accessToken = useAuthStore((state) => state.authData?.access_token);
+  const authData = useAuthStore((state) => state.authData);
+  const accessToken = authData?.access_token || "";
   const [preferences, setPreferences] = useState({
     desktop_notifications: false,
     email_notifications: false,
@@ -17,35 +18,35 @@ const Preferences = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const getPreferences = async () => {
-  //     if (!accessToken) return; // If no token, do nothing
-  //     try {
-  //       const fetchedPreferences = await fetchPreference(accessToken); // Fetch preferences
-  //       setPreferences(fetchedPreferences.data); // Set initial state
-  //     } catch (error) {
-  //       console.error("Error fetching preferences:", error);
-  //     } finally {
-  //       setLoading(false); // Stop loading
-  //     }
-  //   };
+  useEffect(() => {
+    const getPreferences = async () => {
+      if (!accessToken) return; // If no token, do nothing
+      try {
+        setLoading(true);
+        const fetchedPreferences = await fetchPreference(accessToken); // Fetch preferences
+        setPreferences(fetchedPreferences.data); // Set initial state
+      } catch (error) {
+        console.error("Error fetching preferences:", error);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
 
-  //   getPreferences();
-  // }, [accessToken]);
+    getPreferences();
+  }, [accessToken]);
 
   const handleToggle = async (key: string, value: boolean) => {
     try {
+      setLoading(true);
       console.log(key, value);
 
-      const updatedPref = await updatePreference(
-        "578|2Gh29TnCz1ZE7RhHH2gQe3DuKp54uSjFZnx9N5Ak62c3bddb",
-        key,
-        value,
-      ); // Update on API
+      const updatedPref = await updatePreference(accessToken, key, value); // Update on API
       setPreferences((prev) => ({ ...prev, [key]: value })); // Update local state
       console.log(updatedPref);
     } catch (error) {
       console.error("Failed to update preference:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
