@@ -39,11 +39,15 @@ const Profile = () => {
   const authState = useAuthStore((state) => state.authData);
   const [disabled, setDisabled] = useState(true);
 
-  const name = "Sadiq B";
-  const email = "sad@gmail.com";
-  const gender = "male";
-  const level_of_education = "high";
-  const access_token = "1234";
+  const {
+    name,
+    email,
+    id,
+    gender,
+    profile_image,
+    level_of_education,
+    access_token,
+  } = authState as AuthData;
 
   // const updateAuthState = useAuthStore((state) => state.setAuthData);
   const [profileImage, setProfileImage] = useState(authState?.profile_image);
@@ -368,8 +372,8 @@ const Profile = () => {
                 rules={{ required: "Please select a type" }}
                 label="Gender"
                 options={[
-                  { label: "Bachelors", value: "bachelors" },
-                  { label: "Beginner", value: "Beginner" },
+                  { label: "Male", value: "male" },
+                  { label: "Female", value: "female" },
                   { label: "Prefer not to say", value: "prefer not to say" },
                 ]}
               />
@@ -382,8 +386,8 @@ const Profile = () => {
                 rules={{ required: "Please select a type" }}
                 label="Certification"
                 options={[
-                  { label: "Bachelors", value: "bachelors" },
-                  { label: "Beginner", value: "Beginner" },
+                  { label: "Yes", value: "yes" },
+                  { label: "No", value: "no" },
                   { label: "Prefer not to say", value: "prefer not to say" },
                 ]}
               />

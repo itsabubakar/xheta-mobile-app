@@ -6,7 +6,6 @@ import Modal from "react-native-modal";
 
 import { greenTick } from "~/assets/animations";
 import { CircleX } from "~/assets/icons";
-import { updatePassword } from "~/src/api";
 import { updateTutorsPassword } from "~/src/api/tutors-profile";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";

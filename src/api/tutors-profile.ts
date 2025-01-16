@@ -5,7 +5,7 @@ export const updateTutorsProfile = async (accessToken: string, data: any) => {
   console.log(data, "data sent to backend");
   try {
     const response = await client.put(
-      "/v1/learner/profile/update",
+      "/v1/tutor/profile/update",
       data, // Data should be passed here as the second argument
       {
         headers: {
