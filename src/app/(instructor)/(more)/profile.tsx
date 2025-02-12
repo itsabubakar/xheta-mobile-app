@@ -20,7 +20,12 @@ import {
   fetchProfilePicture,
   updateProfile,
   updateProfilePicture,
+  updateTutorsProfilePicture,
 } from "~/src/api";
+import {
+  fetchTutorsProfilePicture,
+  updateTutorsProfile,
+} from "~/src/api/tutors-profile";
 import { useAuthStore, AuthData } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
@@ -112,7 +117,7 @@ const Profile = () => {
       setLoading(true);
 
       // Call the API with the updated data
-      const response = await updateProfile(access_token, updatedData);
+      const response = await updateTutorsProfile(access_token, updatedData);
 
       console.log(response);
 
@@ -155,6 +160,8 @@ const Profile = () => {
 
     if (!result.canceled) {
       const { uri, mimeType } = result.assets[0];
+
+      console.log(uri);
       setProfileImage(uri);
       await uploadProfilePicture(uri, mimeType);
     }
@@ -205,14 +212,14 @@ const Profile = () => {
 
     try {
       // Upload the profile picture
-      const newProfilePicture = await updateProfilePicture(
+      const newProfilePicture = await updateTutorsProfilePicture(
         access_token,
         formData,
       );
       console.log(newProfilePicture, "response from server");
 
       // Fetch the updated profile image URL
-      const updatedProfile = await fetchProfilePicture(access_token);
+      const updatedProfile = await fetchTutorsProfilePicture(access_token);
 
       console.log(updatedProfile.profile_image);
 
@@ -367,7 +374,7 @@ const Profile = () => {
             <View style={{ width: "100%", flex: 1 }}>
               <ControlledDropdown
                 disabled={disabled}
-                name="education"
+                name="gender"
                 control={control}
                 rules={{ required: "Please select a type" }}
                 label="Gender"

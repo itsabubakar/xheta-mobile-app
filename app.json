@@ -15,12 +15,12 @@
       "tsconfigPaths": true
     },
     "orientation": "default",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/iconOne.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splashScreen.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#03363D"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -29,7 +29,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-iconOne.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.thetrueseeker.xhetaapp"

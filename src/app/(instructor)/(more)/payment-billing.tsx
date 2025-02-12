@@ -19,6 +19,7 @@ import {
   CircularPlus,
   Mastercard,
   TrashIcon,
+  UBA,
   Visacard,
 } from "~/assets/icons";
 import { noContent } from "~/assets/images";
@@ -185,40 +186,35 @@ const PaymentBilling = (props: Props) => {
       <ScreenHeaderWithCustomIcon
         icon={<CircularPlus />}
         bg
-        title="Payment & Billing"
+        title="Payment"
         buttonFunction={openBottomSheet}
       />
 
-      {payments?.length === 0 && (
+      {/* {payments?.length === 0 && (
         <View
           style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
         >
           <Image source={noContent} />
           <Text style={{ textAlign: "center", color: "#434343", marginTop: 8 }}>
-            You don’t have any saved cards yet
+            You don’t have any bank info yet
           </Text>
         </View>
-      )}
-      {payments.length > 0 && (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            padding: 16,
-          }}
-        >
-          {payments?.map((item: any) => (
-            <Card
-              id={item.id}
-              deleteCard={deleteCard}
-              card_expiry_date={item.card_expiry_date}
-              card_holder_name={item.card_holder_name}
-              card_number={item.card_number}
-              card_type={item.card_type}
-              key={item.id}
-            />
-          ))}
-        </ScrollView>
-      )}
+      )} */}
+      {/* {payments.length > 0 && ( */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          padding: 16,
+        }}
+      >
+        <Text style={{ marginBottom: 16, height: 20 }} variant="subtitle">
+          Bank info
+        </Text>
+        <Bank />
+        <Bank />
+        <Bank />
+      </ScrollView>
+      {/* )} */}
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -247,7 +243,7 @@ const PaymentBilling = (props: Props) => {
               }}
             >
               <Text style={{ marginBottom: 8 }} variant="subtitle">
-                Email verification
+                Account details
               </Text>
               <Text style={{ marginBottom: 24 }}>
                 Kindly enter your account details
@@ -255,29 +251,22 @@ const PaymentBilling = (props: Props) => {
               <ControlledInput
                 control={control}
                 name="card_holder_name"
-                label="Card Holder name"
+                label="Account number"
+                placeholder="Enter account number"
               />
               <ControlledInput
                 control={control}
                 name="card_number"
-                label="Card Number"
+                label="Account name"
+                placeholder="Enter account name"
               />
-              <View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
-                <View style={{ width: "50%" }}>
-                  <ControlledInput
-                    control={control}
-                    name="card_expiry_date"
-                    label="Expiration Date"
-                  />
-                </View>
-                <View style={{ width: "50%" }}>
-                  <ControlledInput
-                    control={control}
-                    name="card_cvc"
-                    label="Cvv"
-                  />
-                </View>
-              </View>
+              <ControlledInput
+                control={control}
+                name="card_number"
+                label="Bank name"
+                placeholder="Select bank"
+              />
+
               <Button
                 loading={cardSave}
                 disabled={cardSave}
@@ -292,14 +281,7 @@ const PaymentBilling = (props: Props) => {
   );
 };
 
-const Card = ({
-  card_expiry_date,
-  card_holder_name,
-  card_number,
-  card_type,
-  deleteCard,
-  id,
-}: any) => {
+const Bank = ({}: any) => {
   const formatCardNumber = (cardNumber: string) => {
     // Remove spaces and non-numeric characters
     cardNumber = cardNumber.replace(/\D/g, "");
@@ -323,32 +305,25 @@ const Card = ({
         backgroundColor: "#F5F5F5",
         padding: 16,
         borderRadius: 16,
+        flexDirection: "row",
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 4,
-        }}
-      >
+      <View style={{ justifyContent: "space-between" }}>
         <Text style={{ fontSize: 16 }} variant="md">
-          {card_type === "VISA" ? "Visa" : "Mastercard"}{" "}
-          {formatCardNumber(card_number)}
+          Xheta Humans
         </Text>
-        {card_type === "VISA" ? <Visacard /> : <Mastercard />}
+        <Text style={{ color: "#686868" }}>UBA</Text>
       </View>
+
       <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
+        style={{ marginLeft: "auto", alignItems: "flex-end", paddingRight: 16 }}
       >
-        <Text style={{ color: "#686868" }}>Exp: {card_expiry_date}</Text>
+        <UBA />
+        <Text style={{ paddingTop: 8 }}>0987654321</Text>
+      </View>
+
+      <View>
         <Pressable
-          onPress={() => deleteCard(id)}
           style={{ backgroundColor: "#fff", padding: 8, borderRadius: 999 }}
         >
           <TrashIcon color="black" />

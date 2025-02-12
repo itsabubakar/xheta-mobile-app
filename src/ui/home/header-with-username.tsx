@@ -23,10 +23,16 @@ const HeaderWithUsername = ({ name, profileImage }: Props) => {
         },
       ]}
     >
-      <Image
-        style={{ width: 48, height: 48, borderRadius: 9999 }}
-        source={profileImage ? { uri: profileImage } : profile}
-      />
+      <Pressable
+        onPress={() => {
+          router.push("/(instructor)/(more)/profile");
+        }}
+      >
+        <Image
+          style={{ width: 48, height: 48, borderRadius: 9999 }}
+          source={profileImage ? { uri: profileImage } : profile}
+        />
+      </Pressable>
       <View style={{ marginLeft: 8 }}>
         <Text
           style={{ color: "white", fontFamily: "AeonikBold", fontSize: 14 }}
@@ -42,8 +48,8 @@ const HeaderWithUsername = ({ name, profileImage }: Props) => {
       <Pressable
         style={styles.notificationButton}
         onPress={() => {
-          console.log("Navigating to /notifications"); // Log the path
-          router.push("/notifications"); // Ensure this is the correct path
+          console.log("Navigating to /notifications");
+          router.push("/notifications");
         }}
       >
         <Notifications />

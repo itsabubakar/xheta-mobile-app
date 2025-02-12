@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { Persons } from "~/assets/icons";
+import { joinCommunity } from "~/src/api";
 import { fetchCommunities } from "~/src/api/community";
 import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeader } from "~/src/ui";
@@ -53,6 +54,9 @@ const Communities = () => {
       </View>
     );
   }
+
+  console.log(communities);
+  console.log(communities);
   return (
     <View style={styles.container}>
       <ScreenHeader bg title="Community" />
@@ -71,6 +75,7 @@ const Communities = () => {
             course_name={community.course_name}
             description={community.description}
             members={community.members}
+            accessToken={accessToken}
           />
         ))}
       </ScrollView>
@@ -78,13 +83,29 @@ const Communities = () => {
   );
 };
 
-const Community = ({ name, course_name, description, members, id }: any) => {
+const Community = ({
+  name,
+  course_name,
+  description,
+  members,
+  id,
+  accessToken,
+}: any) => {
   const router = useRouter();
+
+  const handleClick = async () => {
+    // community-chat/1/join
+    // router.push(`/community-chat/${id}/join`);
+    console.log(id);
+    try {
+      const res = await joinCommunity(accessToken, id);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <Pressable
-      onPress={() => router.push(`/(community)/${id}`)}
-      style={styles.community}
-    >
+    <Pressable onPress={handleClick} style={styles.community}>
       <View
         style={{
           backgroundColor: theme.colors.borderColor,

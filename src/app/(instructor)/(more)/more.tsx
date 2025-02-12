@@ -3,21 +3,16 @@ import React from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import {
-  Accomplisment,
-  Bootcamp,
-  Chevron,
   Community,
   Logout,
   Preferences,
   Profile,
   Security,
   SlimChevronIcon,
-  Support,
 } from "~/assets/icons";
 import {
   CirlcedPaymentAndBilling,
   CirlcedPaymentHistory,
-  SwitchIcon,
 } from "~/assets/icons/moreIcons";
 import { useAuthStore } from "~/src/core/storage";
 import { Text, theme } from "~/theme";
@@ -63,7 +58,7 @@ const More = (props: Props) => {
             <MoreLink
               route="/payment-billing"
               icon={<CirlcedPaymentAndBilling />}
-              title="Payment & Billing"
+              title="Payment"
             />
             <MoreLink
               route="/preferences"
@@ -72,7 +67,7 @@ const More = (props: Props) => {
             />
           </View>
         </ScrollView>
-        <Pressable
+        {/* <Pressable
           onPress={handleLogout}
           style={{
             padding: 8,
@@ -89,7 +84,7 @@ const More = (props: Props) => {
         >
           <Text style={styles.switch}>Become a learner</Text>
           <SwitchIcon />
-        </Pressable>
+        </Pressable> */}
 
         <Pressable onPress={handleLogout} style={styles.logoutContainer}>
           <Logout />
