@@ -2,6 +2,8 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,76 +11,99 @@ import {
 } from "react-native";
 
 import { Persons } from "~/assets/icons";
+import { noContent } from "~/assets/images";
 import { joinCommunity } from "~/src/api";
-import { fetchCommunities } from "~/src/api/community";
+import { fetchCommunities, fetchUserCommunities } from "~/src/api/community";
 import { useAuthStore } from "~/src/core/storage";
-import { ScreenHeader } from "~/src/ui";
+import { ScreenHeaderWithTabs } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 const Communities = () => {
-  const [communities, setCommunities] = useState([]);
-  const authData = useAuthStore((state) => state.authData);
+  const [allCommunities, setAllCommunities] = useState([]);
+  const [userCommunities, setUserCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("All");
+
+  const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
 
+  /** Fetch All and User Communities in Parallel */
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetchCommunities(accessToken);
-      setCommunities(res.data);
+      const [allRes, userRes] = await Promise.all([
+        fetchCommunities(accessToken),
+        fetchUserCommunities(accessToken),
+      ]);
+      setAllCommunities(allRes.data);
+      setUserCommunities(userRes.data);
     } catch (error: any) {
-      console.error("Error fetching data:", error.response.data.message);
+      console.error(
+        "Error fetching communities:",
+        error?.response?.data?.message,
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData(); // Fetch both on mount
   }, []);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-          backgroundColor: theme.colors.white,
-        }}
-      >
-        <View>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
-      </View>
-    );
-  }
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
 
-  console.log(communities);
-  console.log(communities);
   return (
     <View style={styles.container}>
-      <ScreenHeader bg title="Community" />
+      <ScreenHeaderWithTabs
+        tabs={["All", "Mine"]}
+        onTabChange={handleTabChange}
+        title="Community"
+      />
 
-      <ScrollView
-        contentContainerStyle={{
-          padding: 16,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {communities?.map((community: any) => (
-          <Community
-            key={community.id}
-            id={community.id}
-            name={community.name}
-            course_name={community.course_name}
-            description={community.description}
-            members={community.members}
-            accessToken={accessToken}
-          />
-        ))}
-      </ScrollView>
+      {loading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {(activeTab === "All" ? allCommunities : userCommunities).map(
+            (community: any) => (
+              <Community
+                key={community.id}
+                id={community.id}
+                name={community.name}
+                course_name={community.course_name}
+                description={community.description}
+                members={community.members}
+                accessToken={accessToken}
+              />
+            ),
+          )}
+          {activeTab === "Mine" && userCommunities.length === 0 && (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                marginTop: 170,
+              }}
+            >
+              <Image source={noContent} />
+              <Text
+                style={{ textAlign: "center", color: "#434343", marginTop: 8 }}
+              >
+                You haven't joined any communities yet
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -94,32 +119,25 @@ const Community = ({
   const router = useRouter();
 
   const handleClick = async () => {
-    // community-chat/1/join
-    // router.push(`/community-chat/${id}/join`);
     console.log(id);
     try {
       const res = await joinCommunity(accessToken, id);
       console.log(res);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log(error.response.data.message);
+      Alert.alert(
+        "Error",
+        error?.response?.data?.message || "Something went wrong",
+      );
     }
   };
+
   return (
     <Pressable onPress={handleClick} style={styles.community}>
-      <View
-        style={{
-          backgroundColor: theme.colors.borderColor,
-          borderRadius: 9999,
-          padding: 8,
-        }}
-      >
+      <View style={styles.iconWrapper}>
         <Persons />
       </View>
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
+      <View style={{ flex: 1 }}>
         <Text style={{ color: "#1D1D1D", marginBottom: 8 }} variant="md">
           {name}
         </Text>
@@ -136,6 +154,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.white,
   },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollContainer: {
+    padding: 16,
+  },
   community: {
     paddingBottom: 16,
     flexDirection: "row",
@@ -146,6 +172,11 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderRadius: 16,
+  },
+  iconWrapper: {
+    backgroundColor: theme.colors.borderColor,
+    borderRadius: 9999,
+    padding: 8,
   },
 });
 

@@ -26,6 +26,7 @@ import { noContent } from "~/assets/images";
 import {
   addTutorSavedCard,
   deleteTutorSavedCard,
+  getTutorBankInfo,
   getTutorSavedCards,
 } from "~/src/api/tutor-payments";
 import { useAuthStore } from "~/src/core/storage";
@@ -61,7 +62,7 @@ const PaymentBilling = (props: Props) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await getTutorSavedCards(accessToken);
+      const res = await getTutorBankInfo(accessToken);
       console.log(res.data);
       setPayments(res.data);
     } catch (error: any) {
@@ -210,8 +211,6 @@ const PaymentBilling = (props: Props) => {
         <Text style={{ marginBottom: 16, height: 20 }} variant="subtitle">
           Bank info
         </Text>
-        <Bank />
-        <Bank />
         <Bank />
       </ScrollView>
       {/* )} */}

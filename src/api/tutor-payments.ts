@@ -16,9 +16,9 @@ export const getTutorPayments = async (accessToken: string) => {
   }
 };
 
-export const getTutorSavedCards = async (accessToken: string) => {
+export const getTutorBankInfo = async (accessToken: string) => {
   try {
-    const response = await client.get(`/v1/card-details`, {
+    const response = await client.get(`/v1/tutor/bank-account-detail`, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`,

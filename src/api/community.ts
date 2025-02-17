@@ -23,3 +23,15 @@ export const joinCommunity = async (accessToken: string, id: string) => {
 
   return response.data;
 };
+
+export const fetchUserCommunities = async (accessToken: string) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get("v1/my-communities", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`, // Include the bearer token
+    },
+  });
+
+  return response.data;
+};

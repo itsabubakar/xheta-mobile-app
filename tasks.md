@@ -16,15 +16,16 @@
 
 ## Tutors
 
-- [] Work on community screen 1 day
 - [x] Redo payment screen to reflect bank details 1 hour
 - [x] Link profile picture on home to profile 20 minutes
 - [x] Work on security 1 hour
 - [x] Work on profile 1 hour
-- [] Add icon to app
-- [] Fix splash screen
+- [x] Add icon to app
+- [x] Fix splash screen
 
+- [] Work on community screen 1 day
 - [] Add tabs to courses 1 hour
+- [] Add bank api 1 hour
 - [] Add bottom sheet to mobile 1 day
 - [] Add react query and use it to update course addition 2 hours
 - [] Test adding classes 1 hour
