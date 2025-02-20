@@ -7,33 +7,55 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Image,
 } from "react-native";
 
 import { ImageIcon, SendIcon } from "~/assets/icons";
-import { joinCommunity } from "~/src/api/community";
+import { getCommunityMessages } from "~/src/api/communities";
 import { useAuthStore } from "~/src/core/storage";
 import { ScreenHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
 interface MessageItem {
-  id: string;
+  id: number;
   text: string;
   sender: string;
+  sender_id: number;
+  created_at: string;
+  sender_profile_image: string;
+  has_file: boolean;
+  file?: string | null;
 }
 
 const DynamicCommunity = () => {
   const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [inputText, setInputText] = useState("");
+
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
+  const currentUserId = authData?.user?.id || 0; // Assuming `authData.user.id` holds the current user's ID
   const { community }: any = useLocalSearchParams();
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await joinCommunity(accessToken, community);
-      console.log(res);
+      const res = await getCommunityMessages(accessToken, community);
+      if (res?.data) {
+        const formattedMessages = res.data.map((msg: any) => ({
+          id: msg.id,
+          text: msg.content,
+          sender: msg.sender,
+          sender_id: msg.sender_id,
+          created_at: msg.created_at,
+          sender_profile_image: msg.sender_profile_image,
+          has_file: msg.has_file,
+          file: msg.file || null,
+        }));
+        setMessages(formattedMessages);
+      }
     } catch (error: any) {
-      console.error("Error fetching data:", error.response.data.message);
+      console.error("Error fetching messages:", error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -43,76 +65,79 @@ const DynamicCommunity = () => {
     fetchData();
   }, []);
 
-  const [messages, setMessages] = useState<MessageItem[]>([
-    { id: "1", text: "Hey! How are you?", sender: "other" },
-    { id: "2", text: "I'm good! How about you?", sender: "me" },
-  ]);
-  const [inputText, setInputText] = useState("");
-
   const sendMessage = () => {
     if (inputText.trim()) {
-      const newMessage = {
-        id: Date.now().toString(),
+      const newMessage: MessageItem = {
+        id: Date.now(),
         text: inputText,
-        sender: "me",
+        sender: "You",
+        sender_id: currentUserId,
+        created_at: new Date().toLocaleString(),
+        sender_profile_image: "", // Assuming no profile image for the current user
+        has_file: false,
+        file: null,
       };
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       setInputText("");
     }
   };
 
-  const renderItem = ({ item }: { item: MessageItem }) => (
-    <View
-      style={[
-        styles.messageRow,
-        item.sender === "me" ? styles.myMessageRow : styles.otherMessageRow,
-      ]}
-    >
-      {item.sender === "other" && <View style={styles.avatar} />}
-      <View style={styles.messageContent}>
-        <Text
-          variant="sm"
-          style={[
-            styles.senderName,
-            item.sender === "me" ? styles.mySenderName : styles.otherSenderName,
-          ]}
-        >
-          {item.sender === "me" ? "You" : "John"}
-        </Text>
-        <View
-          style={[
-            styles.messageContainer,
-            item.sender === "me" ? styles.myMessage : styles.otherMessage,
-          ]}
-        >
+  const renderItem = ({ item }: { item: MessageItem }) => {
+    const isCurrentUser = item.sender_id === currentUserId;
+
+    return (
+      <View
+        style={[
+          styles.messageRow,
+          isCurrentUser ? styles.myMessageRow : styles.otherMessageRow,
+        ]}
+      >
+        {!isCurrentUser && (
+          <Image
+            source={{ uri: item.sender_profile_image }}
+            style={styles.avatar}
+          />
+        )}
+        <View style={styles.messageContent}>
           <Text
-            style={
-              item.sender === "me"
-                ? styles.myMessageText
-                : styles.otherMessageText
-            }
+            variant="sm"
+            style={[
+              styles.senderName,
+              isCurrentUser ? styles.mySenderName : styles.otherSenderName,
+            ]}
           >
-            {item.text}
+            {isCurrentUser ? "You" : item.sender}
           </Text>
+          <View
+            style={[
+              styles.messageContainer,
+              isCurrentUser ? styles.myMessage : styles.otherMessage,
+            ]}
+          >
+            <Text
+              style={
+                isCurrentUser ? styles.myMessageText : styles.otherMessageText
+              }
+            >
+              {item.text}
+            </Text>
+            {item.has_file && item.file && (
+              <Image
+                source={{ uri: item.file }}
+                style={styles.messageImage}
+                resizeMode="cover"
+              />
+            )}
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-          backgroundColor: theme.colors.white,
-        }}
-      >
-        <View>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -124,19 +149,12 @@ const DynamicCommunity = () => {
       <FlatList
         data={messages}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.chatContainer}
       />
 
       <View style={styles.inputContainer}>
-        <View
-          style={{
-            borderRightWidth: 1,
-            borderColor: theme.colors.borderColor,
-            paddingRight: 16,
-            paddingLeft: 6,
-          }}
-        >
+        <View style={styles.imageIconContainer}>
           <ImageIcon />
         </View>
         <TextInput
@@ -158,6 +176,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.white,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   chatContainer: {
     flexGrow: 1,
     justifyContent: "flex-end",
@@ -170,16 +193,18 @@ const styles = StyleSheet.create({
   },
   myMessageRow: {
     justifyContent: "flex-end",
+    alignSelf: "flex-end",
   },
   otherMessageRow: {
     justifyContent: "flex-start",
+    alignSelf: "flex-start",
   },
   avatar: {
     width: 40,
     height: 40,
-    backgroundColor: "red",
     borderRadius: 20,
     marginRight: 10,
+    backgroundColor: "#ddd",
   },
   messageContent: {
     maxWidth: "70%",
@@ -189,8 +214,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   mySenderName: {
-    alignSelf: "flex-end", // Aligns "You" to the right
-    textAlign: "right", // Ensures text aligns right within the container
+    alignSelf: "flex-end",
+    textAlign: "right",
   },
   otherSenderName: {
     alignSelf: "flex-start",
@@ -219,12 +244,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "black",
   },
+  messageImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+    marginTop: 5,
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
     borderTopWidth: 1,
     borderColor: theme.colors.borderColor,
+  },
+  imageIconContainer: {
+    borderRightWidth: 1,
+    borderColor: theme.colors.borderColor,
+    paddingRight: 16,
+    paddingLeft: 6,
   },
   input: {
     flex: 1,

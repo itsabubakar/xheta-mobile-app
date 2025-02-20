@@ -27,7 +27,6 @@ import {
   addTutorSavedCard,
   deleteTutorSavedCard,
   getTutorBankInfo,
-  getTutorSavedCards,
 } from "~/src/api/tutor-payments";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeaderWithCustomIcon } from "~/src/ui";

@@ -23,7 +23,8 @@
 - [x] Add icon to app
 - [x] Fix splash screen
 
-- [] Work on community screen 1 day
+- [x] Work on community screen 1 day
+- [] Add pusher and echo to messaging 1 day
 - [] Add tabs to courses 1 hour
 - [] Add bank api 1 hour
 - [] Add bottom sheet to mobile 1 day

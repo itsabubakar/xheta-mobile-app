@@ -75,6 +75,7 @@ const Communities = () => {
           {(activeTab === "All" ? allCommunities : userCommunities).map(
             (community: any) => (
               <Community
+                userCommunities={userCommunities}
                 key={community.id}
                 id={community.id}
                 name={community.name}
@@ -115,20 +116,30 @@ const Community = ({
   members,
   id,
   accessToken,
+  userCommunities,
 }: any) => {
   const router = useRouter();
 
+  const isUserInCommunity = userCommunities.some(
+    (community: any) => community.id === id,
+  );
+
+  console.log(isUserInCommunity);
+
   const handleClick = async () => {
-    console.log(id);
-    try {
-      const res = await joinCommunity(accessToken, id);
-      console.log(res);
-    } catch (error: any) {
-      console.log(error.response.data.message);
-      Alert.alert(
-        "Error",
-        error?.response?.data?.message || "Something went wrong",
-      );
+    if (isUserInCommunity) {
+      // Navigate if user is already in the community
+      router.push(`/${id}` as any);
+    } else {
+      try {
+        await joinCommunity(accessToken, id);
+      } catch (error: any) {
+        console.log(error.response.data);
+        Alert.alert(
+          "Error",
+          error?.response?.data?.message || "Something went wrong",
+        );
+      }
     }
   };
 

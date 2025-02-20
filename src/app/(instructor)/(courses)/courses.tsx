@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import { noContent } from "~/assets/images";
 import { CreatedCourses } from "~/components";
 import { getTutorCourses } from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
@@ -87,25 +89,25 @@ const Courses = (props: Props) => {
         title="My courses"
       />
 
-      {/* <View style={styles.tabRow}>
+      <View style={styles.tabRow}>
         <TabButton
           label="All"
           isActive={activeTab === "all"}
           onPress={() => setActiveTab("all")}
-          badgeCount={20}
+          badgeCount={0}
         />
         <TabButton
           label="Pending"
           isActive={activeTab === "pending"}
           onPress={() => setActiveTab("pending")}
-          badgeCount={2}
+          badgeCount={0}
         />
         <TabButton
           label="Draft"
           isActive={activeTab === "draft"}
           onPress={() => setActiveTab("draft")}
         />
-      </View> */}
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -119,6 +121,12 @@ const Courses = (props: Props) => {
         {courses.map((course: any) => (
           <CreatedCourses key={course.id} course={course} />
         ))}
+        {courses.length === 0 && (
+          <View style={styles.noContentContainer}>
+            <Image style={{ marginTop: 160 }} source={noContent} />
+            <Text>You have no content available in this tab.</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -236,5 +244,11 @@ const styles = StyleSheet.create({
   },
   activeBadgeText: {
     color: theme.colors.primary,
+  },
+  noContentContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    padding: 16,
   },
 });
