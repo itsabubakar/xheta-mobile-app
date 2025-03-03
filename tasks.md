@@ -24,8 +24,8 @@
 - [x] Fix splash screen
 
 - [x] Work on community screen 1 day
-- [] Add pusher and echo to messaging 1 day
-- [] Add tabs to courses 1 hour
+- [x] Add pusher and echo to messaging 1 day
+- [x] Add tabs to courses 1 hour
 - [] Add bank api 1 hour
 - [] Add bottom sheet to mobile 1 day
 - [] Add react query and use it to update course addition 2 hours

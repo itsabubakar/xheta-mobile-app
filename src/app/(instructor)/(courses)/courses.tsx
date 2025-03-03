@@ -58,9 +58,7 @@ const Courses = (props: Props) => {
     // Refetch only if refetch param is true
     if (params.refetch === "true") {
       console.log(params);
-      console.log("refetching the data");
       fetchData();
-
       router.setParams({ refetch: undefined }); // Clear the param after refetching
     }
   }, [params.refetch]);

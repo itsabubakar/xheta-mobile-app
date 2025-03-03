@@ -43,11 +43,11 @@ const More = (props: Props) => {
       <View style={styles.contentContainer}>
         <ScrollView contentContainerStyle={styles.itemConc}>
           <View style={styles.linksContainer}>
-            <MoreLink
+            {/* <MoreLink
               route="/community"
               icon={<Community />}
               title="Community"
-            />
+            /> */}
             <MoreLink
               icon={<CirlcedPaymentHistory />}
               title="Payment history"

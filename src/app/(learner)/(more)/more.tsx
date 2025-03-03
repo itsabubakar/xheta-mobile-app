@@ -47,7 +47,7 @@ const More = (props: Props) => {
           }}
         >
           <MoreLink icon={<Bootcamp />} title="Bootcamp" />
-          <MoreLink icon={<Community />} title="Community" />
+          {/* <MoreLink icon={<Community />} title="Community" /> */}
           <MoreLink icon={<Profile />} title="Profile" />
           <MoreLink icon={<Security />} title="Security" />
           <MoreLink icon={<Accomplisment />} title="Accomplishment" />

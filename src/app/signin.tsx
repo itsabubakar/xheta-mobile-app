@@ -208,11 +208,11 @@ const SignIn = () => {
             <Button
               onPress={() => router.replace("/signup")}
               variant="link"
-              label="Don't have an account?"
+              label="Don't have an account? Sign up"
               style={{ borderWidth: 0 }}
               fontFamily="AeonikMedium"
             />
-            <Text
+            {/* <Text
               style={{
                 color: theme.colors.primary,
                 fontFamily: "AeonikMedium",
@@ -221,7 +221,7 @@ const SignIn = () => {
             >
               {" "}
               Sign up
-            </Text>
+            </Text> */}
           </View>
         </View>
 
