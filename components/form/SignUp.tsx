@@ -15,7 +15,7 @@ import Toast from "~/src/ui/toast/custom-toast";
 import { Text, useTheme } from "~/theme";
 
 type Props = {
-  role: string;
+  role: string | null;
 };
 
 type FormData = {
@@ -43,7 +43,7 @@ const SignUp = ({ role }: Props) => {
   // Manage loading state
   const [loading, setLoading] = useState(false);
 
-  console.log(role);
+  console.log(role, "role");
 
   // Form hooks
   const {

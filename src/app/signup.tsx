@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
+import { useRoleStore } from "../core/storage";
 import { Button } from "../ui";
 
 import { CircleX, Xback } from "~/assets/icons";
@@ -13,18 +14,20 @@ import { Text, useTheme } from "~/theme";
 
 const SignUp = () => {
   const router = useRouter();
-  const [isModalVisible, setModalVisible] = useState(false);
+  // const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
-  let { role } = useLocalSearchParams();
-  if (Array.isArray(role)) {
-    role = role[0]; // Ensure it's a string
-  }
+  const role = useRoleStore((state) => state.selectedRole);
+
+  // let { role } = useLocalSearchParams();
+  // if (Array.isArray(role)) {
+  //   role = role[0]; // Ensure it's a string
+  // }
 
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    // setModalVisible(false);
     router.replace("/(learner)/home");
   };
-  console.log(role);
+  // console.log(role);
 
   return (
     <View style={styles.container}>
@@ -49,7 +52,7 @@ const SignUp = () => {
         {/* Sign up form component */}
         <SignUpForm role={role} />
 
-        <Modal isVisible={isModalVisible}>
+        <Modal isVisible={false}>
           <View
             style={{
               marginTop: "25%",
@@ -87,7 +90,7 @@ const SignUp = () => {
           </View>
         </Modal>
       </ScrollView>
-      <StatusBar backgroundColor={isModalVisible ? "#000000B3" : "white"} />
+      <StatusBar backgroundColor="white" />
     </View>
   );
 };

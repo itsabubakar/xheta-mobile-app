@@ -73,3 +73,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 }));
+
+interface RoleState {
+  selectedRole: string | null; // New state for storing the role
+  setSelectedRole: (role: string) => void; // Function to update the role
+}
+
+export const useRoleStore = create<RoleState>((set) => ({
+  selectedRole: null, // Default state
+
+  setSelectedRole: (role: string) => {
+    set({ selectedRole: role });
+  },
+}));

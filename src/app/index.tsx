@@ -6,7 +6,7 @@ import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 import { Button } from "../ui/button";
 
 import { onboardingBg } from "~/assets/images";
-import { useAuthStore } from "~/src/core/storage"; // Import your auth store
+import { useAuthStore, useRoleStore } from "~/src/core/storage"; // Import your auth store
 import { Text, theme } from "~/theme";
 
 type Props = {
@@ -53,13 +53,15 @@ const OnBoarding = (props: Props) => {
   const [isLearnerChecked, setLearnerChecked] = useState(false);
   const [isInstructorChecked, setInstructorChecked] = useState(false);
   const [loading, setLoading] = useState(true); // State to handle loading
-  const [selectedRole, setSelectedRole] = useState<string | null>(null); // Track selected role
+
+  const setSelectedRole = useRoleStore((state) => state.setSelectedRole);
+  const selectedRole = useRoleStore((state) => state.selectedRole);
   const router = useRouter();
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated); // Access auth state
   const hydrateAuthData = useAuthStore((state) => state.hydrateAuthData); // Hydrate auth data
 
-  console.log(selectedRole, "role selected");
+  console.log(selectedRole, "selected role on index");
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -75,22 +77,23 @@ const OnBoarding = (props: Props) => {
 
     checkAuthentication();
   }, [hydrateAuthData]);
+
   useEffect(() => {
     if (!loading && isAuthenticated) {
       const redirectToHome = async () => {
         setLoading(true); // Set loading state to true before routing
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Optional: Small delay
+        // await new Promise((resolve) => setTimeout(resolve, 500)); // Optional: Small delay
 
         const authData = useAuthStore.getState().authData; // Get authData from the store
         const role = authData?.role;
 
         if (role === "tutor") {
-          router.replace("/(instructor)/(home)/home"); // Redirect to instructor home
+          router.push("/(instructor)/(home)/home"); // Redirect to instructor home
         } else if (role === "learner") {
-          router.replace("/(learner)/home"); // Redirect to learner home
+          router.push("/(learner)/home"); // Redirect to learner home
         } else {
           console.log("No role found, redirecting to onboarding...");
-          router.replace("/onboarding"); // Handle edge case: no role found
+          router.push("/onboarding"); // Handle edge case: no role found
         }
       };
       redirectToHome();

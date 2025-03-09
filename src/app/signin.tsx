@@ -21,7 +21,7 @@ type FormData = {
 };
 
 const SignIn = () => {
-  const [isModalVisible, setModalVisible] = useState(false);
+  // const [isModalVisible, setModalVisible] = useState(false);
   const theme = useTheme();
   const router = useRouter();
 
@@ -37,7 +37,7 @@ const SignIn = () => {
   };
 
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    // setModalVisible(!isModalVisible);
     router.replace("/(learner)/home");
   };
 
@@ -88,7 +88,7 @@ const SignIn = () => {
       console.log(res);
 
       setLoading(false); // Stop loading once the request is complete
-      setModalVisible(true); // Show the modal after successful account creation
+      // setModalVisible(false); // Show the modal after successful account creation
     } catch (err: any) {
       console.error(err.response.data.message);
       showToast(err.response.data.message || "An unexpected error occurred");
@@ -225,7 +225,7 @@ const SignIn = () => {
           </View>
         </View>
 
-        <Modal isVisible={isModalVisible}>
+        <Modal isVisible={false}>
           <View
             style={{
               marginTop: "25%",
@@ -263,7 +263,7 @@ const SignIn = () => {
           </View>
         </Modal>
       </ScrollView>
-      <StatusBar backgroundColor={isModalVisible ? "#000000B3" : "white"} />
+      <StatusBar backgroundColor="white" />
     </View>
   );
 };
