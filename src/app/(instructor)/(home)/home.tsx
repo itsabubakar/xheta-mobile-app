@@ -43,7 +43,7 @@ const Home = () => {
       // Extract current month's earnings
 
       setUpcomingClasses(classesRes);
-      if (authData?.account_activated) {
+      if (!authData?.account_activated) {
         bottomSheetRef.current?.expand();
       }
 

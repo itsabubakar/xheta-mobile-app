@@ -26,8 +26,11 @@
 - [x] Work on community screen 1 day
 - [x] Add pusher and echo to messaging 1 day
 - [x] Add tabs to courses 1 hour
-- [] Add bank api 1 hour
-- [] Add bottom sheet to tutors 1 day
+- [x] Add bottom sheet to tutors 1 day
+- [] Add profile update api to bottom sheet
+- [] Complete schedule/ class request api
+- [] Add class request to homepage
+- [x] Add bank api 1 hour
 - [] Add react query and use it to update course addition 2 hours
 - [] Test adding classes 1 hour
 - [] Test Lesson request 1 hour

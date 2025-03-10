@@ -20,7 +20,6 @@ export const getTutorBankInfo = async (accessToken: string) => {
   try {
     const response = await client.get(`/v1/tutor/bank-account-detail`, {
       headers: {
-        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`,
       },
     });
@@ -32,30 +31,18 @@ export const getTutorBankInfo = async (accessToken: string) => {
   }
 };
 
-export const addTutorSavedCard = async (accessToken: string, data: any) => {
+export const addTutorBankInfo = async (accessToken: string, data: any) => {
+  console.log(data);
   try {
-    const response = await client.post(`/v1/card-details`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${accessToken}`,
+    const response = await client.patch(
+      `/v1/tutor/update/bank-account-detail`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Error creating course:", error);
-    throw error;
-  }
-};
-
-export const deleteTutorSavedCard = async (accessToken: string, id: string) => {
-  try {
-    const response = await client.delete(`/v1/card-details/${id}`, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    );
 
     return response.data;
   } catch (error) {
