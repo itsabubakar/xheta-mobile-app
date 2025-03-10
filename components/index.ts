@@ -35,6 +35,7 @@ export { default as Hero } from "./instructor/hero";
 export { default as UpcomingClassSchedule } from "./instructor/upcoming-class";
 export { default as DatePicker } from "./instructor/date-picker";
 export { default as InstructorClass } from "./instructor/class";
+export { default as InstructorHomeBottomSheet } from "./instructor/bottom-sheet";
 
 // Lessons request
 

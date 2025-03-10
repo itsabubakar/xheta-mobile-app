@@ -3,20 +3,28 @@ import BottomSheet, {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import * as DocumentPicker from "expo-document-picker";
 import LottieView from "lottie-react-native";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Dimensions, Image, Pressable, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import EmailVerification from "./email-verification";
 
-import { CircleX } from "~/assets/icons";
+import { CircleX, FileIcon } from "~/assets/icons";
 import { xhetaBanner } from "~/assets/images";
 import { updateProfile } from "~/src/api";
 import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledDropdown } from "~/src/ui/form/input";
-import { Text } from "~/theme";
+import { Text, theme } from "~/theme";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -28,6 +36,8 @@ type FormData = {
   gender: string;
   education: string;
   interest: string[];
+  qualification: string;
+  note: any;
 };
 
 const HomeBottomSheet = ({
@@ -43,10 +53,12 @@ const HomeBottomSheet = ({
     "welcome" | "email-verification" | "profile-update" | "update-successful"
   >("welcome"); // State for managing steps
   const [loading, setLoading] = useState(false);
+  const [assignmentDocument, setAssignmentDocument] = useState<any>({});
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
     watch, // allows us to "watch" the value of a field
   } = useForm<FormData>({
@@ -54,6 +66,8 @@ const HomeBottomSheet = ({
       gender: "",
       education: "",
       interest: ["ui/ux design", "female"],
+      qualification: "",
+      note: null,
     },
   });
 
@@ -77,6 +91,51 @@ const HomeBottomSheet = ({
       <View style={styles.bottomSheetIndicator} />
     </View>
   );
+
+  const openDocumentPicker = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // Allow all file types
+        copyToCacheDirectory: true, // Cache the document temporarily
+      });
+
+      console.log(result);
+
+      // Check if the operation was canceled
+      if (result.canceled) {
+        console.log("Document picking cancelled.");
+        return;
+      }
+
+      // Get the first asset (if multiple selections are enabled in the future, handle accordingly)
+      const document = result.assets[0];
+
+      if (document) {
+        const file = {
+          name: document.name, // File name
+          uri: document.uri, // File URI
+          size: document.size || 0, // File size in bytes
+          type: document.mimeType || "Unknown", // MIME type or fallback
+        };
+        // Assuming you have a state setter function for storing the document
+        setAssignmentDocument({
+          name: document.name, // File name
+          uri: document.uri, // File URI
+          size: document.size || 0, // File size in bytes
+          type: document.mimeType || "Unknown", // MIME type or fallback
+        });
+
+        setValue("note", file);
+
+        console.log("Picked document:", file);
+      } else {
+        console.error("No document was selected.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to pick document.");
+      console.error("Error picking document:", error);
+    }
+  };
 
   const handleProfileUpdate = async (data: FormData) => {
     console.log(data, "profile update function");
@@ -172,13 +231,13 @@ const HomeBottomSheet = ({
                 paddingHorizontal: 16,
               }}
             >
-              <Text variant="subtitle">Email verification</Text>
+              <Text variant="subtitle">Profile update</Text>
               <View style={styles.dropDownView} />
               <ControlledDropdown
                 name="gender"
                 control={control}
                 rules={{ required: "Please select a type" }}
-                label="Gender"
+                label="Area of expertise"
                 options={[
                   { label: "Nil", value: "nil" },
                   { label: "Male", value: "male" },
@@ -190,7 +249,7 @@ const HomeBottomSheet = ({
                 name="education"
                 control={control}
                 rules={{ required: "Please select a type" }}
-                label="Level of education"
+                label="Do you have a qualification"
                 options={[
                   { label: "Nil", value: "nil" },
                   { label: "High school", value: "high school" },
@@ -200,27 +259,38 @@ const HomeBottomSheet = ({
                   { label: "PhD", value: "phd" },
                 ]}
               />
-              <ControlledDropdown
-                multiSelect
-                name="interest"
-                control={control}
-                rules={{ required: "Please select a type" }}
-                label="Area of interest"
-                options={[
-                  { label: "UI/UX Design", value: "uI/UX Design" },
-                  {
-                    label: "Frontend Development",
-                    value: "frontend Development",
-                  },
-                  {
-                    label: "Backend Development",
-                    value: "backend Development",
-                  },
-                  { label: "Data Analytics", value: "data Analytics" },
-                  { label: "Data Science", value: "data Science" },
-                  { label: "Product Management", value: "product Management" },
-                ]}
-              />
+
+              <View style={{ marginBottom: 16 }}>
+                <Text style={{ fontFamily: "AeonikMedium" }}>
+                  Upload your qualification
+                </Text>
+                <Pressable
+                  onPress={openDocumentPicker}
+                  style={{
+                    backgroundColor: theme.colors.lightGray,
+                    borderColor: theme.colors.borderColor,
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    marginTop: 6,
+                    padding: 12,
+                    borderStyle: "dashed",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    rowGap: 8,
+                  }}
+                >
+                  {watch("note") ? (
+                    <Text>{watch("note").name}</Text>
+                  ) : (
+                    <>
+                      <FileIcon />
+                      <Text style={{ textAlign: "center" }}>
+                        Click to upload a document
+                      </Text>
+                    </>
+                  )}
+                </Pressable>
+              </View>
 
               <Button
                 loading={loading}

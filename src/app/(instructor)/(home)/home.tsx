@@ -1,9 +1,15 @@
+import BottomSheet from "@gorhom/bottom-sheet";
 import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 
-import { Hero, InstructorClass, UpcomingClassSchedule } from "~/components";
+import {
+  Hero,
+  InstructorClass,
+  InstructorHomeBottomSheet,
+  UpcomingClassSchedule,
+} from "~/components";
 import {
   getTutorDashBoard,
   getTutorMonthlyEarnings,
@@ -21,7 +27,7 @@ const Home = () => {
   const [upcomingClasses, setUpcomingClasses] = useState(null);
   const todayDate = format(new Date(), "yyyy-MM-dd");
   const [selectedDate, setSelectedDate] = useState(todayDate);
-  console.log(authData, "authData");
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -37,6 +43,9 @@ const Home = () => {
       // Extract current month's earnings
 
       setUpcomingClasses(classesRes);
+      if (authData?.account_activated) {
+        bottomSheetRef.current?.expand();
+      }
 
       console.log(dashboardRes, "dashboard res");
       console.log(classesRes, "classesRes res");
@@ -48,39 +57,50 @@ const Home = () => {
   }, [accessToken, selectedDate]);
 
   useEffect(() => {
+    console.log(authData?.account_activated, "account_activated");
+
     fetchData();
   }, [fetchData]);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-  }
   return (
     <View style={styles.container}>
       <HeaderWithUsername
         profileImage={authData?.profile_image}
         name={authData?.name}
       />
-      <ScrollView
-        contentContainerStyle={{ paddingVertical: 24, paddingHorizontal: 16 }}
-      >
-        <Hero dashboardData={dashboardData} />
-        <UpcomingClassSchedule
-          upcomingClasses={upcomingClasses}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
-      </ScrollView>
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "white",
+          }}
+        >
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : (
+        <>
+          <ScrollView
+            contentContainerStyle={{
+              paddingVertical: 24,
+              paddingHorizontal: 16,
+            }}
+          >
+            <Hero dashboardData={dashboardData} />
+            <UpcomingClassSchedule
+              upcomingClasses={upcomingClasses}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+          </ScrollView>
+        </>
+      )}
+      <InstructorHomeBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        accountActivated={authData?.account_activated}
+      />
+
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>
   );
