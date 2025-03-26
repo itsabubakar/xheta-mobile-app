@@ -27,10 +27,10 @@
 - [x] Add pusher and echo to messaging 1 day
 - [x] Add tabs to courses 1 hour
 - [x] Add bottom sheet to tutors 1 day
-- [] Add profile update api to bottom sheet
+- [x] Add profile update api to bottom sheet
+- [x] Add bank api 1 hour
 - [] Complete schedule/ class request api
 - [] Add class request to homepage
-- [x] Add bank api 1 hour
 - [] Add react query and use it to update course addition 2 hours
 - [] Test adding classes 1 hour
 - [] Test Lesson request 1 hour

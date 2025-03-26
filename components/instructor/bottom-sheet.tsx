@@ -5,7 +5,7 @@ import BottomSheet, {
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import * as DocumentPicker from "expo-document-picker";
 import LottieView from "lottie-react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Alert,
@@ -20,7 +20,7 @@ import EmailVerification from "./email-verification";
 
 import { CircleX, FileIcon } from "~/assets/icons";
 import { xhetaBanner } from "~/assets/images";
-import { updateProfile } from "~/src/api";
+import { fetchCategories, updateProfile } from "~/src/api";
 import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledDropdown } from "~/src/ui/form/input";
@@ -31,14 +31,6 @@ const { width: screenWidth } = Dimensions.get("window");
 // Calculate the image width maintaining the aspect ratio
 const imageWidth = screenWidth * 0.9; // 90% of screen width
 const imageHeight = (imageWidth * 156) / 343; // Maintain aspect ratio
-
-type FormData = {
-  gender: string;
-  education: string;
-  interest: string[];
-  qualification: string;
-  note: any;
-};
 
 const HomeBottomSheet = ({
   accountActivated,
@@ -54,6 +46,7 @@ const HomeBottomSheet = ({
   >("welcome"); // State for managing steps
   const [loading, setLoading] = useState(false);
   const [assignmentDocument, setAssignmentDocument] = useState<any>({});
+  const [categories, setCategories] = useState<any[]>([]);
 
   const {
     control,
@@ -61,11 +54,9 @@ const HomeBottomSheet = ({
     setValue,
     formState: { errors },
     watch, // allows us to "watch" the value of a field
-  } = useForm<FormData>({
+  } = useForm<any>({
     defaultValues: {
-      gender: "",
-      education: "",
-      interest: ["ui/ux design", "female"],
+      categories: categories || [],
       qualification: "",
       note: null,
     },
@@ -84,6 +75,19 @@ const HomeBottomSheet = ({
 
   const handleSheetChanges = useCallback((index: number) => {
     // handle index changes
+  }, []);
+  useEffect(() => {
+    const handleCategories = async () => {
+      try {
+        const response = await fetchCategories(accessToken);
+        console.log(response.data);
+        setCategories(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    handleCategories();
   }, []);
 
   const renderHandle = () => (
@@ -144,8 +148,6 @@ const HomeBottomSheet = ({
     try {
       const res = await updateProfile(accessToken, {
         name: authData?.name,
-        gender: data.gender,
-        level_of_education: data.education,
         area_of_interest: 1,
         email: authData?.email,
       });
@@ -234,17 +236,16 @@ const HomeBottomSheet = ({
               <Text variant="subtitle">Profile update</Text>
               <View style={styles.dropDownView} />
               <ControlledDropdown
-                name="gender"
+                name="expertise"
                 control={control}
-                rules={{ required: "Please select a type" }}
+                rules={{ required: "Please select a category" }}
                 label="Area of expertise"
-                options={[
-                  { label: "Nil", value: "nil" },
-                  { label: "Male", value: "male" },
-                  { label: "Female", value: "female" },
-                  { label: "Prefer not to say", value: "prefer not to say" },
-                ]}
+                options={categories.map((category) => ({
+                  label: category.category_name,
+                  value: category.id,
+                }))}
               />
+
               <ControlledDropdown
                 name="education"
                 control={control}

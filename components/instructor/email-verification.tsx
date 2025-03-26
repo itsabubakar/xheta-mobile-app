@@ -105,7 +105,7 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
   };
 
   const handleProfileUpdate = () => {
-    onSetBottomSheet("profile-update"); // Move to the profile update screen
+    onSetBottomSheet("update-successful"); // Move to the profile update screen
   };
 
   const handleEmailVerification = async (data: FormData) => {
