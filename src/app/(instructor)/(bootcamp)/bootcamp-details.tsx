@@ -56,7 +56,7 @@ const BootcampDetails = (props: Props) => {
     }
   }, [id, isDraft, draftData]);
 
-  console.log(draftData);
+  console.log(bootCampInfo?.participants, "info");
 
   const fetchBootcampFromAPI = async () => {
     setLoading(true);
@@ -194,11 +194,7 @@ const BootcampDetails = (props: Props) => {
         {isDraft === "true" ? <Text>Draft</Text> : <Text>Published</Text>}
 
         {isDraft !== "true" && (
-          <View
-            style={{
-              marginTop: 24,
-            }}
-          >
+          <View style={{ marginTop: 24 }}>
             <Text
               variant="subtitle"
               style={{ color: "#1D1D1D", marginBottom: 8 }}
@@ -206,12 +202,9 @@ const BootcampDetails = (props: Props) => {
               Participants
             </Text>
             <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              {/* Column 1 */}
+              {/* Column 1 - Learner's Name */}
               <View style={{ flex: 1 }}>
                 <View
                   style={{
@@ -226,48 +219,32 @@ const BootcampDetails = (props: Props) => {
                     variant="subtitle"
                     style={{ color: "#434343", fontSize: 12 }}
                   >
-                    LEARNERS NAME
+                    LEARNER'S NAME
                   </Text>
                 </View>
-                <View>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                  >
-                    John Doe
-                  </Text>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                  >
-                    John Doe
-                  </Text>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                  >
-                    John Doe
-                  </Text>
-                </View>
+                {bootCampInfo?.participants?.map(
+                  (participant: any, index: any) => (
+                    <Text
+                      key={index}
+                      style={{
+                        padding: 16,
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#D2D2D266",
+                      }}
+                    >
+                      {participant.name || "N/A"}
+                    </Text>
+                  ),
+                )}
               </View>
 
-              {/* Column 2 */}
+              {/* Column 2 - Email */}
               <View style={{ flex: 1 }}>
                 <View
                   style={{
                     backgroundColor: "#EDEDED",
                     padding: 14,
                     paddingBottom: 8,
-
                     borderBottomWidth: 1,
                     borderBottomColor: "#D2D2D266",
                   }}
@@ -279,41 +256,22 @@ const BootcampDetails = (props: Props) => {
                     EMAIL
                   </Text>
                 </View>
-                <View>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    jo.parker@gmail.com
-                  </Text>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    jo.parker@gmail.com
-                  </Text>
-                  <Text
-                    style={{
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#D2D2D266",
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    jo.parker@gmail.com
-                  </Text>
-                </View>
+                {bootCampInfo?.participants?.map(
+                  (participant: any, index: any) => (
+                    <Text
+                      key={index}
+                      style={{
+                        padding: 16,
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#D2D2D266",
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {participant.email || "N/A"}
+                    </Text>
+                  ),
+                )}
               </View>
             </View>
           </View>
