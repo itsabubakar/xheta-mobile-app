@@ -92,7 +92,6 @@ const SignUp = ({ role }: Props) => {
       });
 
       setLoading(false); // Stop loading once the request is complete
-      setModalVisible(true); // Show the modal after successful account creation
     } catch (err) {
       showToast(error || "An unexpected error occurred");
       console.error(error, "status error");

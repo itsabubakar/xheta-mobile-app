@@ -72,6 +72,18 @@ export const getTutorCourses = async (accessToken: string) => {
   return response.data;
 };
 
+export const getCourseCategories = async (accessToken: string) => {
+  console.log(accessToken, "access token");
+
+  const response = await client.get("/v1/categories", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
 export const editCourseModule = async (
   accessToken: string,
   courseId: string,

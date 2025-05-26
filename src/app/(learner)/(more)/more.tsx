@@ -73,6 +73,16 @@ const More = (props: Props) => {
             Logout
           </Text>
         </Pressable>
+        <Text
+          style={{
+            textAlign: "center",
+            marginBottom: 16,
+            fontSize: 8,
+            color: "#686868",
+          }}
+        >
+          version:1.1
+        </Text>
       </ScrollView>
     </View>
   );

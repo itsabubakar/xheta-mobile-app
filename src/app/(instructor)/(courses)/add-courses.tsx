@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Pressable,
@@ -17,7 +17,7 @@ import Modal from "react-native-modal";
 import { greenTick } from "~/assets/animations";
 import { CircleX, FileIcon } from "~/assets/icons";
 import { info } from "~/assets/images";
-import { createCourse } from "~/src/api/tutors-courses";
+import { createCourse, getCourseCategories } from "~/src/api/tutors-courses";
 import { useAuthStore } from "~/src/core/storage";
 import { Button, ScreenHeader } from "~/src/ui";
 import { ControlledInput } from "~/src/ui/form";
@@ -34,6 +34,21 @@ const AddCourses = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const accessToken = authData?.access_token || "";
   const [createdCourseId, setCreatedCourseId] = useState("");
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCourseCategories(accessToken);
+        setCategories(response.data);
+        console.log("Course categories:", response.data);
+      } catch (error) {
+        console.error("Error fetching course categories:", error);
+      }
+    };
+    fetchCategories();
+    console.log("Access Token:", accessToken);
+  }, []);
 
   const { control, setValue, watch, handleSubmit, reset } = useForm<any>({
     defaultValues: {
@@ -106,9 +121,10 @@ const AddCourses = (props: Props) => {
 
     // Create FormData for proper image upload
     const formData = new FormData();
+    console.log(category_id, "category id");
 
     formData.append("course_name", course_name);
-    formData.append("category_id", "1");
+    formData.append("category_id", category_id);
     formData.append("course_price", course_price);
     formData.append("course_level", course_level);
     formData.append("certificate", certificate);
@@ -154,6 +170,11 @@ const AddCourses = (props: Props) => {
       params: { refetch: "true" }, // Add a refetch query param
     });
   };
+
+  const categoryOptions = categories?.map((category) => ({
+    label: category.category_name,
+    value: category.id,
+  }));
 
   if (loading) {
     return (
@@ -217,20 +238,7 @@ const AddCourses = (props: Props) => {
             rules={{
               required: "Name is required",
             }}
-            options={[
-              { label: "UI/UX Design", value: "uI/UX Design" },
-              {
-                label: "Frontend Development",
-                value: "frontend Development",
-              },
-              {
-                label: "Backend Development",
-                value: "backend Development",
-              },
-              { label: "Data Analytics", value: "data Analytics" },
-              { label: "Data Science", value: "data Science" },
-              { label: "Product Management", value: "product Management" },
-            ]}
+            options={categoryOptions}
           />
         </View>
 
