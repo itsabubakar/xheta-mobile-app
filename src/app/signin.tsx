@@ -85,7 +85,7 @@ const SignIn = () => {
         is_first_time: true,
       });
 
-      console.log(res);
+      console.log(res, "login response");
 
       setLoading(false); // Stop loading once the request is complete
       // setModalVisible(false); // Show the modal after successful account creation

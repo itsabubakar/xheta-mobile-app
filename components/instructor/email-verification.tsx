@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
 import { verifyEmail, verifyEmailOtp } from "~/src/api/auth";
-import { useAuthStore } from "~/src/core/storage";
+import { AuthData, useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
 import { ControlledInput, OTPInput } from "~/src/ui/form";
 import { Text, useTheme } from "~/theme";
@@ -105,7 +105,7 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
   };
 
   const handleProfileUpdate = () => {
-    onSetBottomSheet("update-successful"); // Move to the profile update screen
+    onSetBottomSheet("profile-update"); // Move to the profile update screen
   };
 
   const handleEmailVerification = async (data: FormData) => {
@@ -116,6 +116,11 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
         token: accessToken,
         email: data?.email.toLowerCase(),
       });
+      const updatedAuthData = {
+        ...useAuthStore.getState().authData,
+        account_activated: true,
+      };
+      await useAuthStore.getState().setAuthData(updatedAuthData as AuthData);
 
       console.log(res);
       setLoading(false);

@@ -89,11 +89,13 @@ export const updateTutorsProfilePicture = async (
 
 export const fetchTutorsProfilePicture = async (accessToken: string) => {
   try {
-    const response = await client.get("/v1/tutor/fetch/profile-image", {
+    const response = await client.get("/v1/tutor/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    return response.data; // Adjust according to your response structure
+    console.log("Profile picture fetched:", response.data.user.profile_image);
+
+    return response.data.user.profile_image; // Adjust according to your response structure
   } catch (error) {
     console.error("Error fetching profile picture:", error);
   }

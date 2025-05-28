@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
 import LottieView from "lottie-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Alert,
@@ -22,6 +22,7 @@ import {
   updateProfilePicture,
   updateTutorsProfilePicture,
 } from "~/src/api";
+import { getCourseCategories } from "~/src/api/tutors-courses";
 import {
   fetchTutorsProfilePicture,
   updateTutorsProfile,
@@ -58,6 +59,7 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState(authState?.profile_image);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
 
   const getNames = (fullName: string) => {
     const [firstName, ...lastNameParts] = fullName.trim().split(" ");
@@ -220,15 +222,16 @@ const Profile = () => {
 
       // Fetch the updated profile image URL
       const updatedProfile = await fetchTutorsProfilePicture(access_token);
+      console.log("Updated profile image URL:", updatedProfile);
 
-      console.log(updatedProfile.profile_image);
+      console.log(updatedProfile, "profile image url two");
 
-      if (updatedProfile?.profile_image) {
+      if (updatedProfile) {
         await updateAuthState({
-          profile_image: updatedProfile.profile_image, // Update only the profile image
+          profile_image: updatedProfile, // Update only the profile image
         });
 
-        setProfileImage(updatedProfile.profile_image); // Update local state if necessary
+        setProfileImage(updatedProfile); // Update local state if necessary
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -240,6 +243,24 @@ const Profile = () => {
       setLoading(false); // Stop loading
     }
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCourseCategories(access_token);
+        setCategories(response.data);
+        console.log("Course categories:", response.data);
+      } catch (error) {
+        console.error("Error fetching course categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const categoryOptions = categories?.map((category) => ({
+    label: category.category_name,
+    value: category.id,
+  }));
 
   return (
     <View

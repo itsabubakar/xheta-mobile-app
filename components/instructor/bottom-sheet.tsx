@@ -80,7 +80,7 @@ const HomeBottomSheet = ({
     const handleCategories = async () => {
       try {
         const response = await fetchCategories(accessToken);
-        console.log(response.data);
+        console.log(response.data, "categories");
         setCategories(response.data);
       } catch (error) {
         console.log(error);
@@ -89,6 +89,11 @@ const HomeBottomSheet = ({
 
     handleCategories();
   }, []);
+
+  const categoryOptions = categories?.map((category) => ({
+    label: category.category_name,
+    value: category.id,
+  }));
 
   const renderHandle = () => (
     <View style={styles.handleContainer}>
