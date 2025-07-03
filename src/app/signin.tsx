@@ -11,7 +11,7 @@ import { useAuthStore } from "../core/storage";
 import { Button } from "../ui";
 import { ControlledInput } from "../ui/form"; // Your existing ControlledInput component
 
-import { CircleX, GoogleIcon } from "~/assets/icons";
+import { CircleX } from "~/assets/icons";
 import Toast from "~/src/ui/toast/custom-toast";
 import { Text, useTheme } from "~/theme";
 
@@ -188,15 +188,6 @@ const SignIn = () => {
           <View style={styles.divider} />
         </View>
 
-        <View style={{ marginVertical: 24 }}>
-          {/* google sign up */}
-          <Button
-            variant="outline"
-            icon={<GoogleIcon />}
-            label="Sign in with Google"
-            onPress={handleSubmit(onSubmit)}
-          />
-        </View>
         <View>
           <View
             style={{

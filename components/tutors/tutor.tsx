@@ -14,6 +14,8 @@ const Tutor = ({ tutor }: any) => {
 
   const { id } = tutor;
 
+  console.log("tutor", tutor);
+
   return (
     <Pressable
       onPress={() => router.navigate(`/(tutors)/${id}`)}
@@ -26,7 +28,7 @@ const Tutor = ({ tutor }: any) => {
             height: 106,
             borderRadius: 8,
           }}
-          source={course}
+          source={tutor?.profile_image ? { uri: tutor.profile_image } : course}
         />
       </View>
       <Text
@@ -35,16 +37,17 @@ const Tutor = ({ tutor }: any) => {
           paddingBottom: 4,
           color: "#1D1D1D",
         }}
-        variant="md"
+        variant="sm"
       >
-        UI/UX Design
+        {tutor.account_activated} account
       </Text>
       <Text
         style={{
-          color: theme.colors.lightBlack,
+          color: "#1D1D1D",
         }}
+        variant="md"
       >
-        By {tutor.name}
+        {tutor.name}
       </Text>
       <View
         style={{
@@ -54,12 +57,12 @@ const Tutor = ({ tutor }: any) => {
         }}
       >
         <Text style={styles.price}>#{tutor.TutorHourlyCharge} / hr</Text>
-        <Text style={styles.price}>
+        {/* <Text style={styles.price}>
           <View>
             <StarIcon size={20} />
           </View>
           5.0
-        </Text>
+        </Text> */}
       </View>
     </Pressable>
   );

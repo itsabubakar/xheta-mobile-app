@@ -9,3 +9,6 @@ export const noAccomplishments = require("./no-accomplishments.png");
 export const noContent = require("./no-content.png");
 export const payment = require("./payment.png");
 export const info = require("./info.png");
+export const imgOne = require("./img1.png");
+export const imgTwo = require("./img2.png");
+export const imgThree = require("./img3.png");

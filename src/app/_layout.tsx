@@ -9,7 +9,7 @@ import { theme } from "theme";
 import { useAuthStore } from "~/src/core/storage";
 
 export const unstable_settings = {
-  initialRouteName: "(learner)",
+  initialRouteName: "/",
 };
 
 export default function RootLayout() {

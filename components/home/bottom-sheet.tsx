@@ -31,11 +31,11 @@ type FormData = {
 };
 
 const HomeBottomSheet = ({
-  accountActivated,
   bottomSheetRef,
+  categoryOptions,
 }: {
-  accountActivated: boolean | undefined;
   bottomSheetRef: React.RefObject<BottomSheet>;
+  categoryOptions?: { label: string; value: string }[];
 }) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
@@ -53,7 +53,7 @@ const HomeBottomSheet = ({
     defaultValues: {
       gender: "",
       education: "",
-      interest: ["ui/ux design", "female"],
+      interest: [],
     },
   });
 
@@ -206,20 +206,7 @@ const HomeBottomSheet = ({
                 control={control}
                 rules={{ required: "Please select a type" }}
                 label="Area of interest"
-                options={[
-                  { label: "UI/UX Design", value: "uI/UX Design" },
-                  {
-                    label: "Frontend Development",
-                    value: "frontend Development",
-                  },
-                  {
-                    label: "Backend Development",
-                    value: "backend Development",
-                  },
-                  { label: "Data Analytics", value: "data Analytics" },
-                  { label: "Data Science", value: "data Science" },
-                  { label: "Product Management", value: "product Management" },
-                ]}
+                options={categoryOptions || []}
               />
 
               <Button

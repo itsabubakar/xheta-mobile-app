@@ -2,7 +2,6 @@
   "expo": {
     "name": "Xheta",
     "slug": "xheta-app",
-    "version": "1.0.0",
     "scheme": "xheta-app",
     "web": {
       "bundler": "metro",

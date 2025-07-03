@@ -83,8 +83,6 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
   };
 
   const onOtpSubmit = async (data: FormData) => {
-    console.log("clicked");
-    console.log("Form submitted:", codes?.join(""));
     setLoading(true);
     if (!codes) return;
 
@@ -94,7 +92,6 @@ const EmailVerification = ({ onSetBottomSheet }: Props) => {
         code: codes?.join(""),
       });
 
-      console.log(res);
       setLoading(false);
       setStep(3); // Move to the OTP screen
     } catch (err: any) {

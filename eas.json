@@ -19,6 +19,7 @@
       "channel": "preview"
     },
     "production": {
+      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle",
         "distribution": "store",
@@ -28,5 +29,8 @@
       },
       "channel": "production"
     }
+  },
+  "cli": {
+    "appVersionSource": "remote"
   }
 }

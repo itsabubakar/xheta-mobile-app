@@ -4,7 +4,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import Course from "./course";
 
-import { noContent } from "~/assets/images";
+import { imgOne, imgTwo, noContent } from "~/assets/images";
 import { SectionHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -23,24 +23,15 @@ const CourseSection = ({ courses }: any) => {
         ))
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Image source={noContent} />
+          <Image style={{ width: 200, height: 200 }} source={imgTwo} />
           <Text
             style={{
               paddingTop: 16,
               textAlign: "center",
             }}
           >
-            You have not enrolled to any course yet. Browse Courses...
+            You have not enrolled to any course yet.
           </Text>
-          <Pressable onPress={() => router.push("/(courses)/courses")}>
-            <Text
-              style={{
-                color: theme.colors.primary,
-              }}
-            >
-              Browse Courses
-            </Text>
-          </Pressable>
         </View>
       )}
     </View>

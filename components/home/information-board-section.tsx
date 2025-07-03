@@ -5,7 +5,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import Information from "./information";
 
 import { NoContentIcon } from "~/assets/icons";
-import { noContent } from "~/assets/images";
+import { imgThree, noContent } from "~/assets/images";
 import { SectionHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -25,24 +25,15 @@ const InformationBoardSection = ({ upcomingClasses }: any) => {
         upcomingClasses.map((item: any) => <Information key={item.id} />)
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Image source={noContent} />
+          <Image style={{ width: 200, height: 200 }} source={imgThree} />
           <Text
             style={{
               paddingTop: 16,
               textAlign: "center",
             }}
           >
-            You have no upcoming activities yet. Browse Courses...
+            Scheduled classes will appear here when available
           </Text>
-          <Pressable onPress={() => router.push("/(courses)/courses")}>
-            <Text
-              style={{
-                color: theme.colors.primary,
-              }}
-            >
-              Browse Courses
-            </Text>
-          </Pressable>
         </View>
       )}
     </View>

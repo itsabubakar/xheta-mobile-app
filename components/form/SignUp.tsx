@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
-import { CircleX, GoogleIcon } from "~/assets/icons";
+import { CircleX } from "~/assets/icons";
 import { signUp } from "~/src/api";
 import { useSignUp } from "~/src/api/auth";
 import { useAuthStore } from "~/src/core/storage";
@@ -215,16 +215,6 @@ const SignUp = ({ role }: Props) => {
         <View style={styles.divider} />
         <Text style={styles.orText}>or</Text>
         <View style={styles.divider} />
-      </View>
-
-      <View style={{ marginVertical: 24 }}>
-        {/* google sign up */}
-        <Button
-          variant="outline"
-          icon={<GoogleIcon />}
-          label="Sign up with Google"
-          onPress={handleSubmit(onSubmit)}
-        />
       </View>
 
       <View>

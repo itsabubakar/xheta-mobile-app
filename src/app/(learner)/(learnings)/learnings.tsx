@@ -205,15 +205,6 @@ const Learnings = (props: Props) => {
               >
                 No courses to show yet. Browse Courses...
               </Text>
-              <Pressable onPress={() => router.push("/(courses)/courses")}>
-                <Text
-                  style={{
-                    color: theme.colors.primary,
-                  }}
-                >
-                  Browse Courses
-                </Text>
-              </Pressable>
             </View>
           )}
         </>

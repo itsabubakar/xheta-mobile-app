@@ -1,7 +1,13 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import {
   AssignmentSection,
@@ -9,7 +15,11 @@ import {
   HomeBottomSheet,
   InformationBoardSection,
 } from "~/components";
-import { getUpcomingClasses, getDashboardCourses } from "~/src/api"; //
+import {
+  getUpcomingClasses,
+  getDashboardCourses,
+  fetchCategories,
+} from "~/src/api"; //
 import { useAuthStore } from "~/src/core/storage";
 import { HeaderWithUsername } from "~/src/ui";
 import { theme } from "~/theme";
@@ -24,6 +34,7 @@ const Home = (props: Props) => {
   const [upcomingClasses, setUpcomingClasses] = useState(null);
   const [loading, setLoading] = useState(true);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -39,18 +50,33 @@ const Home = (props: Props) => {
         // Store the results in state
         setCourses(fetchedCourses);
         setUpcomingClasses(fetchedClasses);
-        if (!authData?.account_activated) {
-          bottomSheetRef.current?.expand();
-        }
+        // if (!authData?.account_activated) {
+        // bottomSheetRef.current?.expand();
+        // }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false); // Set loading to false when data has been fetched or an error occurs
       }
     };
+    const handleCategories = async () => {
+      try {
+        const response = await fetchCategories(accessToken);
+        console.log(response.data, "categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
+    handleCategories();
     fetchData();
   }, []);
+
+  const categoryOptions = categories?.map((category) => ({
+    label: category.category_name,
+    value: category.id,
+  }));
 
   return (
     <View style={styles.container}>
@@ -69,10 +95,10 @@ const Home = (props: Props) => {
           <InformationBoardSection upcomingClasses={upcomingClasses} />
         </ScrollView>
       )}
-      <HomeBottomSheet
+      {/* <HomeBottomSheet
+        categoryOptions={categoryOptions}
         bottomSheetRef={bottomSheetRef}
-        accountActivated={authData?.account_activated}
-      />
+      /> */}
 
       <StatusBar style="light" backgroundColor={theme.colors.primary} />
     </View>

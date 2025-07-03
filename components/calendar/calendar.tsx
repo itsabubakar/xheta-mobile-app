@@ -60,8 +60,6 @@ const CustomCalendar = ({
   const formattedMonth = format(currentDate, "MMMM");
   const formattedYear = format(currentDate, "yyyy");
 
-  console.log(selectedDate);
-
   return (
     <View style={styles.container}>
       {/* Header for Month Navigation */}

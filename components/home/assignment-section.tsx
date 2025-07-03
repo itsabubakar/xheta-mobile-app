@@ -4,7 +4,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import Assignment from "./assignment";
 
-import { noContent } from "~/assets/images";
+import { imgOne, noContent } from "~/assets/images";
 import { SectionHeader } from "~/src/ui";
 import { Text, theme } from "~/theme";
 
@@ -19,25 +19,15 @@ const AssignmentSection = (props: Props) => {
         link="/"
       />
       <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <Image source={noContent} />
+        <Image source={imgOne} />
         <Text
           style={{
             paddingTop: 16,
             textAlign: "center",
           }}
         >
-          You have no assignments yet. Browse Courses...
+          Assignments will appear here.
         </Text>
-        <Pressable onPress={() => router.push("/(courses)/courses")}>
-          <Text
-            variant="md"
-            style={{
-              color: theme.colors.primary,
-            }}
-          >
-            Browse Courses
-          </Text>
-        </Pressable>
       </View>
 
       {/* <View style={styles.assignmentContainer}>
