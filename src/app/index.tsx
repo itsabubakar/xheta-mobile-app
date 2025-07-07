@@ -6,7 +6,7 @@ import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 import { Button } from "../ui/button";
 
 import { onboardingBg } from "~/assets/images";
-import { useAuthStore, useRoleStore } from "~/src/core/storage"; // Import your auth store
+import { useAuthStore, useRoleStore } from "~/src/core/storage";
 import { Text, theme } from "~/theme";
 
 type Props = {

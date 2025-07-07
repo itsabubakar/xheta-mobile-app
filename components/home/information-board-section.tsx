@@ -1,13 +1,12 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 import Information from "./information";
 
-import { NoContentIcon } from "~/assets/icons";
-import { imgThree, noContent } from "~/assets/images";
+import { imgThree } from "~/assets/images";
 import { SectionHeader } from "~/src/ui";
-import { Text, theme } from "~/theme";
+import { Text } from "~/theme";
 
 type Props = object;
 
