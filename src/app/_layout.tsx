@@ -2,14 +2,43 @@ import { ThemeProvider } from "@shopify/restyle";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
+import { View, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "theme";
 
 import { useAuthStore } from "~/src/core/storage";
 
 export const unstable_settings = {
   initialRouteName: "(learner)",
+};
+
+interface SafeAreaViewProps {
+  children: React.ReactNode;
+  edges?: {
+    top?: boolean;
+    bottom?: boolean;
+    left?: boolean;
+    right?: boolean;
+  };
+  style?: ViewStyle;
+}
+
+const SafeAreaView: React.FC<SafeAreaViewProps> = ({
+  children,
+  edges = { top: true, bottom: true, left: true, right: true },
+  style,
+}) => {
+  const insets = useSafeAreaInsets();
+
+  const paddingStyle: ViewStyle = {
+    paddingTop: edges.top ? insets.top : 0,
+    paddingBottom: edges.bottom ? insets.bottom : 0,
+    paddingLeft: edges.left ? insets.left : 0,
+    paddingRight: edges.right ? insets.right : 0,
+  };
+
+  return <View style={[paddingStyle, style]}>{children}</View>;
 };
 
 export default function RootLayout() {
