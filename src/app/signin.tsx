@@ -90,8 +90,8 @@ const SignIn = () => {
       setLoading(false); // Stop loading once the request is complete
       // setModalVisible(false); // Show the modal after successful account creation
     } catch (err: any) {
-      console.error(err.response.data.message);
-      showToast(err.response.data.message || "An unexpected error occurred");
+      console.error(err.message);
+      showToast(err.message || "An unexpected error occurred");
       setLoading(false); // Stop loading if the request fails
     }
   };

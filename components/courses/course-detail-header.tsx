@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import Video, { VideoRef } from "react-native-video";
 
 import { CustomVideoPlayer } from "../video";
 
@@ -14,7 +13,6 @@ type Props = {
 
 const CourseDetailsHeader = ({ info }: Props) => {
   console.log(info.course_intro_video);
-  const videoRef = useRef<VideoRef>(null);
 
   const onBuffer = () => {
     console.log("buffering");
