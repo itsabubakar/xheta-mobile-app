@@ -68,8 +68,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notifications"
         options={{
-          title: "Notifications",
-          tabBarButton: () => null, // Hides the tab button
+          href: null,
         }}
       />
     </Tabs>

@@ -203,7 +203,7 @@ const Learnings = (props: Props) => {
                   textAlign: "center",
                 }}
               >
-                No courses to show yet. Browse Courses...
+                No courses to show yet.
               </Text>
             </View>
           )}

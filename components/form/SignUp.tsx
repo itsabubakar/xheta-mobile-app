@@ -6,7 +6,6 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Modal from "react-native-modal";
 
 import { CircleX } from "~/assets/icons";
-import { signUp } from "~/src/api";
 import { useSignUp } from "~/src/api/auth";
 import { useAuthStore } from "~/src/core/storage";
 import { Button } from "~/src/ui";
