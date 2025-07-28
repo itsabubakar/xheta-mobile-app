@@ -47,7 +47,7 @@ const Wallet = (props: Props) => {
                 fontFamily: "AeonikBold",
               }}
             >
-              #50,000
+              ₦50,000
             </Text>
           </View>
         </View>

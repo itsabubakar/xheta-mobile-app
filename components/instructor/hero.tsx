@@ -135,7 +135,7 @@ const Withdraw = ({ wallet }: any) => {
             fontFamily: "AeonikBold",
           }}
         >
-          #{wallet || 0}
+          ₦{wallet || 0}
         </Text>
         <Pressable
           onPress={() => router.push("/wallet")}
