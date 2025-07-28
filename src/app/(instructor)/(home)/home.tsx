@@ -29,7 +29,7 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(todayDate);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  useEffect(() => console.log("auth data is: ", accessToken), []);
+  useEffect(() => console.log("auth data is: ", authData?.role), []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);

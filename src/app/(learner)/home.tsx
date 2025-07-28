@@ -11,7 +11,8 @@ import {
 } from "~/components";
 import { getUpcomingClasses, getDashboardCourses } from "~/src/api"; //
 import { useAuthStore } from "~/src/core/storage";
-import { HeaderWithUsername } from "~/src/ui";
+import { HeaderWithUsernameLeaner } from "~/src/ui";
+import HeaderWithUsernameLearner from "~/src/ui/home/learner-header-with-username";
 import { theme } from "~/theme";
 
 type Props = object;
@@ -54,7 +55,7 @@ const Home = (props: Props) => {
 
   return (
     <View style={styles.container}>
-      <HeaderWithUsername
+      <HeaderWithUsernameLearner
         profileImage={authData?.profile_image}
         name={authData?.name}
       />
