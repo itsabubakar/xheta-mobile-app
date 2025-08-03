@@ -14,6 +14,7 @@
     "@dev-plugins/react-query": "^0.0.7",
     "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^4",
+    "@jitsi/react-native-sdk": "^11.3.2",
     "@lottiefiles/dotlottie-react": "^0.14.3",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/datetimepicker": "8.4.1",
