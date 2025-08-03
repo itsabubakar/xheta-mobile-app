@@ -91,7 +91,7 @@ const Tutor = () => {
                 Price
               </Text>
               <Text variant="title">
-                #{tutorInfo?.TutorHourlyCharge}
+                ₦{tutorInfo?.TutorHourlyCharge}
                 <Text
                   style={{
                     fontFamily: "AeonikNormal",

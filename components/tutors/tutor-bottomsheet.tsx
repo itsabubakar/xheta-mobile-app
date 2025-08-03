@@ -27,8 +27,8 @@ import { ControlledDropdown, ControlledTextArea } from "~/src/ui/form/input";
 import { Text, theme } from "~/theme";
 
 type PaymentBottomSheetProps = {
-  bottomSheetRef: React.RefObject<BottomSheet>;
-  tutorId: string;
+  bottomSheetRef: React.RefObject<BottomSheet | null>;
+  tutorId: number;
 };
 
 const PaymentBottomSheet = ({
@@ -55,7 +55,7 @@ const PaymentBottomSheet = ({
   const [showCalendar, setShowCalendar] = useState(false);
 
   const closeBottomSheet = () => {
-    bottomSheetRef.current?.close();
+    bottomSheetRef?.current?.close();
     setCurrentSection(0);
   };
 
@@ -87,6 +87,7 @@ const PaymentBottomSheet = ({
       time_zone: userTimeZone,
       tutor_id: tutorId,
     };
+    console.log("DATA TO SUBMIT: ", dataToSubmit);
 
     try {
       const res = await bookTutor(accessToken, dataToSubmit);

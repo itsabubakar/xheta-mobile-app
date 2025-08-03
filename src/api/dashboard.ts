@@ -43,7 +43,6 @@ export const getUpcomingClasses = async (accessToken: string) => {
         },
       },
     );
-
     return response.data; // Adjust according to your response structure
   } catch (error) {
     console.error("Error fetching dashboard activities:", error);

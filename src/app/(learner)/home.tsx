@@ -39,7 +39,7 @@ const Home = (props: Props) => {
 
         // Store the results in state
         setCourses(fetchedCourses);
-        setUpcomingClasses(fetchedClasses);
+        setUpcomingClasses(fetchedClasses.data);
         if (!authData?.account_activated) {
           bottomSheetRef.current?.expand();
         }

@@ -52,7 +52,7 @@ export const bookTutor = async (
     start_time: string;
     end_time: string;
     time_zone: string;
-    tutor_id: string;
+    tutor_id: number;
     message_from_learner: string;
   },
 ) => {

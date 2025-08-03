@@ -37,7 +37,7 @@ const HomeBottomSheet = ({
   bottomSheetRef,
 }: {
   accountActivated: boolean | undefined;
-  bottomSheetRef: React.RefObject<BottomSheet>;
+  bottomSheetRef: React.RefObject<BottomSheet | null>;
 }) => {
   const authData = useAuthStore((state) => state.authData);
   const accessToken = authData?.access_token || "";
