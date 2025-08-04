@@ -1,2 +1,4 @@
-ignoredBuiltDependencies:
-  - '@jitsi/react-native-sdk'
+packages:
+  - "."
+ignoredBuildDependencies:
+  - "@jitsi/react-native-sdk"
