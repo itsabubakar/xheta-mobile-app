@@ -1,4 +1,0 @@
-packages:
-  - "."
-ignoredBuildDependencies:
-  - "@jitsi/react-native-sdk"
